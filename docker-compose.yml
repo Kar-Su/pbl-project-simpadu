@@ -1,0 +1,144 @@
+services:
+  # DEVELOPMENT CONFIG HOT RELOAD (AIR)
+  golang:
+    image: go-air:1.26
+    build:
+      context: ./backend
+      dockerfile: ../.docker/golang-air.Dockerfile
+    container_name: golang_pbl
+    restart: unless-stopped
+    # expose:
+    #   - "8080"
+    working_dir: /golang
+    volumes:
+      - ./backend:/golang
+    environment:
+      - ENV=development
+    env_file:
+      - .env
+      - backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pbl
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.golang-service.entrypoints=web"
+      - "traefik.http.routers.golang-service.rule=PathPrefix(`/api`)"
+      - "traefik.http.services.golang-service.loadbalancer.server.port=${GO_PORT:-8080}"
+      - "traefik.http.routers.golang-service.priority=10"
+
+  nextjs:
+    image: nextjs:node24-alpine
+    build:
+      context: ./frontend
+      dockerfile: ../.docker/node-nextjs.Dockerfile
+      target: development
+    container_name: nextjs_pbl
+    restart: unless-stopped
+    command: npm run dev
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+      - WATCHPACK_POLLING=true
+    env_file:
+      - .env
+      - frontend/.env
+    networks:
+      - pbl
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nextjs-service.entrypoints=web"
+      - "traefik.http.routers.nextjs-service.rule=PathPrefix(`/`)"
+      - "traefik.http.routers.nextjs-service.priority=1"
+      - "traefik.http.services.nextjs-service.loadbalancer.server.port=3000"
+
+  db:
+    image: "mysql:8.0"
+    container_name: mysql_pbl
+    restart: unless-stopped
+    # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+    ports:
+      - "3306:3306"
+    # expose:
+    #   - "3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-p${DB_ROOT_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+    volumes:
+      - ./.docker/mysql/data:/var/lib/mysql
+      - ./.docker/mysql/logs:/var/log/mysql
+      - ./.docker/mysql/sql:/docker-entrypoint-initdb.d
+    networks:
+      - pbl
+
+  phpmyadmin:
+    image: "phpmyadmin/phpmyadmin:latest"
+    container_name: phpmyadmin_pbl
+    restart: unless-stopped
+    # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+    # ports:
+    #   - "80"
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      # PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_ABSOLUTE_URI: http://localhost/pma/
+    networks:
+      - pbl
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pma-service.entrypoints=web"
+      - "traefik.http.routers.pma-service.rule=PathPrefix(`/pma`)"
+      - "traefik.http.middlewares.pma-slash.redirectregex.regex=^(.*)/pma$$"
+      - "traefik.http.middlewares.pma-slash.redirectregex.replacement=$$1/pma/"
+      - "traefik.http.middlewares.pma-strip.stripprefix.prefixes=/pma"
+      - "traefik.http.routers.pma-service.middlewares=pma-slash,pma-strip"
+      - "traefik.http.services.pma-service.loadbalancer.server.port=80"
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik_pbl
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--accessLog=true"
+      - "--log.level=INFO"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - pbl
+
+networks:
+  pbl:
+    driver: bridge
