@@ -5,11 +5,11 @@ const (
 	DB_LOG_DIR = "./config/logs/query_log"
 	JWTService = "JWTService"
 
-	ENUM_ROLE_SUPER_ADMIN     = "super admin"
-	ENUM_ROLE_AKADEMIK_ADMIN  = "akademik admin"
-	ENUM_ROLE_PEGAWAI_ADMIN   = "pegawai admin"
-	ENUM_ROLE_KEUANGAN_ADMIN  = "keuangan admin"
-	ENUM_ROLE_MAHASISWA_ADMIN = "mahasiswa admin"
-	ENUM_ROLE_MAHASISWA       = "mahasiswa"
-	ENUM_ROLE_DOSEN           = "dosen"
+	KODE_ROLE_SUPER_ADMIN     = "r-su"
+	KODE_ROLE_AKADEMIK_ADMIN  = "r-aa"
+	KODE_ROLE_PEGAWAI_ADMIN   = "r-pa"
+	KODE_ROLE_KEUANGAN_ADMIN  = "r-ka"
+	KODE_ROLE_MAHASISWA_ADMIN = "r-ma"
+	KODE_ROLE_MAHASISWA       = "r-ms"
+	KODE_ROLE_DOSEN           = "r-ds"
 )

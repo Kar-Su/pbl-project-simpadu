@@ -6,6 +6,7 @@ require (
 	github.com/common-nighthawk/go-figure v0.0.0-20210622060536-734e95fb86be
 	github.com/gin-contrib/cors v1.7.7
 	github.com/gin-gonic/gin v1.12.0
+	github.com/google/uuid v1.6.0
 	github.com/samber/do/v2 v2.0.0
 	golang.org/x/crypto v0.48.0
 	gorm.io/driver/mysql v1.6.0
