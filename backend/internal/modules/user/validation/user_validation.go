@@ -7,6 +7,7 @@ import (
 	"strings"
 	"web-hosting/internal/modules/user/dto"
 	"web-hosting/internal/package/constants"
+	help "web-hosting/internal/package/helpers"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -46,14 +47,14 @@ func (v *UserValidation) ValidateUpdateNonAdminRequest(req dto.UserNonAdminUpdat
 func validateRole(fl validator.FieldLevel) bool {
 	role := fl.Field().String()
 
-	role = strings.ReplaceAll(strings.ToLower(role), " ", "_")
+	role = help.NormalizeString(role)
 
 	return role == constants.ROLE_ADMIN || role == constants.ROLE_SUPER_ADMIN || role == constants.ROLE_MAHASISWA || role == constants.ROLE_DOSEN
 }
 
 func validateRoleNonAdmin(fl validator.FieldLevel) bool {
 	role := fl.Field().String()
-	role = strings.ReplaceAll(strings.ToLower(role), " ", "_")
+	role = help.NormalizeString(role)
 
 	return role != constants.ROLE_ADMIN && role != constants.ROLE_SUPER_ADMIN
 }

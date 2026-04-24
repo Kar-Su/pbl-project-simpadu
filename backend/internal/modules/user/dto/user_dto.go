@@ -3,9 +3,9 @@ package dto
 import (
 	"errors"
 	"mime/multipart"
-	"strings"
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/package/constants"
+	"web-hosting/internal/package/helpers"
 )
 
 const (
@@ -121,7 +121,7 @@ func ToUserResponse(user entities.User) UserResponse {
 }
 
 func RoleNameToRoleID(roleName string) uint {
-	roleName = strings.ReplaceAll(strings.ToLower(roleName), " ", "_")
+	roleName = helpers.NormalizeString(roleName)
 	switch roleName {
 	case constants.ROLE_SUPER_ADMIN:
 		return constants.ROLE_ID_SUPER_ADMIN
