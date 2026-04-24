@@ -50,7 +50,7 @@ type (
 		Email    string               `json:"email" form:"email" binding:"required,email"`
 		Password string               `json:"password" form:"password" binding:"required,min=8"`
 		RoleKode string               `json:"role_kode" form:"role_kode" binding:"required"`
-		DetailId int                  `json:"detail_id" form:"detail_id" binding:"omitempty"`
+		DetailId uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
 		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
 	}
 
@@ -59,7 +59,7 @@ type (
 		Email    string               `json:"email" form:"email" binding:"required,email"`
 		Password string               `json:"password" form:"password" binding:"required,min=8"`
 		RoleKode string               `json:"role_kode" form:"role_kode" binding:"required"`
-		DetailId int                  `json:"detail_id" form:"detail_id" binding:"required"`
+		DetailId uint                 `json:"detail_id" form:"detail_id" binding:"required"`
 		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
 	}
 
@@ -85,7 +85,7 @@ type (
 		Email    string               `json:"email" form:"email" binding:"omitempty,email"`
 		Password string               `json:"password" form:"password" binding:"omitempty,min=8"`
 		RoleKode string               `json:"role_kode" form:"role_kode" binding:"omitempty"`
-		DetailId int                  `json:"detail_id" form:"detail_id" binding:"omitempty"`
+		DetailId uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
 		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
 	}
 
