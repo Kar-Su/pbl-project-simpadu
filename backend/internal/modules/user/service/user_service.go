@@ -12,13 +12,13 @@ import (
 
 type UserService interface {
 	UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error)
-	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest, roleKode string, detailId uint) (dto.UserResponse, error)
+	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error)
 	DeleteAdmin(ctx context.Context, userId uuid.UUID) error
-	DeleteNonAdmin(ctx context.Context, roleKode string, detailId uint) error
+	DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error
 	GetUserByID(ctx context.Context, userId uuid.UUID) (dto.UserResponse, error)
-	GetUserByRoleAndDetailID(ctx context.Context, roleKode string, detailId uint) (dto.UserResponse, error)
+	GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uint) (dto.UserResponse, error)
 	GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error)
-	GetUserByRole(ctx context.Context, roleKode string) ([]dto.UserResponse, error)
+	GetUserByRole(ctx context.Context, roleId uint) ([]dto.UserResponse, error)
 }
 
 type userService struct {
@@ -51,8 +51,11 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 		}
 		user.Password = HashPassword
 	}
-	if req.RoleKode != "" {
-		user.RoleKode = req.RoleKode
+	if roleName := req.RoleName; roleName != "" {
+		user.RoleID = dto.RoleNameToRoleID(roleName)
+	}
+	if req.DetailId != nil {
+		user.DetailID = req.DetailId
 	}
 	if req.Image != nil {
 		fileName := req.Image.Filename
@@ -66,8 +69,8 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 	return dto.ToUserResponse(updatedUser), nil
 }
 
-func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest, roleKode string, detailId uint) (dto.UserResponse, error) {
-	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleKode, detailId)
+func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error) {
+	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
 		return dto.UserResponse{}, dto.ErrUserNotFound
 	}
@@ -84,9 +87,6 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminCr
 		}
 		user.Password = hashPassword
 	}
-	if req.RoleKode != "" {
-		user.RoleKode = req.RoleKode
-	}
 	if req.Image != nil {
 		if req.Image.Filename == "null" {
 			user.ImageUrl = nil
@@ -95,7 +95,7 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminCr
 			user.ImageUrl = &fileName
 		}
 	}
-	updatedUser, err := s.userRepository.UpdateByRoleAndDetailID(ctx, s.db, roleKode, detailId, user)
+	updatedUser, err := s.userRepository.UpdateByRoleAndDetailID(ctx, s.db, roleId, detailId, user)
 	if err != nil {
 		return dto.UserResponse{}, dto.ErrUpdateUser
 	}
@@ -104,12 +104,9 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminCr
 }
 
 func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
-	user, err := s.userRepository.GetUserByID(ctx, s.db, userId)
+	_, err := s.userRepository.GetUserByID(ctx, s.db, userId)
 	if err != nil {
 		return dto.ErrUserNotFound
-	}
-	if user.RoleKode != "admin" {
-		return dto.ErrInvalidAdminRole
 	}
 
 	if err := s.userRepository.Delete(ctx, s.db, userId); err != nil {
@@ -118,8 +115,8 @@ func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 	return nil
 }
 
-func (s *userService) DeleteNonAdmin(ctx context.Context, roleKode string, detailId uint) error {
-	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleKode, detailId)
+func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error {
+	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
 		return dto.ErrUserNotFound
 	}
@@ -145,8 +142,8 @@ func (s *userService) GetUserByEmail(ctx context.Context, email string) (dto.Use
 	return dto.ToUserResponse(user), nil
 }
 
-func (s *userService) GetUserByRole(ctx context.Context, roleKode string) ([]dto.UserResponse, error) {
-	user, err := s.userRepository.GetUserByRole(ctx, s.db, roleKode)
+func (s *userService) GetUserByRole(ctx context.Context, roleId uint) ([]dto.UserResponse, error) {
+	user, err := s.userRepository.GetUserByRole(ctx, s.db, roleId)
 	if err != nil {
 		return nil, dto.ErrUserNotFound
 	}
@@ -159,8 +156,8 @@ func (s *userService) GetUserByRole(ctx context.Context, roleKode string) ([]dto
 	return responses, nil
 }
 
-func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleKode string, detailId uint) (dto.UserResponse, error) {
-	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleKode, detailId)
+func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uint) (dto.UserResponse, error) {
+	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
 		return dto.UserResponse{}, dto.ErrUserNotFound
 	}

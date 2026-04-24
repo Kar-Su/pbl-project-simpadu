@@ -12,15 +12,15 @@ import (
 type UserRepository interface {
 	Register(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error)
 	Update(ctx context.Context, tx *gorm.DB, userid uuid.UUID, user entities.User) (entities.User, error)
-	UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint, user entities.User) (entities.User, error)
+	UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint, user entities.User) (entities.User, error)
 	Delete(ctx context.Context, tx *gorm.DB, userId uuid.UUID) error
-	DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint) error
+	DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) error
 	GetUserByID(ctx context.Context, tx *gorm.DB, userId uuid.UUID) (entities.User, error)
 	GetUserByEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, error)
-	GetUserByRole(ctx context.Context, tx *gorm.DB, roleKode string) ([]entities.User, error)
-	GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint) (entities.User, error)
+	GetUserByRole(ctx context.Context, tx *gorm.DB, roleId uint) ([]entities.User, error)
+	GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, error)
 	CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, bool, error)
-	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint) (entities.User, bool, error)
+	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, bool, error)
 }
 
 type userRepository struct {
@@ -48,7 +48,7 @@ func (r *userRepository) Update(ctx context.Context, tx *gorm.DB, userId uuid.UU
 		tx = r.db
 	}
 
-	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("id = ?", user.ID).Updates(&user).Error; err != nil {
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("id = ?", user.ID).Select("*").Updates(&user).Error; err != nil {
 		return entities.User{}, err
 	}
 
@@ -60,16 +60,16 @@ func (r *userRepository) Update(ctx context.Context, tx *gorm.DB, userId uuid.UU
 	return user, nil
 }
 
-func (r *userRepository) UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint, user entities.User) (entities.User, error) {
+func (r *userRepository) UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint, user entities.User) (entities.User, error) {
 	if tx == nil {
 		tx = r.db
 	}
-	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("role_kode = ? AND detail_id = ?", roleKode, detailId).Select("*").Updates(&user).Error; err != nil {
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("role_id = ? AND detail_id = ?", roleId, detailId).Select("*").Updates(&user).Error; err != nil {
 		return entities.User{}, err
 	}
 
 	var updatedUser entities.User
-	if err := tx.WithContext(ctx).First(&updatedUser, "role_kode = ? AND detail_id = ?", roleKode, detailId).Error; err != nil {
+	if err := tx.WithContext(ctx).First(&updatedUser, "role_id = ? AND detail_id = ?", roleId, detailId).Error; err != nil {
 		return entities.User{}, err
 	}
 
@@ -86,11 +86,11 @@ func (r *userRepository) Delete(ctx context.Context, tx *gorm.DB, userId uuid.UU
 	return nil
 }
 
-func (r *userRepository) DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint) error {
+func (r *userRepository) DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) error {
 	if tx == nil {
 		tx = r.db
 	}
-	if err := tx.WithContext(ctx).Delete(&entities.User{}, "role_kode = ? AND detail_id = ?", roleKode, detailId).Error; err != nil {
+	if err := tx.WithContext(ctx).Delete(&entities.User{}, "role_id = ? AND detail_id = ?", roleId, detailId).Error; err != nil {
 		return err
 	}
 	return nil
@@ -101,7 +101,7 @@ func (r *userRepository) GetUserByID(ctx context.Context, tx *gorm.DB, userId uu
 		tx = r.db
 	}
 	var user entities.User
-	if err := tx.WithContext(ctx).First(&user, "id = ?", userId).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Role").First(&user, "id = ?", userId).Error; err != nil {
 		return entities.User{}, err
 	}
 	return user, nil
@@ -112,29 +112,29 @@ func (r *userRepository) GetUserByEmail(ctx context.Context, tx *gorm.DB, email 
 		tx = r.db
 	}
 	var user entities.User
-	if err := tx.WithContext(ctx).First(&user, "email = ?", email).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Role").First(&user, "email = ?", email).Error; err != nil {
 		return entities.User{}, err
 	}
 	return user, nil
 }
 
-func (r *userRepository) GetUserByRole(ctx context.Context, tx *gorm.DB, roleKode string) ([]entities.User, error) {
+func (r *userRepository) GetUserByRole(ctx context.Context, tx *gorm.DB, roleId uint) ([]entities.User, error) {
 	if tx == nil {
 		tx = r.db
 	}
 	var users []entities.User
-	if err := tx.WithContext(ctx).Find(&users, "role_kode = ?", roleKode).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Role").Find(&users, "role_id = ?", roleId).Error; err != nil {
 		return nil, err
 	}
 	return users, nil
 }
 
-func (r *userRepository) GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint) (entities.User, error) {
+func (r *userRepository) GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, error) {
 	if tx == nil {
 		tx = r.db
 	}
 	var users entities.User
-	if err := tx.WithContext(ctx).Find(&users, "role_kode = ? AND detail_id = ?", roleKode, detailId).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Role").Find(&users, "role_id = ? AND detail_id = ?", roleId, detailId).Error; err != nil {
 		return entities.User{}, err
 	}
 	return users, nil
@@ -154,12 +154,12 @@ func (r *userRepository) CheckEmail(ctx context.Context, tx *gorm.DB, email stri
 	return user, true, nil
 }
 
-func (r *userRepository) CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleKode string, detailId uint) (entities.User, bool, error) {
+func (r *userRepository) CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, bool, error) {
 	if tx == nil {
 		tx = r.db
 	}
 	var user entities.User
-	if err := tx.WithContext(ctx).First(&user, "role_kode = ? AND detail_id = ?", roleKode, detailId).Error; err != nil {
+	if err := tx.WithContext(ctx).First(&user, "role_id = ? AND detail_id = ?", roleId, detailId).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return entities.User{}, false, nil
 		}

@@ -5,11 +5,13 @@ const (
 	DB_LOG_DIR = "./config/logs/query_log"
 	JWTService = "JWTService"
 
-	KODE_ROLE_SUPER_ADMIN     = "r-su"
-	KODE_ROLE_AKADEMIK_ADMIN  = "r-aa"
-	KODE_ROLE_PEGAWAI_ADMIN   = "r-pa"
-	KODE_ROLE_KEUANGAN_ADMIN  = "r-ka"
-	KODE_ROLE_MAHASISWA_ADMIN = "r-ma"
-	KODE_ROLE_MAHASISWA       = "r-ms"
-	KODE_ROLE_DOSEN           = "r-ds"
+	ROLE_ID_SUPER_ADMIN = 1
+	ROLE_ID_ADMIN       = 2
+	ROLE_ID_MAHASISWA   = 3
+	ROLE_ID_DOSEN       = 4
+
+	ROLE_SUPER_ADMIN = "super_admin"
+	ROLE_ADMIN       = "admin"
+	ROLE_MAHASISWA   = "mahasiswa"
+	ROLE_DOSEN       = "dosen"
 )

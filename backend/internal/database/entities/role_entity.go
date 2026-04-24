@@ -1,6 +1,6 @@
 package entities
 
 type Role struct {
-	Kode string `gorm:"primaryKey;type:char(4)" json:"kode"`
+	ID   uint   `gorm:"primaryKey;autoIncrement;type:int" json:"id"`
 	Name string `gorm:"not null" json:"name"`
 }

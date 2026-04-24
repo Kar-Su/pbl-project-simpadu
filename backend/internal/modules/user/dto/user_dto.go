@@ -3,7 +3,9 @@ package dto
 import (
 	"errors"
 	"mime/multipart"
+	"strings"
 	"web-hosting/internal/database/entities"
+	"web-hosting/internal/package/constants"
 )
 
 const (
@@ -18,6 +20,7 @@ const (
 	MESSAGE_FAILED_TOKEN_NOT_FOUND = "token not found"
 	MESSAGE_FAILED_TOKEN_INVALID   = "token invalid"
 	MESSAGE_FAILED_DENIED_ACCESS   = "access denied"
+	MESSAGE_FAILED_BAD_REQUEST     = "bad request"
 
 	// SUCCESS
 	MESSAGE_SUCCESS_REGISTER_USER  = "user registered successfully"
@@ -51,17 +54,25 @@ type (
 		ID       string  `json:"id"`
 		Name     string  `json:"name"`
 		Email    string  `json:"email"`
-		Role     string  `json:"role"`
+		RoleName string  `json:"role_name"`
 		DetailId *uint   `json:"detail_id"`
 		ImageUrl *string `json:"image_url"`
+	}
+
+	UserRoleURI struct {
+		RoleName string `uri:"role_name" binding:"required,custom_role"`
+	}
+	UserSyncURI struct {
+		UserRoleURI
+		DetailId uint `uri:"detail_id" binding:"required,gt=0"`
 	}
 
 	UserAdminCreateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"required,email"`
 		Password string                `json:"password" form:"password" binding:"required,min=8"`
-		RoleKode string                `json:"role_kode" form:"role_kode" binding:"required"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
+		RoleName string                `json:"role_kode" form:"role_kode" binding:"required, custom_role"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
@@ -69,8 +80,8 @@ type (
 		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"required,email"`
 		Password string                `json:"password" form:"password" binding:"required,min=8"`
-		RoleKode string                `json:"role_kode" form:"role_kode" binding:"required, is_non_admin"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required"`
+		RoleName string                `json:"role_kode" form:"role_kode" binding:"required, is_non_admin"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required,gt=0"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
@@ -78,7 +89,8 @@ type (
 		Name     string                `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"omitempty,email"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8"`
-		RoleKode string                `json:"role_kode" form:"role_kode" binding:"omitempty"`
+		RoleName string                `json:"role_kode" form:"role_kode" binding:"omitempty, custom_role"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
@@ -86,8 +98,8 @@ type (
 		Name     string                `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"omitempty,email"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8"`
-		RoleKode string                `json:"role_kode" form:"role_kode" binding:"omitempty, is_non_admin"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
+		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty, is_non_admin"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
@@ -102,8 +114,24 @@ func ToUserResponse(user entities.User) UserResponse {
 		ID:       user.ID.String(),
 		Name:     user.Name,
 		Email:    user.Email,
-		Role:     user.RoleKode,
+		RoleName: user.Role.Name,
 		DetailId: user.DetailID,
 		ImageUrl: user.ImageUrl,
+	}
+}
+
+func RoleNameToRoleID(roleName string) uint {
+	roleName = strings.ReplaceAll(strings.ToLower(roleName), " ", "_")
+	switch roleName {
+	case constants.ROLE_SUPER_ADMIN:
+		return constants.ROLE_ID_SUPER_ADMIN
+	case constants.ROLE_ADMIN:
+		return constants.ROLE_ID_ADMIN
+	case constants.ROLE_MAHASISWA:
+		return constants.ROLE_ID_MAHASISWA
+	case constants.ROLE_DOSEN:
+		return constants.ROLE_ID_DOSEN
+	default:
+		return 0
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 	"web-hosting/internal/modules/user/dto"
+	"web-hosting/internal/package/constants"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -17,12 +18,21 @@ type UserValidation struct {
 func NewUserValidation() *UserValidation {
 	validate := validator.New()
 	validate.SetTagName("binding")
-	validate.RegisterValidation("is_non_admin", validateNonAdmin)
+	validate.RegisterValidation("custom_role", validateRole)
+	validate.RegisterValidation("is_non_admin", validateRoleNonAdmin)
 	validate.RegisterValidation("custom_ext", customExtImage)
 
 	return &UserValidation{
 		validate: validate,
 	}
+}
+
+func (v *UserValidation) ValidateSyncURI(req dto.UserSyncURI) error {
+	return v.validate.Struct(req)
+}
+
+func (v *UserValidation) ValidateUserRoleURI(req dto.UserRoleURI) error {
+	return v.validate.Struct(req)
 }
 
 func (v *UserValidation) ValidateUpdateAdminRequest(req dto.UserAdminUpdateRequest) error {
@@ -33,10 +43,19 @@ func (v *UserValidation) ValidateUpdateNonAdminRequest(req dto.UserNonAdminUpdat
 	return v.validate.Struct(req)
 }
 
-func validateNonAdmin(fl validator.FieldLevel) bool {
-	roleId := fl.Field().String()
+func validateRole(fl validator.FieldLevel) bool {
+	role := fl.Field().String()
 
-	return roleId != "r-sa" && roleId != "r-ad"
+	role = strings.ReplaceAll(strings.ToLower(role), " ", "_")
+
+	return role == constants.ROLE_ADMIN || role == constants.ROLE_SUPER_ADMIN || role == constants.ROLE_MAHASISWA || role == constants.ROLE_DOSEN
+}
+
+func validateRoleNonAdmin(fl validator.FieldLevel) bool {
+	role := fl.Field().String()
+	role = strings.ReplaceAll(strings.ToLower(role), " ", "_")
+
+	return role != constants.ROLE_ADMIN && role != constants.ROLE_SUPER_ADMIN
 }
 
 func customExtImage(fl validator.FieldLevel) bool {

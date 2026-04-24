@@ -12,7 +12,8 @@ type User struct {
 	Email    string    `gorm:"type:varchar(255);not null;uniqueIndex" json:"email"`
 	Password string    `gorm:"type:varchar(255);not null" json:"password"`
 	ImageUrl *string   `gorm:"type:varchar(255)" json:"image_url"`
-	RoleKode string    `gorm:"type:char(4)" json:"role_kode"`
+	RoleID   uint      `gorm:"type:int;not null" json:"role_id"`
+	Role     Role      `gorm:"foreignKey:RoleID;references:ID" json:"role"`
 	DetailID *uint     `gorm:"type:int;index" json:"detail_id"`
 
 	Timestamp

@@ -8,7 +8,7 @@ CREATE TABLE if not exists users (
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_url VARCHAR(255),
-    role_kode char(4) NOT NULL,
+    role_id int NOT NULL,
     detail_id int
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -32,13 +32,13 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 );
 
 CREATE TABLE if not exists roles (
-    kode char(4) PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL
 );
 
 
-insert into roles (kode, name) values
-    ('r-sa', 'super admin'),
-    ('r-ad', 'admin'),
-    ('r-ms', 'mahasiswa'),
-    ('r-ds', 'dosen');
+insert into roles (name) values
+    ('super_admin'),
+    ('admin'),
+    ('mahasiswa'),
+    ('dosen');
