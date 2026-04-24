@@ -3,6 +3,7 @@ package dto
 import (
 	"errors"
 	"mime/multipart"
+	"web-hosting/internal/database/entities"
 )
 
 const (
@@ -39,62 +40,55 @@ var (
 	ErrGetUserByRoleIdAndDetailId = errors.New("failed to get user by role id and detail id")
 	ErrUserNotFound               = errors.New("user not found")
 	ErrEmailAlreadyExists         = errors.New("email already exists")
+	ErrInvalidAdminRole           = errors.New("invalid not admin role")
 	ErrRoleNotFound               = errors.New("role not found")
 	ErrTokenInvalid               = errors.New("token invalid")
 	ErrTokenExpired               = errors.New("token expired")
 )
 
 type (
+	UserResponse struct {
+		ID       string  `json:"id"`
+		Name     string  `json:"name"`
+		Email    string  `json:"email"`
+		Role     string  `json:"role"`
+		DetailId *uint   `json:"detail_id"`
+		ImageUrl *string `json:"image_url"`
+	}
+
 	UserAdminCreateRequest struct {
-		Name     string               `json:"name" form:"name" binding:"required,min=2,max=255"`
-		Email    string               `json:"email" form:"email" binding:"required,email"`
-		Password string               `json:"password" form:"password" binding:"required,min=8"`
-		RoleKode string               `json:"role_kode" form:"role_kode" binding:"required"`
-		DetailId uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
-		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
+		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
+		Email    string                `json:"email" form:"email" binding:"required,email"`
+		Password string                `json:"password" form:"password" binding:"required,min=8"`
+		RoleKode string                `json:"role_kode" form:"role_kode" binding:"required"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
 	UserNonAdminCreateRequest struct {
-		Name     string               `json:"name" form:"name" binding:"required,min=2,max=255"`
-		Email    string               `json:"email" form:"email" binding:"required,email"`
-		Password string               `json:"password" form:"password" binding:"required,min=8"`
-		RoleKode string               `json:"role_kode" form:"role_kode" binding:"required"`
-		DetailId uint                 `json:"detail_id" form:"detail_id" binding:"required"`
-		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
-	}
-
-	UserResponse struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Role     string `json:"role"`
-		DetailId uint   `json:"detail_id"`
-		ImageUrl string `json:"image_url"`
-	}
-
-	UserAdminResponse struct {
-		Id       string `json:"id"`
-		Name     string `json:"name"`
-		Email    string `json:"email"`
-		Role     string `json:"role"`
-		ImageUrl string `json:"image_url"`
-	}
-
-	UserNonAdminUpdateRequest struct {
-		Name     string               `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
-		Email    string               `json:"email" form:"email" binding:"omitempty,email"`
-		Password string               `json:"password" form:"password" binding:"omitempty,min=8"`
-		RoleKode string               `json:"role_kode" form:"role_kode" binding:"omitempty"`
-		DetailId uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
-		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
+		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
+		Email    string                `json:"email" form:"email" binding:"required,email"`
+		Password string                `json:"password" form:"password" binding:"required,min=8"`
+		RoleKode string                `json:"role_kode" form:"role_kode" binding:"required, is_non_admin"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
 	UserAdminUpdateRequest struct {
-		Name     string               `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
-		Email    string               `json:"email" form:"email" binding:"omitempty,email"`
-		Password string               `json:"password" form:"password" binding:"omitempty,min=8"`
-		RoleKode string               `json:"role_kode" form:"role_kode" binding:"omitempty"`
-		Image    multipart.FileHeader `json:"image" form:"image" binding:"omitempty"`
+		Name     string                `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
+		Email    string                `json:"email" form:"email" binding:"omitempty,email"`
+		Password string                `json:"password" form:"password" binding:"omitempty,min=8"`
+		RoleKode string                `json:"role_kode" form:"role_kode" binding:"omitempty"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
+	}
+
+	UserNonAdminUpdateRequest struct {
+		Name     string                `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
+		Email    string                `json:"email" form:"email" binding:"omitempty,email"`
+		Password string                `json:"password" form:"password" binding:"omitempty,min=8"`
+		RoleKode string                `json:"role_kode" form:"role_kode" binding:"omitempty, is_non_admin"`
+		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
 
 	UserLoginRequest struct {
@@ -102,3 +96,14 @@ type (
 		Password string `json:"password" form:"password" binding:"required,min=8"`
 	}
 )
+
+func ToUserResponse(user entities.User) UserResponse {
+	return UserResponse{
+		ID:       user.ID.String(),
+		Name:     user.Name,
+		Email:    user.Email,
+		Role:     user.RoleKode,
+		DetailId: user.DetailID,
+		ImageUrl: user.ImageUrl,
+	}
+}

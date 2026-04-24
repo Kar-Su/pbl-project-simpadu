@@ -18,7 +18,7 @@ CREATE TABLE if not exists users (
     CONSTRAINT fk_role FOREIGN KEY (role_kode) REFERENCES roles(kode)
 );
 
-CREATE TABLE IF NOT EXISTS refresh_token (
+CREATE TABLE IF NOT EXISTS refresh_tokens (
     id binary(16) PRIMARY KEY,
     user_id BINARY(16) NOT NULL,
     token VARCHAR(255) NOT NULL,
@@ -31,17 +31,14 @@ CREATE TABLE IF NOT EXISTS refresh_token (
     CONSTRAINT fk_token_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE if not exist role (
+CREATE TABLE if not exists roles (
     kode char(4) PRIMARY KEY,
     name VARCHAR(255) NOT NULL
 );
 
 
-insert into role (kode, name) values
-    ('r-su', 'super admin'),
-    ('r-aa', 'admin akademik'),
-    ('r-pa', 'admin pegawai'),
-    ('r-ka', 'admin keuangan'),
-    ('r-ma', 'admin mahasiswa'),
+insert into roles (kode, name) values
+    ('r-sa', 'super admin'),
+    ('r-ad', 'admin'),
     ('r-ms', 'mahasiswa'),
     ('r-ds', 'dosen');
