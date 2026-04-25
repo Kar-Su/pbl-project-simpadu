@@ -10,7 +10,7 @@ const (
 	ROLE_ID_MAHASISWA   = 3
 	ROLE_ID_DOSEN       = 4
 
-	// Nama role harus huruf kecil dan tanpa spasi di golang
+	//! Nama role harus huruf kecil dan tanpa spasi di golang
 	ROLE_SUPER_ADMIN = "superadmin"
 	ROLE_ADMIN       = "admin"
 	ROLE_MAHASISWA   = "mahasiswa"

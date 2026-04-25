@@ -10,14 +10,17 @@ import (
 func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	userController := do.MustInvoke[controller.UserController](injector)
 	// Next Harus Invoce JWTAut
-	userRoutes := router.Group("/api/user")
+	apiRoutes := router.Group("/api")
 	{
-		userRoutes.GET("/:id", userController.GetUser)
-		userRoutes.PUT("/super/:id", userController.UpdateAdmin)
-		userRoutes.DELETE("/super/:id", userController.DeleteAdmin)
+		apiRoutes.GET("/user/:id", userController.GetUser)
+		apiRoutes.PUT("/super/user/:id", userController.UpdateAdmin)
+		apiRoutes.DELETE("/super/user/:id", userController.DeleteAdmin)
 
-		userRoutes.GET("/sync/:role_name/:detail_id", userController.GetUserNonAdmin)
-		userRoutes.PUT("/sync/:role_name/:detail_id", userController.UpdateNonAdmin)
-		userRoutes.DELETE("/sync/:role_name/:detail_id", userController.DeleteNonAdmin)
+		apiRoutes.GET("/user/role/:role_name", userController.GetUserByRole)
+		apiRoutes.GET("/user/email/:email", userController.GetUserByEmail)
+
+		apiRoutes.GET("/user/sync/:role_name/:detail_id", userController.GetUserNonAdmin)
+		apiRoutes.PUT("/user/sync/:role_name/:detail_id", userController.UpdateNonAdmin)
+		apiRoutes.DELETE("/user/sync/:role_name/:detail_id", userController.DeleteNonAdmin)
 	}
 }

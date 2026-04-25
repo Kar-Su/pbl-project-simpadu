@@ -11,6 +11,7 @@ type RefreshToken struct {
 	UserID    uuid.UUID `gorm:"type:binary(16);not null;index" json:"user_id"`
 	Token     string    `gorm:"type:varchar(255);not null;uniqueIndex" json:"token"`
 	ExpiredAt time.Time `gorm:"type:timestamp;not null" json:"expired_at"`
+	User      User      `gorm:"foreignKey:UserID" json:"user"`
 
 	Timestamp
 }

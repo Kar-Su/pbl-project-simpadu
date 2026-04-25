@@ -38,7 +38,7 @@ CREATE TABLE if not exists roles (
 
 
 insert into roles (name) values
-    ('super-admin'),
+    ('super admin'),
     ('admin'),
     ('mahasiswa'),
     ('dosen');
