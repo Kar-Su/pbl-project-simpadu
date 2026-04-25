@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"web-hosting/internal/package/script"
+	"web-hosting/internal/providers"
 
 	"github.com/samber/do/v2"
 )
@@ -17,5 +18,14 @@ func args(injector do.Injector) bool {
 }
 
 func main() {
+	var (
+		injector = do.New()
+	)
+
+	providers.RegisterProviders(injector)
+
+	if !args(injector) {
+		return
+	}
 
 }
