@@ -13,6 +13,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	apiRoutes := router.Group("/api")
 	{
 		apiRoutes.GET("/user/:id", userController.GetUser)
+		apiRoutes.POST("/super/user", userController.RegisterAdmin)
 		apiRoutes.PUT("/super/user/:id", userController.UpdateAdmin)
 		apiRoutes.DELETE("/super/user/:id", userController.DeleteAdmin)
 

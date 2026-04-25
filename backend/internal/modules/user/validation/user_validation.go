@@ -36,6 +36,10 @@ func (v *UserValidation) ValidateUserRoleURI(req dto.UserRoleURI) error {
 	return v.validate.Struct(req)
 }
 
+func (v *UserValidation) ValidateRegisterRequest(req dto.UserAdminCreateRequest) error {
+	return v.validate.Struct(req)
+}
+
 func (v *UserValidation) ValidateUpdateAdminRequest(req dto.UserAdminUpdateRequest) error {
 	return v.validate.Struct(req)
 }

@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"web-hosting/internal/database/entities"
+	"web-hosting/internal/modules/user/dto"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type UserRepository interface {
-	Register(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error)
+	RegisterAdmin(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error)
 	Update(ctx context.Context, tx *gorm.DB, userid uuid.UUID, user entities.User) (entities.User, error)
 	UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint, user entities.User) (entities.User, error)
 	Delete(ctx context.Context, tx *gorm.DB, userId uuid.UUID) error
@@ -33,7 +34,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) Register(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error) {
+func (r *userRepository) RegisterAdmin(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -124,7 +125,7 @@ func (r *userRepository) GetUserByRole(ctx context.Context, tx *gorm.DB, roleId 
 	}
 	var users []entities.User
 	if err := tx.WithContext(ctx).Preload("Role").Find(&users, "role_id = ?", roleId).Error; err != nil {
-		return nil, err
+		return nil, dto.ErrRoleNotFound
 	}
 	return users, nil
 }

@@ -33,7 +33,8 @@ const (
 )
 
 var (
-	ErrCreateUser                 = errors.New("failed to create user")
+	ErrCreateUser = errors.New("failed to create user")
+
 	ErrUpdateUser                 = errors.New("failed to update user")
 	ErrDeleteUser                 = errors.New("failed to delete user")
 	ErrLoginUser                  = errors.New("failed to login user")

@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/user/dto"
 	"web-hosting/internal/modules/user/repository"
 	"web-hosting/internal/package/helpers"
@@ -11,6 +12,7 @@ import (
 )
 
 type UserService interface {
+	CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) (dto.UserResponse, error)
 	UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error)
 	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error)
 	DeleteAdmin(ctx context.Context, userId uuid.UUID) error
@@ -31,6 +33,36 @@ func NewUserService(userRepository repository.UserRepository, db *gorm.DB) UserS
 		userRepository: userRepository,
 		db:             db,
 	}
+}
+
+func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) (dto.UserResponse, error) {
+	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+	if isExist {
+		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
+	}
+
+	userEntity := entities.User{
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
+		RoleID:   dto.RoleNameToRoleID(req.RoleName),
+	}
+	if req.DetailId != nil {
+		userEntity.DetailID = req.DetailId
+	}
+	if req.Image != nil {
+		fileName := req.Image.Filename
+		userEntity.ImageUrl = &fileName
+	}
+	userCreated, err := s.userRepository.RegisterAdmin(ctx, s.db, userEntity)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+
+	return dto.ToUserResponse(userCreated), nil
 }
 
 func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error) {
@@ -70,8 +102,11 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 }
 
 func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error) {
-	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
+	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
+		return dto.UserResponse{}, dto.ErrUpdateUser
+	}
+	if !isExist {
 		return dto.UserResponse{}, dto.ErrUserNotFound
 	}
 	if req.Name != "" {
@@ -116,8 +151,11 @@ func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 }
 
 func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error {
-	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
+	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
+		return dto.ErrDeleteUser
+	}
+	if !isExist {
 		return dto.ErrUserNotFound
 	}
 	if err := s.userRepository.Delete(ctx, s.db, user.ID); err != nil {

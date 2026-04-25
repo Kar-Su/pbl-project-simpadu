@@ -1,9 +1,18 @@
 package constants
 
+import (
+	"time"
+	"web-hosting/internal/package/env"
+)
+
 const (
 	DB         = "db"
 	DB_LOG_DIR = "./config/logs/query_log"
-	JWTService = "JWTService"
+
+	JWTService      = "JWTService"
+	JWT_ISSUER      = "TIM 1"
+	JWT_ACCESS_EXP  = 1 * time.Hour
+	JWT_REFRESH_EXP = 24 * time.Hour
 
 	ROLE_ID_SUPER_ADMIN = 1
 	ROLE_ID_ADMIN       = 2
@@ -15,4 +24,8 @@ const (
 	ROLE_ADMIN       = "admin"
 	ROLE_MAHASISWA   = "mahasiswa"
 	ROLE_DOSEN       = "dosen"
+)
+
+var (
+	JWT_SECRET_KEY = env.GetWithDefault[string]("JWT_SECRET", "")
 )

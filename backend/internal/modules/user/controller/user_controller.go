@@ -19,6 +19,7 @@ type UserController interface {
 	GetUserNonAdmin(ctx *gin.Context)
 	GetUserByEmail(ctx *gin.Context)
 	GetUserByRole(ctx *gin.Context)
+	RegisterAdmin(ctx *gin.Context)
 	UpdateAdmin(ctx *gin.Context)
 	UpdateNonAdmin(ctx *gin.Context)
 	DeleteAdmin(ctx *gin.Context)
@@ -121,6 +122,23 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_USER, data)
 	ctx.JSON(http.StatusOK, res)
 
+}
+
+func (c *userController) RegisterAdmin(ctx *gin.Context) {
+	var reqBody dto.UserAdminCreateRequest
+	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	data, err := c.userService.CreateAdmin(ctx.Request.Context(), reqBody)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, data)
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
