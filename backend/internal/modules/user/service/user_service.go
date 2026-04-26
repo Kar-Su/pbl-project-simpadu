@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"errors"
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/user/dto"
 	"web-hosting/internal/modules/user/repository"
+	"web-hosting/internal/package/constants"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -38,7 +40,7 @@ func NewUserService(userRepository repository.UserRepository, db *gorm.DB) UserS
 func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) (dto.UserResponse, error) {
 	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrCreateUser
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	if isExist {
 		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
@@ -68,7 +70,7 @@ func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRe
 func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) (dto.UserResponse, error) {
 	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrCreateUser
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	if isExist {
 		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
@@ -98,7 +100,10 @@ func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCr
 func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByID(ctx, s.db, userId)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrUserNotFound
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return dto.UserResponse{}, dto.ErrUserNotFound
+		}
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	if req.Name != "" {
 		user.Name = req.Name
@@ -130,7 +135,7 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error) {
 	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrUpdateUser
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	if !isExist {
 		return dto.UserResponse{}, dto.ErrUserNotFound
@@ -163,7 +168,10 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUp
 func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 	_, err := s.userRepository.GetUserByID(ctx, s.db, userId)
 	if err != nil {
-		return dto.ErrUserNotFound
+		if errors.Is(err, dto.ErrUserNotFound) {
+			return dto.ErrUserNotFound
+		}
+		return constants.ErrInternalErr
 	}
 
 	if err := s.userRepository.Delete(ctx, s.db, userId); err != nil {
@@ -175,7 +183,7 @@ func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error {
 	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
-		return dto.ErrDeleteUser
+		return constants.ErrInternalErr
 	}
 	if !isExist {
 		return dto.ErrUserNotFound
@@ -189,7 +197,10 @@ func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId 
 func (s *userService) GetUserByID(ctx context.Context, userId uuid.UUID) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByID(ctx, s.db, userId)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrUserNotFound
+		if errors.Is(err, dto.ErrUserNotFound) {
+			return dto.UserResponse{}, dto.ErrUserNotFound
+		}
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil
 }
@@ -197,7 +208,10 @@ func (s *userService) GetUserByID(ctx context.Context, userId uuid.UUID) (dto.Us
 func (s *userService) GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByEmail(ctx, s.db, email)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrUserNotFound
+		if errors.Is(err, dto.ErrUserNotFound) {
+			return dto.UserResponse{}, dto.ErrUserNotFound
+		}
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil
 }
@@ -219,7 +233,10 @@ func (s *userService) GetUserByRole(ctx context.Context, roleId uint) ([]dto.Use
 func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uint) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
-		return dto.UserResponse{}, dto.ErrUserNotFound
+		if errors.Is(err, dto.ErrUserNotFound) {
+			return dto.UserResponse{}, dto.ErrUserNotFound
+		}
+		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil
 }

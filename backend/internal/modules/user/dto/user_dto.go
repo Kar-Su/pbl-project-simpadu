@@ -35,19 +35,15 @@ const (
 var (
 	ErrCreateUser = errors.New("failed to create user")
 
-	ErrUpdateUser                 = errors.New("failed to update user")
-	ErrDeleteUser                 = errors.New("failed to delete user")
-	ErrLoginUser                  = errors.New("failed to login user")
-	ErrGetUserById                = errors.New("failed to get user by id")
-	ErrGetUserByEmail             = errors.New("failed to get user by email")
-	ErrGetUserByRoleId            = errors.New("failed to get user by role id")
-	ErrGetUserByRoleIdAndDetailId = errors.New("failed to get user by role id and detail id")
-	ErrUserNotFound               = errors.New("user not found")
-	ErrEmailAlreadyExists         = errors.New("email already exists")
-	ErrInvalidAdminRole           = errors.New("invalid not admin role")
-	ErrRoleNotFound               = errors.New("role not found")
-	ErrTokenInvalid               = errors.New("token invalid")
-	ErrTokenExpired               = errors.New("token expired")
+	ErrUpdateUser         = errors.New("failed to update user")
+	ErrDeleteUser         = errors.New("failed to delete user")
+	ErrLoginUser          = errors.New("failed to login user")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrEmailAlreadyExists = errors.New("email already exists")
+	ErrInvalidAdminRole   = errors.New("invalid not admin role")
+	ErrRoleNotFound       = errors.New("role not found")
+	ErrTokenInvalid       = errors.New("token invalid")
+	ErrTokenExpired       = errors.New("token expired")
 )
 
 type (

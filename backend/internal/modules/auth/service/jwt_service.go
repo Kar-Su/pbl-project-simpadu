@@ -18,6 +18,7 @@ type JwtService interface {
 	GenerateRefreshToken() (string, time.Time)
 	ValidateToken(token string) (*jwt.Token, error)
 	GetUserIDByToken(token string) (string, error)
+	GetRoleNameByToken(token string) (string, error)
 }
 
 type jwtCustomClaim struct {
@@ -100,6 +101,23 @@ func (j *jwtService) GetUserIDByToken(tokenString string) (string, error) {
 
 	if claims, ok := token.Claims.(*jwtCustomClaim); ok && token.Valid {
 		return claims.UserID, nil
+	}
+
+	return "", fmt.Errorf("invalid token claims")
+}
+
+func (j *jwtService) GetRoleNameByToken(tokenString string) (string, error) {
+	token, err := j.ValidateToken(tokenString)
+
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return "", fmt.Errorf("token has expired")
+		}
+		return "", err
+	}
+
+	if claims, ok := token.Claims.(*jwtCustomClaim); ok && token.Valid {
+		return claims.RoleName, nil
 	}
 
 	return "", fmt.Errorf("invalid token claims")

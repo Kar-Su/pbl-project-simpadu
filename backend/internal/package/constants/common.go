@@ -1,6 +1,7 @@
 package constants
 
 import (
+	"errors"
 	"time"
 	"web-hosting/internal/package/env"
 )
@@ -28,4 +29,6 @@ const (
 
 var (
 	JWT_SECRET_KEY = env.GetWithDefault[string]("JWT_SECRET", "")
+
+	ErrInternalErr = errors.New("Internal Error")
 )
