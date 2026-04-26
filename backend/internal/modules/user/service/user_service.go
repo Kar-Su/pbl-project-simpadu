@@ -12,6 +12,7 @@ import (
 
 type UserService interface {
 	CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) (dto.UserResponse, error)
+	CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) (dto.UserResponse, error)
 	UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error)
 	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error)
 	DeleteAdmin(ctx context.Context, userId uuid.UUID) error
@@ -56,7 +57,37 @@ func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRe
 		fileName := req.Image.Filename
 		userEntity.ImageUrl = &fileName
 	}
-	userCreated, err := s.userRepository.RegisterAdmin(ctx, s.db, userEntity)
+	userCreated, err := s.userRepository.Register(ctx, s.db, userEntity)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+
+	return dto.ToUserResponse(userCreated), nil
+}
+
+func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) (dto.UserResponse, error) {
+	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
+	if err != nil {
+		return dto.UserResponse{}, dto.ErrCreateUser
+	}
+	if isExist {
+		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
+	}
+
+	userEntity := entities.User{
+		Name:     req.Name,
+		Email:    req.Email,
+		Password: req.Password,
+		RoleID:   dto.RoleNameToRoleID(req.RoleName),
+	}
+	if req.DetailId != nil {
+		userEntity.DetailID = req.DetailId
+	}
+	if req.Image != nil {
+		fileName := req.Image.Filename
+		userEntity.ImageUrl = &fileName
+	}
+	userCreated, err := s.userRepository.Register(ctx, s.db, userEntity)
 	if err != nil {
 		return dto.UserResponse{}, dto.ErrCreateUser
 	}

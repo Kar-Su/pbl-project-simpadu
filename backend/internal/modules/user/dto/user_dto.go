@@ -79,6 +79,8 @@ type (
 
 	UserNonAdminCreateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
+		Email    string                `json:"email" form:"email" binding:"required,email"`
+		Password string                `json:"password" form:"password" binding:"required,min=8"`
 		RoleName string                `json:"role_name" form:"role_kode" binding:"required, is_non_admin"`
 		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required,gt=0"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`

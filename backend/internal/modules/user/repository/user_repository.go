@@ -11,7 +11,7 @@ import (
 )
 
 type UserRepository interface {
-	RegisterAdmin(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error)
+	Register(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error)
 	Update(ctx context.Context, tx *gorm.DB, userid uuid.UUID, user entities.User) (entities.User, error)
 	UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint, user entities.User) (entities.User, error)
 	Delete(ctx context.Context, tx *gorm.DB, userId uuid.UUID) error
@@ -34,7 +34,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (r *userRepository) RegisterAdmin(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error) {
+func (r *userRepository) Register(ctx context.Context, tx *gorm.DB, user entities.User) (entities.User, error) {
 	if tx == nil {
 		tx = r.db
 	}

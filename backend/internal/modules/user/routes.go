@@ -19,6 +19,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 
 		apiRoutes.GET("/user/role/:role_name", userController.GetUserByRole)
 		apiRoutes.GET("/user/email/:email", userController.GetUserByEmail)
+		apiRoutes.POST("/user", userController.RegisterNonAdmin)
 
 		apiRoutes.GET("/user/sync/:role_name/:detail_id", userController.GetUserNonAdmin)
 		apiRoutes.PUT("/user/sync/:role_name/:detail_id", userController.UpdateNonAdmin)
