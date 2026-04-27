@@ -131,7 +131,7 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 func (c *userController) UpdateAdmin(ctx *gin.Context) {
 	var reqBody dto.UserAdminUpdateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -156,7 +156,7 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 func (c *userController) RegisterAdmin(ctx *gin.Context) {
 	var reqBody dto.UserAdminCreateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -173,7 +173,7 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 	var reqBody dto.UserNonAdminCreateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -197,7 +197,7 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 
 	var reqBody dto.UserNonAdminUpdateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}

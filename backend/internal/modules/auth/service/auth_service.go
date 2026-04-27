@@ -27,13 +27,13 @@ type authService struct {
 	db               *gorm.DB
 }
 
-// func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, jwtService JwtService) AuthService {
-// 	return &authService{
-// 		useRepo:          useRepo,
-// 		refreshTokenRepo: refreshTokenRepo,
-// 		jwtService:       jwtService,
-// 	}
-// }
+func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, jwtService JwtService) AuthService {
+	return &authService{
+		useRepo:          useRepo,
+		refreshTokenRepo: refreshTokenRepo,
+		jwtService:       jwtService,
+	}
+}
 
 func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (authDto.TokenResponse, error) {
 	user, isExist, err := s.useRepo.CheckEmail(ctx, s.db, req.Email)
@@ -92,7 +92,7 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
-	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String())
+	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String(), refreshTokenEntity.User.Role.Name)
 	if err != nil {
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
@@ -126,5 +126,15 @@ func (s *authService) ResetPassword(ctx context.Context, req authDto.ResetPasswo
 		return userDto.ErrUserNotFound
 	}
 
-	_, err := s.useRepo.Update()
+	hashPass, err := helpers.HashPassword(req.NewPassword)
+	if err != nil {
+		return constants.ErrInternalErr
+	}
+
+	user.Password = hashPass
+	_, err = s.useRepo.Update(ctx, s.db, user.ID, user)
+	if err != nil {
+		return constants.ErrInternalErr
+	}
+	return nil
 }

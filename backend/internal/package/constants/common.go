@@ -31,4 +31,6 @@ var (
 	JWT_SECRET_KEY = env.GetWithDefault[string]("JWT_SECRET", "")
 
 	ErrInternalErr = errors.New("Internal Error")
+
+	MESAGE_FAILED_GET_DATA_FROM_BODY = "failed to get data from body"
 )
