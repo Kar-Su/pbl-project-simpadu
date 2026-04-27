@@ -28,7 +28,7 @@ func (r *refreshTokenRepository) Create(ctx context.Context, tx *gorm.DB, token 
 	if tx == nil {
 		tx = r.db
 	}
-	if err := tx.WithContext(ctx).Create(&token).Error; err != nil {
+	if err := tx.WithContext(ctx).FirstOrCreate(&token).Error; err != nil {
 		return entities.RefreshToken{}, err
 	}
 	return token, nil

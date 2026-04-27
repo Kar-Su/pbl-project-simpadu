@@ -7,6 +7,7 @@ import (
 	"web-hosting/internal/modules/user/dto"
 	"web-hosting/internal/modules/user/repository"
 	"web-hosting/internal/package/constants"
+	"web-hosting/internal/package/helpers"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -112,7 +113,11 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 		user.Email = req.Email
 	}
 	if req.Password != "" {
-		user.Password = req.Password
+		hashPass, err := helpers.HashPassword(req.Password)
+		if err != nil {
+			return dto.UserResponse{}, constants.ErrInternalErr
+		}
+		user.Password = hashPass
 	}
 	if roleName := req.RoleName; roleName != "" {
 		user.RoleID = dto.RoleNameToRoleID(roleName)
@@ -147,7 +152,11 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUp
 		user.Email = req.Email
 	}
 	if req.Password != "" {
-		user.Password = req.Password
+		hashPass, err := helpers.HashPassword(req.Password)
+		if err != nil {
+			return dto.UserResponse{}, constants.ErrInternalErr
+		}
+		user.Password = hashPass
 	}
 	if req.Image != nil {
 		if req.Image.Filename == "null" {

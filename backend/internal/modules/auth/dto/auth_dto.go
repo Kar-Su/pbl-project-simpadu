@@ -21,7 +21,6 @@ var (
 	ErrRefreshTokenNotFound = errors.New("refresh token not found")
 	ErrRefreshTokenExpired  = errors.New("refresh token expired")
 	ErrInvalidCredentials   = errors.New("invalid credentials")
-	ErrPasswordResetToken   = errors.New("password reset token invalid")
 )
 
 type (
@@ -32,15 +31,11 @@ type (
 	TokenResponse struct {
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
-		Role         string `json:"role"`
-	}
-
-	SendPasswordResetRequest struct {
-		Email string `json:"email" binding:"required,email"`
+		RoleName     string `json:"role_name"`
 	}
 
 	ResetPasswordRequest struct {
-		Token       string `json:"token" binding:"required"`
+		Email       string `json:"email" binding:"required,email"`
 		NewPassword string `json:"new_password" binding:"required,min=8"`
 	}
 )
