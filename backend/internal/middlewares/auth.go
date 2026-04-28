@@ -52,8 +52,16 @@ func AuthMiddleware(jwtService service.JwtService) gin.HandlerFunc {
 			return
 		}
 
+		userEmail, err := jwtService.GetUserEmailByToken(authHeader)
+		if err != nil {
+			res := utils.BuildResponseFailed(dto.FAILED_AUTH, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
+
 		ctx.Set("user_id", userId)
 		ctx.Set("role_name", roleName)
+		ctx.Set("user_email", userEmail)
 		ctx.Set("token", authHeader)
 		ctx.Next()
 	}

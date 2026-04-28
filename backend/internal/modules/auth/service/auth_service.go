@@ -52,7 +52,7 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 		return authDto.TokenResponse{}, authDto.ErrInvalidCredentials
 	}
 
-	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name)
+	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name, user.Email)
 	if err != nil {
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
@@ -93,7 +93,7 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
-	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String(), refreshTokenEntity.User.Role.Name)
+	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String(), refreshTokenEntity.User.Role.Name, refreshTokenEntity.User.Email)
 	if err != nil {
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}

@@ -106,6 +106,14 @@ func (c *authController) ResetPassword(ctx *gin.Context) {
 		return
 	}
 
+	userEmail := ctx.MustGet("user_email").(string)
+	userRole := ctx.MustGet("role_name").(string)
+	if userEmail != req.Email && !(userRole == "admin" || userRole == "super-admin") {
+		res := utils.BuildResponseFailed("User unauthorized", "You are not authorized to reset this password", nil)
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+
 	if err := c.authService.ResetPassword(ctx, req); err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_SEND_PASSWORD_RESET, err.Error(), nil)
