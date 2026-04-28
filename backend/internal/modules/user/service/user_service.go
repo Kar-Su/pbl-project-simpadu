@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"web-hosting/internal/database/entities"
+	roleService "web-hosting/internal/modules/role/service"
 	"web-hosting/internal/modules/user/dto"
 	"web-hosting/internal/modules/user/repository"
 	"web-hosting/internal/package/constants"
@@ -28,12 +29,14 @@ type UserService interface {
 
 type userService struct {
 	userRepository repository.UserRepository
+	roleService    roleService.RoleService
 	db             *gorm.DB
 }
 
-func NewUserService(userRepository repository.UserRepository, db *gorm.DB) UserService {
+func NewUserService(userRepository repository.UserRepository, roleService roleService.RoleService, db *gorm.DB) UserService {
 	return &userService{
 		userRepository: userRepository,
+		roleService:    roleService,
 		db:             db,
 	}
 }
@@ -47,11 +50,19 @@ func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRe
 		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
 	}
 
+	roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
+	if err != nil {
+		if errors.Is(err, dto.ErrRoleNotFound) {
+			return dto.UserResponse{}, dto.ErrRoleNotFound
+		}
+		return dto.UserResponse{}, constants.ErrInternalErr
+	}
+
 	userEntity := entities.User{
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: req.Password,
-		RoleID:   dto.RoleNameToRoleID(req.RoleName),
+		RoleID:   roleId,
 	}
 	if req.DetailId != nil {
 		userEntity.DetailID = req.DetailId
@@ -76,12 +87,13 @@ func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCr
 	if isExist {
 		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
 	}
+	roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
 
 	userEntity := entities.User{
 		Name:     req.Name,
 		Email:    req.Email,
 		Password: req.Password,
-		RoleID:   dto.RoleNameToRoleID(req.RoleName),
+		RoleID:   roleId,
 	}
 	if req.DetailId != nil {
 		userEntity.DetailID = req.DetailId
@@ -120,7 +132,14 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 		user.Password = hashPass
 	}
 	if roleName := req.RoleName; roleName != "" {
-		user.RoleID = dto.RoleNameToRoleID(roleName)
+		roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
+		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+				return dto.UserResponse{}, dto.ErrRoleNotFound
+			}
+			return dto.UserResponse{}, constants.ErrInternalErr
+		}
+		user.RoleID = roleId
 	}
 	if req.DetailId != nil {
 		user.DetailID = req.DetailId

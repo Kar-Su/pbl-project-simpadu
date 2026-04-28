@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"net/http"
+	roleService "web-hosting/internal/modules/role/service"
 	"web-hosting/internal/modules/user/dto"
 	"web-hosting/internal/modules/user/service"
 	"web-hosting/internal/modules/user/validation"
@@ -30,15 +31,17 @@ type UserController interface {
 
 type userController struct {
 	userService    service.UserService
+	roleService    roleService.RoleService
 	userValidation *validation.UserValidation
 	db             *gorm.DB
 }
 
-func NewUserController(injector do.Injector, userServ service.UserService) UserController {
+func NewUserController(injector do.Injector, userServ service.UserService, roleService roleService.RoleService) UserController {
 	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
 	userValidation := validation.NewUserValidation()
 	return &userController{
 		userService:    userServ,
+		roleService:    roleService,
 		userValidation: userValidation,
 		db:             db,
 	}
@@ -70,7 +73,18 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
-	roleId := dto.RoleNameToRoleID(req.RoleName)
+	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), req.RoleName)
+	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	result, err := c.userService.GetUserByRoleAndDetailID(ctx.Request.Context(), roleId, req.DetailId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -111,7 +125,18 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	roleId := dto.RoleNameToRoleID(req.RoleName)
+	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), req.RoleName)
+	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	result, err := c.userService.GetUserByRole(ctx.Request.Context(), roleId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -202,7 +227,17 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 		return
 	}
 
-	roleId := dto.RoleNameToRoleID(reqUri.RoleName)
+	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), reqUri.RoleName)
+	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 
 	data, err := c.userService.UpdateNonAdmin(ctx.Request.Context(), reqBody, roleId, reqUri.DetailId)
 	if err != nil {
@@ -234,7 +269,18 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 		return
 	}
 
-	roleId := dto.RoleNameToRoleID(reqUri.RoleName)
+	roleId, err := c.roleService.GetRoleIdByRoleName(ctx, reqUri.RoleName)
+	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	if err := c.userService.DeleteNonAdmin(ctx.Request.Context(), roleId, reqUri.DetailId); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)

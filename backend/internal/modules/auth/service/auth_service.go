@@ -27,11 +27,12 @@ type authService struct {
 	db               *gorm.DB
 }
 
-func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, jwtService JwtService) AuthService {
+func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, jwtService JwtService, db *gorm.DB) AuthService {
 	return &authService{
 		useRepo:          useRepo,
 		refreshTokenRepo: refreshTokenRepo,
 		jwtService:       jwtService,
+		db:               db,
 	}
 }
 

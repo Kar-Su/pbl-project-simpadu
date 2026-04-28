@@ -1,22 +1,24 @@
 package seeds
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"os"
 	"web-hosting/internal/database/entities"
+	"web-hosting/internal/modules/role/repository"
 	"web-hosting/internal/modules/user/dto"
+	"web-hosting/internal/package/helpers"
 
 	"gorm.io/gorm"
 )
 
-func ListUsersSeed(db *gorm.DB) error {
+func ListUsersSeed(ctx context.Context, db *gorm.DB, roleRepo repository.RoleRepository) error {
 	jsonFile, err := os.Open("internal/database/seeders/json/users.json")
 	if err != nil {
 		return err
 	}
 	defer jsonFile.Close()
-
 	jsonData, err := io.ReadAll(jsonFile)
 
 	var users []dto.UserAdminCreateRequest
@@ -31,7 +33,8 @@ func ListUsersSeed(db *gorm.DB) error {
 			Password: user.Password,
 		}
 
-		roleId := dto.RoleNameToRoleID(user.RoleName)
+		normRoleName := helpers.NormalizeString(user.RoleName)
+		roleId, _ := roleRepo.GetRoleIdByRoleName(ctx, db, normRoleName)
 		userEntity.RoleID = roleId
 		if user.DetailId != nil {
 			userEntity.DetailID = user.DetailId

@@ -1,13 +1,17 @@
 package database
 
 import (
+	"context"
 	"web-hosting/internal/database/seeders/seeds"
+	"web-hosting/internal/modules/role/repository"
 
 	"gorm.io/gorm"
 )
 
 func Seeder(db *gorm.DB) error {
-	if err := seeds.ListUsersSeed(db); err != nil {
+	ctx := context.Background()
+	roleRepo := repository.NewRoleRepository(db)
+	if err := seeds.ListUsersSeed(ctx, db, roleRepo); err != nil {
 		return err
 	}
 

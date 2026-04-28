@@ -1,8 +1,10 @@
 package middlewares
 
 import (
+	"net/http"
 	"strings"
 	"web-hosting/internal/modules/auth/service"
+	"web-hosting/internal/package/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,35 +13,41 @@ func AuthMiddleware(jwtService service.JwtService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Authorization header missing"})
+			res := utils.BuildResponseFailed("Failed Auth", "Authorization header missing", nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 
 		if !strings.Contains(authHeader, "Bearer ") {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Invalid authorization header"})
+			res := utils.BuildResponseFailed("Failed Auth", "Invalid authorization header", nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 
 		authHeader = authHeader[len("Bearer "):]
 		token, err := jwtService.ValidateToken(authHeader)
 		if err != nil {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
+			res := utils.BuildResponseFailed("Failed Auth", "Invalid token", nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 
 		if !token.Valid {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
+			res := utils.BuildResponseFailed("Failed Auth", "Invalid token", nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 
 		userId, err := jwtService.GetUserIDByToken(authHeader)
 		if err != nil {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
+			res := utils.BuildResponseFailed("Failed Auth", "Invalid token", nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 		roleName, err := jwtService.GetRoleNameByToken(authHeader)
 		if err != nil {
-			ctx.AbortWithStatusJSON(401, gin.H{"error": "Invalid token"})
+			res := utils.BuildResponseFailed("Failed Auth", "Invalid token", nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 
