@@ -107,6 +107,12 @@ func (c *authController) RefreshToken(ctx *gin.Context) {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
+		if errors.Is(err, dto.ErrRefreshTokenExpired) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REFRESH_TOKEN, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
+			return
+		}
+
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REFRESH_TOKEN, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return

@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 	"web-hosting/internal/database/entities"
 	authDto "web-hosting/internal/modules/auth/dto"
 	"web-hosting/internal/modules/auth/repository"
@@ -105,6 +106,12 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 		}
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
+
+	if refreshTokenEntity.ExpiredAt.Before(time.Now()) {
+		s.refreshTokenRepo.DeleteByToken(ctx, s.db, req.RefreshToken)
+		return authDto.TokenResponse{}, authDto.ErrRefreshTokenExpired
+	}
+
 	if err := s.refreshTokenRepo.DeleteByToken(ctx, s.db, req.RefreshToken); err != nil {
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
