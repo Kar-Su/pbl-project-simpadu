@@ -17,7 +17,6 @@ type RoleService interface {
 	Update(ctx context.Context, req dto.RoleUpdateRequest, roleId uint) (entities.Role, error)
 	Delete(ctx context.Context, roleId uint) error
 	GetRoleIdByRoleName(ctx context.Context, roleName string) (uint, error)
-	GetRoleById(ctx context.Context, roleId uint) (entities.Role, error)
 	GetAllRole(ctx context.Context) ([]entities.Role, error)
 }
 
@@ -97,18 +96,6 @@ func (s *roleService) GetRoleIdByRoleName(ctx context.Context, roleName string) 
 	}
 
 	return roleId, nil
-}
-
-func (s *roleService) GetRoleById(ctx context.Context, roleId uint) (entities.Role, error) {
-	role, err := s.roleRepo.GetRoleById(ctx, s.db, roleId)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Role{}, dto.ErrRoleNotFound
-		}
-		return entities.Role{}, constants.ErrInternalErr
-	}
-
-	return role, nil
 }
 
 func (s *roleService) GetAllRole(ctx context.Context) ([]entities.Role, error) {
