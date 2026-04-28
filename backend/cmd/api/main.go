@@ -2,8 +2,11 @@ package main
 
 import (
 	"log"
-	"net/http"
+	"web-hosting/internal/modules/auth"
+	"web-hosting/internal/modules/role"
+	"web-hosting/internal/modules/user"
 	"web-hosting/internal/package/env"
+	"web-hosting/internal/providers"
 
 	_ "github.com/common-nighthawk/go-figure"
 	"github.com/gin-contrib/cors"
@@ -12,8 +15,7 @@ import (
 )
 
 func run(server *gin.Engine) {
-	server.Static("/assets", "./assets")
-
+	// server.Static("/assets", "./assets")
 	port := env.GetWithDefault[string]("GO_PORT", "8080")
 
 	var serve string
@@ -30,19 +32,14 @@ func run(server *gin.Engine) {
 
 func main() {
 	injector := do.New()
-	_ = injector
 
 	server := gin.Default()
 	server.Use(cors.Default())
 
-	apiRoutes := server.Group("/api")
-	{
-		apiRoutes.GET("/test", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "hello",
-			})
-		})
-	}
+	providers.RegisterProviders(injector)
 
+	user.RegisterRoutes(server, injector)
+	auth.RegisterRoutes(server, injector)
+	role.RegisterRoutes(server, injector)
 	run(server)
 }

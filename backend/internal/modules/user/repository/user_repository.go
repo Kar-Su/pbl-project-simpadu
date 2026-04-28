@@ -146,7 +146,7 @@ func (r *userRepository) CheckEmail(ctx context.Context, tx *gorm.DB, email stri
 		tx = r.db
 	}
 	var user entities.User
-	if err := tx.WithContext(ctx).Where("email = ?", email).Take(&user).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Role").Where("email = ?", email).Take(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return entities.User{}, false, nil
 		}

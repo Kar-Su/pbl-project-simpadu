@@ -15,7 +15,7 @@ func RoleMiddleware(allowedRoles ...string) gin.HandlerFunc {
 		found := slices.Contains(allowedRoles, roleName)
 
 		if !found {
-			res := utils.BuildResponseFailed("Forbidden", "Role anda tidak diizinkan", nil)
+			res := utils.BuildResponseFailed("Role anda tidak diizinkan", "Forbidden", nil)
 			ctx.AbortWithStatusJSON(http.StatusForbidden, res)
 			return
 		}

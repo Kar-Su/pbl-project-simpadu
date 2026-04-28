@@ -19,6 +19,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 		authRoutes.POST("/login", authController.Login)
 		authRoutes.POST("/logout", middlewares.AuthMiddleware(jwtService), authController.Logout)
 		authRoutes.POST("/refresh-token", authController.RefreshToken)
+		authRoutes.GET("/refresh-token/:refresh_token", authController.FindRefreshToken)
 		authRoutes.POST("/reset-password", middlewares.AuthMiddleware(jwtService), authController.ResetPassword)
 	}
 }

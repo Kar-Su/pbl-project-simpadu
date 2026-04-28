@@ -15,6 +15,7 @@ import (
 )
 
 type AuthService interface {
+	FindRefreshToken(ctx context.Context, token string) (authDto.RefreshTokenResponse, error)
 	Login(ctx context.Context, req userDto.UserLoginRequest) (authDto.TokenResponse, error)
 	Logout(ctx context.Context, userId string) error
 	RefreshToken(ctx context.Context, req authDto.RefreshTokenRequest) (authDto.TokenResponse, error)
@@ -34,6 +35,21 @@ func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository
 		jwtService:       jwtService,
 		db:               db,
 	}
+}
+
+func (s *authService) FindRefreshToken(ctx context.Context, token string) (authDto.RefreshTokenResponse, error) {
+	refreshToken, err := s.refreshTokenRepo.FindByToken(ctx, s.db, token)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return authDto.RefreshTokenResponse{}, authDto.ErrRefreshTokenNotFound
+		}
+		return authDto.RefreshTokenResponse{}, constants.ErrInternalErr
+	}
+
+	return authDto.RefreshTokenResponse{
+		RefreshToken: refreshToken.Token,
+		Exp:          refreshToken.ExpiredAt.Unix(),
+	}, nil
 }
 
 func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (authDto.TokenResponse, error) {

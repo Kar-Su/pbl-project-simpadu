@@ -11,11 +11,11 @@ import (
 func Seeder(db *gorm.DB) error {
 	ctx := context.Background()
 	roleRepo := repository.NewRoleRepository(db)
-	if err := seeds.ListUsersSeed(ctx, db, roleRepo); err != nil {
+	if err := seeds.ListRolesSeed(ctx, db); err != nil {
 		return err
 	}
 
-	if err := seeds.ListRolesSeed(ctx, db); err != nil {
+	if err := seeds.ListUsersSeed(ctx, db, roleRepo); err != nil {
 		return err
 	}
 

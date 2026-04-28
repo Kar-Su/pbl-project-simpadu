@@ -80,7 +80,7 @@ func (j *jwtService) GenerateRefreshToken() (string, time.Time) {
 		return "", time.Time{}
 	}
 
-	refreshToken := base64.StdEncoding.EncodeToString(b)
+	refreshToken := base64.RawURLEncoding.EncodeToString(b)
 	expiresAt := time.Now().Add(j.refreshExp)
 
 	return refreshToken, expiresAt

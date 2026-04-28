@@ -38,7 +38,8 @@ type userController struct {
 }
 
 func NewUserController(injector do.Injector, userServ service.UserService, roleService roleService.RoleService) UserController {
-	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
+	// db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
+	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB_TEST)
 	userValidation := validation.NewUserValidation()
 	return &userController{
 		userService:    userServ,

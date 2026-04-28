@@ -8,7 +8,8 @@ import (
 
 const (
 	DB         = "db"
-	DB_LOG_DIR = "./config/logs/query_log"
+	DB_TEST    = "db_test"
+	DB_LOG_DIR = "internal/configs/logs/query_log"
 
 	JWTService      = "JWTService"
 	JWT_ISSUER      = "TIM 1"

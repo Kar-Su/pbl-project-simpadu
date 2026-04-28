@@ -4,10 +4,11 @@ import (
 	"web-hosting/internal/package/helpers"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type User struct {
-	ID       uuid.UUID `gorm:"primaryKey;type:binary(16)" json:"id"`
+	ID       uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
 	Name     string    `gorm:"type:varchar(255);not null" json:"name"`
 	Email    string    `gorm:"type:varchar(255);not null;uniqueIndex" json:"email"`
 	Password string    `gorm:"type:varchar(255);not null" json:"password"`
@@ -19,12 +20,12 @@ type User struct {
 	Timestamp
 }
 
-func (u *User) BeforeCreate() (err error) {
-	u.ID, err = uuid.NewV7()
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	newId, err := uuid.NewV7()
 	if err != nil {
 		return err
 	}
-
+	u.ID = newId
 	if u.Password != "" {
 		u.Password, err = helpers.HashPassword(u.Password)
 		if err != nil {

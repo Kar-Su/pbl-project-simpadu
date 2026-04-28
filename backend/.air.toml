@@ -5,7 +5,7 @@ tmp_dir = "cmd/api/tmp"
 
 [build]
   cmd = "go build -o ./cmd/api/tmp/main ./cmd/api/main.go"
-  bin = "./cmd/tmp/api/main"
+  bin = "./cmd/api/tmp/main"
   full_bin = ""
   args_bin = []
   delay = 1000

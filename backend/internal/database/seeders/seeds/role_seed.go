@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/role/dto"
 
 	"gorm.io/gorm"
 )
 
 func ListRolesSeed(ctx context.Context, db *gorm.DB) error {
-	jsonFile, err := os.Open("internal/datavase/seeders/json/roles.json")
+	jsonFile, err := os.Open("internal/database/seeders/json/roles.json")
 	if err != nil {
 		return err
 	}
@@ -27,7 +28,9 @@ func ListRolesSeed(ctx context.Context, db *gorm.DB) error {
 	}
 
 	for _, role := range roles {
-		if err := db.WithContext(ctx).FirstOrCreate(&role).Error; err != nil {
+		var roleEntity entities.Role
+		roleEntity.Name = role.RoleName
+		if err := db.WithContext(ctx).Where(entities.Role{Name: role.RoleName}).FirstOrCreate(&roleEntity).Error; err != nil {
 			return err
 		}
 	}

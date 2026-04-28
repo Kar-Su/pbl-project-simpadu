@@ -11,7 +11,7 @@ import (
 )
 
 func Commands(injector do.Injector) bool {
-	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
+	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB_TEST)
 	seed := false
 
 	if arg := os.Args[1]; arg == "--seed" {

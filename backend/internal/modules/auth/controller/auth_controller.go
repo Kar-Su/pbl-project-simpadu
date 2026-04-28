@@ -15,6 +15,7 @@ import (
 )
 
 type AuthController interface {
+	FindRefreshToken(ctx *gin.Context)
 	Login(ctx *gin.Context)
 	Logout(ctx *gin.Context)
 	RefreshToken(ctx *gin.Context)
@@ -31,6 +32,24 @@ func NewAuthController(injector do.Injector, authService authServ.AuthService, d
 		authService: authService,
 		db:          db,
 	}
+}
+
+func (c *authController) FindRefreshToken(ctx *gin.Context) {
+	token := ctx.Param("refresh_token")
+
+	result, err := c.authService.FindRefreshToken(ctx.Request.Context(), token)
+	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_FIND_REFRESH_TOKEN, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_FIND_REFRESH_TOKEN, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusNotFound, res)
+		return
+	}
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_FIND_REFRESH_TOKEN, result)
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *authController) Login(ctx *gin.Context) {
