@@ -7,6 +7,10 @@ const (
 	MESSAGE_FAILED_GET_ALL_ROLE        = "failed to get all role"
 	MESSAGE_ROLE_CREATE_ALREADY_EXISTS = "failed to create role, role already exists"
 	MESSAGE_FAILED_DELETE_ROLE         = "failed to delete role"
+	MESSAGE_FAILED_GET_REQUEST_BODY    = "failed to get request"
+	MESSAGE_FAILED_CREATE_ROLE         = "failed to create role"
+
+	MESSAGE_SUCCESS_CREATE_ROLE = "role created successfully"
 )
 
 var (

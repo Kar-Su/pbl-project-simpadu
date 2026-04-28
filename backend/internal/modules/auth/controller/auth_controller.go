@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"net/http"
 	"web-hosting/internal/modules/auth/dto"
 	authServ "web-hosting/internal/modules/auth/service"
@@ -42,6 +43,11 @@ func (c *authController) Login(ctx *gin.Context) {
 
 	result, err := c.authService.Login(ctx, req)
 	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(userDto.MESSAGE_FAILED_LOGIN_USER, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(userDto.MESSAGE_FAILED_LOGIN_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -54,6 +60,11 @@ func (c *authController) Logout(ctx *gin.Context) {
 	userId := ctx.MustGet("user_id").(string)
 
 	if err := c.authService.Logout(ctx, userId); err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_LOGOUT, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_LOGOUT, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -65,13 +76,18 @@ func (c *authController) Logout(ctx *gin.Context) {
 func (c *authController) RefreshToken(ctx *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REFRESH_TOKEN, err.Error(), nil)
+		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
 	result, err := c.authService.RefreshToken(ctx, req)
 	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REFRESH_TOKEN, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REFRESH_TOKEN, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -91,6 +107,11 @@ func (c *authController) ResetPassword(ctx *gin.Context) {
 	}
 
 	if err := c.authService.ResetPassword(ctx, req); err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_SEND_PASSWORD_RESET, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_SEND_PASSWORD_RESET, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return

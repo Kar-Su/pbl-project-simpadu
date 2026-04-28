@@ -53,7 +53,7 @@ func (c *userController) GetUser(ctx *gin.Context) {
 	result, err := c.userService.GetUserByID(ctx.Request.Context(), uuid.MustParse(userId))
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -76,7 +76,7 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), req.RoleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -88,7 +88,7 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 	result, err := c.userService.GetUserByRoleAndDetailID(ctx.Request.Context(), roleId, req.DetailId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -105,7 +105,7 @@ func (c *userController) GetUserByEmail(ctx *gin.Context) {
 	result, err := c.userService.GetUserByEmail(ctx.Request.Context(), email)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -128,7 +128,7 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), req.RoleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -140,7 +140,7 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 	result, err := c.userService.GetUserByRole(ctx.Request.Context(), roleId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -165,7 +165,7 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 	data, err := c.userService.UpdateAdmin(ctx.Request.Context(), reqBody, uuid.MustParse(userId))
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
@@ -272,7 +272,7 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 	roleId, err := c.roleService.GetRoleIdByRoleName(ctx, reqUri.RoleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}
