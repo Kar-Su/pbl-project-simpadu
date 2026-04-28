@@ -39,7 +39,7 @@ func (r *refreshTokenRepository) FindByToken(ctx context.Context, tx *gorm.DB, t
 		tx = r.db
 	}
 	var result entities.RefreshToken
-	if err := tx.WithContext(ctx).Where("token = ?", token).Preload("User").First(&result).Error; err != nil {
+	if err := tx.WithContext(ctx).Where("token = ?", token).Preload("User.Role").First(&result).Error; err != nil {
 		return entities.RefreshToken{}, err
 	}
 	return result, nil
