@@ -248,6 +248,15 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 		return
 	}
 
+	userDetailId := ctx.MustGet("detail_id").(*uint)
+	userRoleName := ctx.MustGet("role_name").(string)
+
+	if *userDetailId != reqUri.DetailId || !(userRoleName == constants.ROLE_ADMIN || userDetailId == &reqUri.DetailId) {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, "Unauthorized", nil)
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
+		return
+	}
+
 	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), reqUri.RoleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {

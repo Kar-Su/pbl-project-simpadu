@@ -55,7 +55,7 @@ type (
 	}
 
 	UserRoleURI struct {
-		RoleName string `uri:"role_name" binding:"required,custom_role"`
+		RoleName string `uri:"role_name" binding:"required,is_non_admin"`
 	}
 	UserSyncURI struct {
 		UserRoleURI

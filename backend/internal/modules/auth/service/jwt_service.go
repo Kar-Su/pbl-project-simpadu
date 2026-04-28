@@ -14,16 +14,18 @@ import (
 )
 
 type JwtService interface {
-	GenerateAccessToken(userId string, roleName string, userEmail string) (string, error)
+	GenerateAccessToken(userId string, roleName string, userEmail string, detailId *uint) (string, error)
 	GenerateRefreshToken() (string, time.Time)
 	ValidateToken(token string) (*jwt.Token, error)
 	GetUserIDByToken(token string) (string, error)
 	GetRoleNameByToken(token string) (string, error)
 	GetUserEmailByToken(tokenString string) (string, error)
+	GetDetailIDByToken(token string) (*uint, error)
 }
 
 type jwtCustomClaim struct {
 	UserID    string `json:"user_id"`
+	DetailID  *uint  `json:"detail_id"`
 	RoleName  string `json:"role_name"`
 	UserEmail string `json:"user_email"`
 	jwt.RegisteredClaims
@@ -53,9 +55,10 @@ func NewJwtService() JwtService {
 	}
 }
 
-func (j *jwtService) GenerateAccessToken(userId string, roleName string, userEmail string) (string, error) {
+func (j *jwtService) GenerateAccessToken(userId string, roleName string, userEmail string, detailId *uint) (string, error) {
 	claims := jwtCustomClaim{
 		UserID:    userId,
+		DetailID:  detailId,
 		RoleName:  roleName,
 		UserEmail: userEmail,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -141,4 +144,21 @@ func (j *jwtService) GetUserEmailByToken(tokenString string) (string, error) {
 	}
 
 	return "", fmt.Errorf("invalid token claims")
+}
+
+func (j *jwtService) GetDetailIDByToken(tokenString string) (*uint, error) {
+	token, err := j.ValidateToken(tokenString)
+
+	if err != nil {
+		if errors.Is(err, jwt.ErrTokenExpired) {
+			return nil, fmt.Errorf("token has expired")
+		}
+		return nil, err
+	}
+
+	if claims, ok := token.Claims.(*jwtCustomClaim); ok && token.Valid {
+		return claims.DetailID, nil
+	}
+
+	return nil, fmt.Errorf("invalid token claims")
 }
