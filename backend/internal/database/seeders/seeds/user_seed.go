@@ -20,6 +20,9 @@ func ListUsersSeed(ctx context.Context, db *gorm.DB, roleRepo repository.RoleRep
 	}
 	defer jsonFile.Close()
 	jsonData, err := io.ReadAll(jsonFile)
+	if err != nil {
+		return err
+	}
 
 	var users []dto.UserAdminCreateRequest
 	if err := json.Unmarshal(jsonData, &users); err != nil {
@@ -40,7 +43,7 @@ func ListUsersSeed(ctx context.Context, db *gorm.DB, roleRepo repository.RoleRep
 			userEntity.DetailID = user.DetailId
 		}
 
-		if err := db.Where("email = ?", user.Email).FirstOrCreate(&userEntity).Error; err != nil {
+		if err := db.WithContext(ctx).Where("email = ?", user.Email).FirstOrCreate(&userEntity).Error; err != nil {
 			return err
 		}
 	}

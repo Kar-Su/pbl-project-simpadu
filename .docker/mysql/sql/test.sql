@@ -33,12 +33,7 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 
 CREATE TABLE if not exists roles (
     id int PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(255) NOT NULL
+    name VARCHAR(255) NOT NULL,
+
+    UNIQUE INDEX idx_roles_name (name)
 );
-
-
-insert into roles (name) values
-    ('super admin'),
-    ('admin'),
-    ('mahasiswa'),
-    ('dosen');

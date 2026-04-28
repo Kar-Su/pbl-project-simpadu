@@ -28,13 +28,13 @@
     "email": "dummydosen@poliban.ac.id",
     "password": "dummy#dosen",
     "role_name": "dosen",
-    "detail_id": 100
+    "detail_id": 1000
   },
   {
     "name": "dummy mahasiswa",
     "email": "dummy@poliban.ac.id",
     "password": "dummy#mahasiswa",
     "role_name": "mahasiswa",
-    "detail_id": 100
+    "detail_id": 1000
   }
 ]

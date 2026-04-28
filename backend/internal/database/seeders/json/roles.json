@@ -1,0 +1,14 @@
+[
+  {
+    "role_name": "super-admin"
+  },
+  {
+    "role_name": "admin"
+  },
+  {
+    "role_name": "dosen"
+  },
+  {
+    "role_name": "mahasiswa"
+  }
+]
