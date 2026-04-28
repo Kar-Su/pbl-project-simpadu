@@ -9,7 +9,7 @@ import (
 
 func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	userController := do.MustInvoke[controller.UserController](injector)
-	// Next Harus Invoce JWTAut
+	// Next Harus Invoke JWTAut
 	apiRoutes := router.Group("/api")
 	{
 		apiRoutes.GET("/user/:id", userController.GetUser)
