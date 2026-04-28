@@ -1,7 +1,10 @@
 package user
 
 import (
+	"web-hosting/internal/middlewares"
+	"web-hosting/internal/modules/auth/service"
 	"web-hosting/internal/modules/user/controller"
+	"web-hosting/internal/package/constants"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do/v2"
@@ -9,20 +12,21 @@ import (
 
 func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	userController := do.MustInvoke[controller.UserController](injector)
-	// Next Harus Invoke JWTAut
+	jwtService := do.MustInvokeNamed[service.JwtService](injector, constants.JWTService)
 	apiRoutes := router.Group("/api")
 	{
-		apiRoutes.GET("/user/:id", userController.GetUser)
-		apiRoutes.POST("/super/user", userController.RegisterAdmin)
-		apiRoutes.PUT("/super/user/:id", userController.UpdateAdmin)
-		apiRoutes.DELETE("/super/user/:id", userController.DeleteAdmin)
+		apiRoutes.GET("/me", middlewares.AuthMiddleware(jwtService), userController.Me)
+		apiRoutes.GET("/user/:id", middlewares.AuthMiddleware(jwtService), userController.GetUser)
+		apiRoutes.POST("/super/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.RegisterAdmin)
+		apiRoutes.PUT("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.UpdateAdmin)
+		apiRoutes.DELETE("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.DeleteAdmin)
 
-		apiRoutes.GET("/user/role/:role_name", userController.GetUserByRole)
-		apiRoutes.GET("/user/email/:email", userController.GetUserByEmail)
-		apiRoutes.POST("/user", userController.RegisterNonAdmin)
+		apiRoutes.GET("/user/role/:role_name", middlewares.AuthMiddleware(jwtService), userController.GetUserByRole)
+		apiRoutes.GET("/user/email/:email", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
+		apiRoutes.POST("/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), userController.RegisterNonAdmin)
 
-		apiRoutes.GET("/user/sync/:role_name/:detail_id", userController.GetUserNonAdmin)
-		apiRoutes.PUT("/user/sync/:role_name/:detail_id", userController.UpdateNonAdmin)
-		apiRoutes.DELETE("/user/sync/:role_name/:detail_id", userController.DeleteNonAdmin)
+		apiRoutes.GET("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.GetUserNonAdmin)
+		apiRoutes.PUT("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), userController.UpdateNonAdmin)
+		apiRoutes.DELETE("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), userController.DeleteNonAdmin)
 	}
 }

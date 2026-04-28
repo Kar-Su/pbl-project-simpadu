@@ -17,6 +17,7 @@ import (
 )
 
 type UserController interface {
+	Me(ctx *gin.Context)
 	GetUser(ctx *gin.Context)
 	GetUserNonAdmin(ctx *gin.Context)
 	GetUserByEmail(ctx *gin.Context)
@@ -45,6 +46,26 @@ func NewUserController(injector do.Injector, userServ service.UserService, roleS
 		userValidation: userValidation,
 		db:             db,
 	}
+}
+
+func (c *userController) Me(ctx *gin.Context) {
+	userId := ctx.MustGet("user_id").(string)
+
+	result, err := c.userService.GetUserByID(ctx.Request.Context(), uuid.MustParse(userId))
+	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
+
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_USER, result)
+	ctx.JSON(http.StatusOK, res)
 }
 
 func (c *userController) GetUser(ctx *gin.Context) {

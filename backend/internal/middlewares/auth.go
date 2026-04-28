@@ -41,13 +41,13 @@ func AuthMiddleware(jwtService service.JwtService) gin.HandlerFunc {
 
 		userId, err := jwtService.GetUserIDByToken(authHeader)
 		if err != nil {
-			res := utils.BuildResponseFailed(dto.FAILED_AUTH, dto.ErrInvalidToken.Error(), nil)
+			res := utils.BuildResponseFailed(dto.FAILED_AUTH, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 		roleName, err := jwtService.GetRoleNameByToken(authHeader)
 		if err != nil {
-			res := utils.BuildResponseFailed(dto.FAILED_AUTH, dto.ErrInvalidToken.Error(), nil)
+			res := utils.BuildResponseFailed(dto.FAILED_AUTH, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
