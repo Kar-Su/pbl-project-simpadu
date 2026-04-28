@@ -75,7 +75,7 @@ func (c *authController) Logout(ctx *gin.Context) {
 
 func (c *authController) RefreshToken(ctx *gin.Context) {
 	var req dto.RefreshTokenRequest
-	if err := ctx.ShouldBindJSON(req); err != nil {
+	if err := ctx.ShouldBindJSON(&req); err != nil {
 		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
