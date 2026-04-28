@@ -32,10 +32,10 @@ type (
 	}
 
 	RoleUpdateRequest struct {
-		RoleName string `json:"role_name" binding:"required,role_exist"`
+		RoleName string `json:"role_name" binding:"required"`
 	}
 
 	RoleNameURI struct {
-		RoleName string `uri:"role_name" binding:"required, role_exist"`
+		RoleName string `uri:"role_name" binding:"required,"`
 	}
 )
