@@ -62,11 +62,8 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 		return authDto.TokenResponse{}, userDto.ErrUserNotFound
 	}
 	isValid, err := helpers.CheckPasswordHash(req.Password, user.Password)
-	if err != nil {
-		return authDto.TokenResponse{}, constants.ErrInternalErr
-	}
-	if !isValid {
-		return authDto.TokenResponse{}, authDto.ErrInvalidCredentials
+	if err != nil && !isValid {
+		return authDto.TokenResponse{}, err
 	}
 
 	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name, user.Email, user.DetailID)
