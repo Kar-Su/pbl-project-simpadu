@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"log"
 	"web-hosting/internal/database/entities"
 	roleService "web-hosting/internal/modules/role/service"
 	"web-hosting/internal/modules/user/dto"
@@ -44,6 +45,7 @@ func NewUserService(userRepository repository.UserRepository, roleService roleSe
 func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) error {
 	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 	if isExist {
@@ -55,6 +57,7 @@ func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRe
 		if errors.Is(err, dto.ErrRoleNotFound) {
 			return dto.ErrRoleNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 
@@ -81,6 +84,7 @@ func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRe
 func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) error {
 	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 	if isExist {
@@ -114,6 +118,7 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return dto.UserResponse{}, dto.ErrUserNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	if req.Name != "" {
@@ -125,6 +130,7 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 	if req.Password != "" {
 		hashPass, err := helpers.HashPassword(req.Password)
 		if err != nil {
+			log.Printf("Internal Error: %v", err)
 			return dto.UserResponse{}, constants.ErrInternalErr
 		}
 		user.Password = hashPass
@@ -135,6 +141,7 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 			if errors.Is(err, gorm.ErrRecordNotFound) {
 				return dto.UserResponse{}, dto.ErrRoleNotFound
 			}
+			log.Printf("Internal Error: %v", err)
 			return dto.UserResponse{}, constants.ErrInternalErr
 		}
 		user.RoleID = roleId
@@ -157,6 +164,7 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error) {
 	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	if !isExist {
@@ -171,6 +179,7 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUp
 	if req.Password != "" {
 		hashPass, err := helpers.HashPassword(req.Password)
 		if err != nil {
+			log.Printf("Internal Error: %v", err)
 			return dto.UserResponse{}, constants.ErrInternalErr
 		}
 		user.Password = hashPass
@@ -197,6 +206,7 @@ func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 		if errors.Is(err, dto.ErrUserNotFound) {
 			return dto.ErrUserNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 
@@ -209,6 +219,7 @@ func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error {
 	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 	if !isExist {
@@ -226,6 +237,7 @@ func (s *userService) GetUserByID(ctx context.Context, userId uuid.UUID) (dto.Us
 		if errors.Is(err, dto.ErrUserNotFound) {
 			return dto.UserResponse{}, dto.ErrUserNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil
@@ -237,6 +249,7 @@ func (s *userService) GetUserByEmail(ctx context.Context, email string) (dto.Use
 		if errors.Is(err, dto.ErrUserNotFound) {
 			return dto.UserResponse{}, dto.ErrUserNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil
@@ -262,6 +275,7 @@ func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint,
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return dto.UserResponse{}, dto.ErrUserNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil

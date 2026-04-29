@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"log"
 	"time"
 	"web-hosting/internal/database/entities"
 	authDto "web-hosting/internal/modules/auth/dto"
@@ -44,6 +45,7 @@ func (s *authService) FindRefreshToken(ctx context.Context, token string) (authD
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return authDto.RefreshTokenResponse{}, authDto.ErrRefreshTokenNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return authDto.RefreshTokenResponse{}, constants.ErrInternalErr
 	}
 
@@ -56,6 +58,7 @@ func (s *authService) FindRefreshToken(ctx context.Context, token string) (authD
 func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (authDto.TokenResponse, error) {
 	user, isExist, err := s.useRepo.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 	if !isExist {
@@ -68,6 +71,7 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 
 	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name, user.Email, user.DetailID)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
@@ -81,6 +85,7 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 
 	_, err = s.refreshTokenRepo.Create(ctx, s.db, refreshTokenEntity)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
@@ -101,6 +106,7 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return authDto.TokenResponse{}, authDto.ErrRefreshTokenNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
@@ -110,11 +116,13 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 	}
 
 	if err := s.refreshTokenRepo.DeleteByToken(ctx, s.db, req.RefreshToken); err != nil {
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
 	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String(), refreshTokenEntity.User.Role.Name, refreshTokenEntity.User.Email, refreshTokenEntity.User.DetailID)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
@@ -128,6 +136,7 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 
 	_, err = s.refreshTokenRepo.Create(ctx, s.db, refreshTokenEntityNew)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
@@ -141,6 +150,7 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 func (s *authService) ResetPassword(ctx context.Context, req authDto.ResetPasswordRequest) error {
 	user, isExist, err := s.useRepo.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 	if !isExist {
@@ -149,12 +159,14 @@ func (s *authService) ResetPassword(ctx context.Context, req authDto.ResetPasswo
 
 	hashPass, err := helpers.HashPassword(req.NewPassword)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 
 	user.Password = hashPass
 	_, err = s.useRepo.Update(ctx, s.db, user.ID, user)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 	return nil

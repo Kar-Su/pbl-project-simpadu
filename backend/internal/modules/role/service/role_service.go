@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"log"
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/role/dto"
 	"web-hosting/internal/modules/role/repository"
@@ -34,6 +35,7 @@ func (s *roleService) Create(ctx context.Context, req dto.RoleCreateRequest) (en
 	isExist, err := s.roleRepo.CheckRoleExist(ctx, s.db, normRoleName)
 
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return entities.Role{}, constants.ErrInternalErr
 	}
 
@@ -43,6 +45,7 @@ func (s *roleService) Create(ctx context.Context, req dto.RoleCreateRequest) (en
 
 	role, err := s.roleRepo.Create(ctx, s.db, normRoleName)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return entities.Role{}, constants.ErrInternalErr
 	}
 
@@ -55,6 +58,7 @@ func (s *roleService) Update(ctx context.Context, req dto.RoleUpdateRequest, rol
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return entities.Role{}, dto.ErrRoleNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return entities.Role{}, constants.ErrInternalErr
 	}
 
@@ -62,6 +66,7 @@ func (s *roleService) Update(ctx context.Context, req dto.RoleUpdateRequest, rol
 	role.Name = normRoleName
 	roleUpdated, err := s.roleRepo.Update(ctx, s.db, roleId, role)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return entities.Role{}, constants.ErrInternalErr
 	}
 
@@ -74,11 +79,13 @@ func (s *roleService) Delete(ctx context.Context, roleId uint) error {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return dto.ErrRoleNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 
 	err = s.roleRepo.Delete(ctx, s.db, roleId)
 	if err != nil {
+		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
 
@@ -92,6 +99,7 @@ func (s *roleService) GetRoleIdByRoleName(ctx context.Context, roleName string) 
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return 0, dto.ErrRoleNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return 0, constants.ErrInternalErr
 	}
 
@@ -104,6 +112,7 @@ func (s *roleService) GetAllRole(ctx context.Context) ([]entities.Role, error) {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, dto.ErrRoleNotFound
 		}
+		log.Printf("Internal Error: %v", err)
 		return nil, constants.ErrInternalErr
 	}
 
