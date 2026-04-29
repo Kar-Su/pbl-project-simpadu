@@ -1,7 +1,7 @@
 package utils
 
 type Response struct {
-	Status  bool   `json:"status"`
+	Success bool   `json:"success"`
 	Message string `json:"message"`
 	Error   any    `json:"error,omitempty"`
 	Data    any    `json:"data,omitempty"`
@@ -12,7 +12,7 @@ type EmptyObj struct{}
 
 func BuildResponseSuccess(message string, data any) Response {
 	res := Response{
-		Status:  true,
+		Success: true,
 		Message: message,
 		Data:    data,
 	}
@@ -21,7 +21,7 @@ func BuildResponseSuccess(message string, data any) Response {
 
 func BuildResponseFailed(message string, err string, data any) Response {
 	res := Response{
-		Status:  false,
+		Success: false,
 		Message: message,
 		Error:   err,
 		Data:    data,

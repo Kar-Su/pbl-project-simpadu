@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"web-hosting/internal/modules/role/dto"
 	"web-hosting/internal/modules/role/service"
@@ -100,13 +101,15 @@ func (c *roleController) Update(ctx *gin.Context) {
 
 func (c *roleController) Delete(ctx *gin.Context) {
 	var RoleNameURI dto.RoleNameURI
+	log.Printf("roleName: %s\n", RoleNameURI.RoleName)
 	if err := ctx.ShouldBindUri(&RoleNameURI); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_VALIDATE_ROLE_URI, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), RoleNameURI.RoleName)
+	roleName := RoleNameURI.RoleName
+	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), roleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_ROLE, err.Error(), nil)

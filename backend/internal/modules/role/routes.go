@@ -17,9 +17,9 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	{
 		apiRoutes.GET("/role", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.GetAllRole)
 
-		apiRoutes.PUT("/super/role", roleController.Update, middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN))
-		apiRoutes.POST("/super/role", roleController.Create, middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN))
-		apiRoutes.DELETE("/super/role/:id", roleController.Delete, middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN))
+		apiRoutes.PUT("/super/role/:role_name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.Update)
+		apiRoutes.POST("/super/role", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.Create)
+		apiRoutes.DELETE("/super/role/:role_name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.Delete)
 
 	}
 

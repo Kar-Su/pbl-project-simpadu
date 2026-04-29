@@ -36,6 +36,6 @@ type (
 	}
 
 	RoleNameURI struct {
-		RoleName string `uri:"role_name" binding:"required,"`
+		RoleName string `uri:"role_name" binding:"required"`
 	}
 )
