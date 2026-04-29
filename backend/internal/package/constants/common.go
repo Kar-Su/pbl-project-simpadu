@@ -26,6 +26,11 @@ const (
 	ROLE_ADMIN       = "admin"
 	ROLE_MAHASISWA   = "mahasiswa"
 	ROLE_DOSEN       = "dosen"
+
+	EMAIL_SUPER_ADMIN     = "tim1@poliban.ac.id"
+	EMAIL_ADMIN_PEGAWAI   = "tim2@poliban.ac.id"
+	EMAIL_ADMIN_MAHASISWA = "tim3@poliban.ac.id"
+	EMAIL_ADMIN_KEUANGAN  = "tim4@poliban.ac.id"
 )
 
 var (

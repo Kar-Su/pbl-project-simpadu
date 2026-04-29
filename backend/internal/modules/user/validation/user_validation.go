@@ -9,6 +9,7 @@ import (
 	"web-hosting/internal/package/constants"
 	help "web-hosting/internal/package/helpers"
 
+	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -17,14 +18,16 @@ type UserValidation struct {
 }
 
 func NewUserValidation() *UserValidation {
-	validate := validator.New()
-	validate.SetTagName("binding")
-	validate.RegisterValidation("custom_role", validateRole)
-	validate.RegisterValidation("is_non_admin", validateRoleNonAdmin)
-	validate.RegisterValidation("custom_ext", customExtImage)
-
+	v, ok := binding.Validator.Engine().(*validator.Validate)
+	if ok {
+		v.SetTagName("binding")
+		v.RegisterValidation("custom_role", validateRole)
+		v.RegisterValidation("is_non_admin", validateRoleNonAdmin)
+		v.RegisterValidation("custom_ext", customExtImage)
+		v.RegisterValidation("non_admin_email", validateNonAdminEmail)
+	}
 	return &UserValidation{
-		validate: validate,
+		validate: v,
 	}
 }
 
@@ -76,4 +79,10 @@ func customExtImage(fl validator.FieldLevel) bool {
 	validExts := []string{".jpg", ".jpeg", ".png"}
 
 	return slices.Contains(validExts, ext)
+}
+
+func validateNonAdminEmail(fl validator.FieldLevel) bool {
+	email := fl.Field().String()
+
+	return email != constants.EMAIL_ADMIN_PEGAWAI && email != constants.EMAIL_ADMIN_MAHASISWA && email != constants.EMAIL_ADMIN_KEUANGAN && email != constants.EMAIL_SUPER_ADMIN
 }

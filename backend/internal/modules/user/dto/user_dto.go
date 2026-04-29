@@ -62,6 +62,10 @@ type (
 		DetailId uint `uri:"detail_id" binding:"required,gt=0"`
 	}
 
+	UserEmailUri struct {
+		Email string `uri:"email" binding:"required,email,non_admin_email"`
+	}
+
 	UserAdminCreateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"required,email"`

@@ -123,7 +123,14 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 }
 
 func (c *userController) GetUserByEmail(ctx *gin.Context) {
-	email := ctx.Param("email")
+	var req dto.UserEmailUri
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	email := req.Email
 	result, err := c.userService.GetUserByEmail(ctx.Request.Context(), email)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
