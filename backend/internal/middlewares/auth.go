@@ -59,13 +59,17 @@ func AuthMiddleware(jwtService service.JwtService) gin.HandlerFunc {
 			return
 		}
 
-		userDetailId, err := jwtService.GetDetailIDByToken(authHeader)
+		userDetailIdPtr, err := jwtService.GetDetailIDByToken(authHeader)
 		if err != nil {
 			res := utils.BuildResponseFailed(dto.FAILED_AUTH, err.Error(), nil)
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 			return
 		}
 
+		var userDetailId uint
+		if userDetailIdPtr != nil {
+			userDetailId = *userDetailIdPtr
+		}
 		ctx.Set("user_id", userId)
 		ctx.Set("detail_id", userDetailId)
 		ctx.Set("role_name", roleName)

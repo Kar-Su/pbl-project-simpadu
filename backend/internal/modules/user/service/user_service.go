@@ -192,7 +192,7 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUp
 			user.ImageUrl = &fileName
 		}
 	}
-	updatedUser, err := s.userRepository.UpdateByRoleAndDetailID(ctx, s.db, roleId, detailId, user)
+	updatedUser, err := s.userRepository.Update(ctx, s.db, user.ID, user)
 	if err != nil {
 		return dto.UserResponse{}, dto.ErrUpdateUser
 	}
@@ -246,7 +246,7 @@ func (s *userService) GetUserByID(ctx context.Context, userId uuid.UUID) (dto.Us
 func (s *userService) GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByEmail(ctx, s.db, email)
 	if err != nil {
-		if errors.Is(err, dto.ErrUserNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return dto.UserResponse{}, dto.ErrUserNotFound
 		}
 		log.Printf("Internal Error: %v", err)

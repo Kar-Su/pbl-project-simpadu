@@ -13,7 +13,6 @@ import (
 type UserRepository interface {
 	Register(ctx context.Context, tx *gorm.DB, user entities.User) error
 	Update(ctx context.Context, tx *gorm.DB, userid uuid.UUID, user entities.User) (entities.User, error)
-	UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint, user entities.User) (entities.User, error)
 	Delete(ctx context.Context, tx *gorm.DB, userId uuid.UUID) error
 	DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) error
 	GetUserByID(ctx context.Context, tx *gorm.DB, userId uuid.UUID) (entities.User, error)
@@ -49,28 +48,12 @@ func (r *userRepository) Update(ctx context.Context, tx *gorm.DB, userId uuid.UU
 		tx = r.db
 	}
 
-	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("id = ?", user.ID).Select("*").Updates(&user).Error; err != nil {
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("id = ?", user.ID).Select("*").Omit("id", "created_at").Updates(&user).Error; err != nil {
 		return entities.User{}, err
 	}
 
 	var updatedUser entities.User
-	if err := tx.WithContext(ctx).First(&updatedUser, "id = ?", userId).Error; err != nil {
-		return entities.User{}, err
-	}
-
-	return user, nil
-}
-
-func (r *userRepository) UpdateByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint, user entities.User) (entities.User, error) {
-	if tx == nil {
-		tx = r.db
-	}
-	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("role_id = ? AND detail_id = ?", roleId, detailId).Select("*").Updates(&user).Error; err != nil {
-		return entities.User{}, err
-	}
-
-	var updatedUser entities.User
-	if err := tx.WithContext(ctx).First(&updatedUser, "role_id = ? AND detail_id = ?", roleId, detailId).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Role").First(&updatedUser, "id = ?", userId).Error; err != nil {
 		return entities.User{}, err
 	}
 

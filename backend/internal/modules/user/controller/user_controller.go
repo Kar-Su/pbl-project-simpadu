@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	roleService "web-hosting/internal/modules/role/service"
 	"web-hosting/internal/modules/user/dto"
@@ -256,11 +257,12 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 		return
 	}
 
-	userDetailId := ctx.MustGet("detail_id").(*uint)
 	userRoleName := ctx.MustGet("role_name").(string)
+	userDetailId := ctx.MustGet("detail_id").(uint)
 
-	if *userDetailId != reqUri.DetailId || !(userRoleName == constants.ROLE_ADMIN || userDetailId == &reqUri.DetailId) {
+	if userDetailId != reqUri.DetailId && userRoleName != constants.ROLE_SUPER_ADMIN {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, "Unauthorized", nil)
+		log.Println(userRoleName)
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
 		return
 	}
