@@ -15,8 +15,8 @@ import (
 )
 
 type UserService interface {
-	CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) (dto.UserResponse, error)
-	CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) (dto.UserResponse, error)
+	CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) error
+	CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) error
 	UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error)
 	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error)
 	DeleteAdmin(ctx context.Context, userId uuid.UUID) error
@@ -41,21 +41,21 @@ func NewUserService(userRepository repository.UserRepository, roleService roleSe
 	}
 }
 
-func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) (dto.UserResponse, error) {
+func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) error {
 	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
-		return dto.UserResponse{}, constants.ErrInternalErr
+		return constants.ErrInternalErr
 	}
 	if isExist {
-		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
+		return dto.ErrEmailAlreadyExists
 	}
 
 	roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
 	if err != nil {
 		if errors.Is(err, dto.ErrRoleNotFound) {
-			return dto.UserResponse{}, dto.ErrRoleNotFound
+			return dto.ErrRoleNotFound
 		}
-		return dto.UserResponse{}, constants.ErrInternalErr
+		return constants.ErrInternalErr
 	}
 
 	userEntity := entities.User{
@@ -71,21 +71,20 @@ func (s *userService) CreateAdmin(ctx context.Context, req dto.UserAdminCreateRe
 		fileName := req.Image.Filename
 		userEntity.ImageUrl = &fileName
 	}
-	userCreated, err := s.userRepository.Register(ctx, s.db, userEntity)
-	if err != nil {
-		return dto.UserResponse{}, dto.ErrCreateUser
+	if err := s.userRepository.Register(ctx, s.db, userEntity); err != nil {
+		return dto.ErrCreateUser
 	}
 
-	return dto.ToUserResponse(userCreated), nil
+	return nil
 }
 
-func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) (dto.UserResponse, error) {
+func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) error {
 	_, isExist, err := s.userRepository.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
-		return dto.UserResponse{}, constants.ErrInternalErr
+		return constants.ErrInternalErr
 	}
 	if isExist {
-		return dto.UserResponse{}, dto.ErrEmailAlreadyExists
+		return dto.ErrEmailAlreadyExists
 	}
 	roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
 
@@ -102,12 +101,11 @@ func (s *userService) CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCr
 		fileName := req.Image.Filename
 		userEntity.ImageUrl = &fileName
 	}
-	userCreated, err := s.userRepository.Register(ctx, s.db, userEntity)
-	if err != nil {
-		return dto.UserResponse{}, dto.ErrCreateUser
+	if err := s.userRepository.Register(ctx, s.db, userEntity); err != nil {
+		return dto.ErrCreateUser
 	}
 
-	return dto.ToUserResponse(userCreated), nil
+	return nil
 }
 
 func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error) {
@@ -261,7 +259,7 @@ func (s *userService) GetUserByRole(ctx context.Context, roleId uint) ([]dto.Use
 func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uint) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
-		if errors.Is(err, dto.ErrUserNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return dto.UserResponse{}, dto.ErrUserNotFound
 		}
 		return dto.UserResponse{}, constants.ErrInternalErr

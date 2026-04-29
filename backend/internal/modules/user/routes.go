@@ -22,7 +22,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 		apiRoutes.DELETE("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.DeleteAdmin)
 
 		apiRoutes.GET("/user/role/:role_name", middlewares.AuthMiddleware(jwtService), userController.GetUserByRole)
-		apiRoutes.GET("/user/email/:email", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
+		apiRoutes.GET("/user/email/", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
 		apiRoutes.POST("/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), userController.RegisterNonAdmin)
 
 		apiRoutes.GET("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.GetUserNonAdmin)

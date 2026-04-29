@@ -123,9 +123,9 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 }
 
 func (c *userController) GetUserByEmail(ctx *gin.Context) {
-	var req dto.UserEmailUri
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil)
+	var req dto.UserEmailRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -214,13 +214,13 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	data, err := c.userService.CreateAdmin(ctx.Request.Context(), reqBody)
+	err := c.userService.CreateAdmin(ctx.Request.Context(), reqBody)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, data)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, nil)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -231,13 +231,13 @@ func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	data, err := c.userService.CreateNonAdmin(ctx.Request.Context(), reqBody)
+	err := c.userService.CreateNonAdmin(ctx.Request.Context(), reqBody)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, data)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, nil)
 	ctx.JSON(http.StatusOK, res)
 }
 

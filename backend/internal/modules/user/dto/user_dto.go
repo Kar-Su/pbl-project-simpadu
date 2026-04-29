@@ -62,24 +62,24 @@ type (
 		DetailId uint `uri:"detail_id" binding:"required,gt=0"`
 	}
 
-	UserEmailUri struct {
-		Email string `uri:"email" binding:"required,email,non_admin_email"`
+	UserEmailRequest struct {
+		Email string `json:"email" binding:"required,email,non_admin_email"`
 	}
 
 	UserAdminCreateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"required,email"`
 		Password string                `json:"password" form:"password" binding:"required,min=8"`
-		RoleName string                `json:"role_name" form:"role_kode" binding:"required, custom_role"`
+		RoleName string                `json:"role_name" form:"role_kode" binding:"required,custom_role"`
 		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0"`
-		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext"`
 	}
 
 	UserNonAdminCreateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"required,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"required,email"`
 		Password string                `json:"password" form:"password" binding:"required,min=8"`
-		RoleName string                `json:"role_name" form:"role_kode" binding:"required, is_non_admin"`
+		RoleName string                `json:"role_name" form:"role_kode" binding:"required,is_non_admin"`
 		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required,gt=0"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
 	}
@@ -88,18 +88,18 @@ type (
 		Name     string                `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"omitempty,email"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8"`
-		RoleName string                `json:"role_kode" form:"role_kode" binding:"omitempty, custom_role"`
+		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty,custom_role"`
 		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0"`
-		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext"`
 	}
 
 	UserNonAdminUpdateRequest struct {
 		Name     string                `json:"name" form:"name" binding:"omitempty,min=2,max=255"`
 		Email    string                `json:"email" form:"email" binding:"omitempty,email"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8"`
-		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty, is_non_admin"`
+		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty,is_non_admin"`
 		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0"`
-		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext"`
 	}
 
 	UserLoginRequest struct {
