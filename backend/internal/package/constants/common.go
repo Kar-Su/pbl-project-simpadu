@@ -16,16 +16,13 @@ const (
 	JWT_ACCESS_EXP  = 1 * time.Hour
 	JWT_REFRESH_EXP = 24 * time.Hour
 
-	ROLE_ID_SUPER_ADMIN = 1
-	ROLE_ID_ADMIN       = 2
-	ROLE_ID_MAHASISWA   = 3
-	ROLE_ID_DOSEN       = 4
-
 	//! Nama role harus huruf kecil dan tanpa spasi di golang
-	ROLE_SUPER_ADMIN = "super-admin"
-	ROLE_ADMIN       = "admin"
-	ROLE_MAHASISWA   = "mahasiswa"
-	ROLE_DOSEN       = "dosen"
+	ROLE_SUPER_ADMIN     = "super-admin"
+	ROLE_ADMIN_AKADEMIK  = "admin-akademik"
+	ROLE_ADMIN_PEGAWAI   = "admin-pegawai"
+	ROLE_ADMIN_MAHASISWA = "admin-mahasiswa"
+	ROLE_ADMIN_KEUANGAN  = "admin-keuangan"
+	ROLE_DOSEN           = "dosen"
 
 	EMAIL_SUPER_ADMIN     = "tim1@poliban.ac.id"
 	EMAIL_ADMIN_PEGAWAI   = "tim2@poliban.ac.id"

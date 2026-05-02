@@ -21,7 +21,6 @@ func NewUserValidation() *UserValidation {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if ok {
 		v.SetTagName("binding")
-		v.RegisterValidation("custom_role", validateRole)
 		v.RegisterValidation("is_non_admin", validateRoleNonAdmin)
 		v.RegisterValidation("custom_ext", customExtImage)
 		v.RegisterValidation("non_admin_email", validateNonAdminEmail)
@@ -51,19 +50,11 @@ func (v *UserValidation) ValidateUpdateNonAdminRequest(req dto.UserNonAdminUpdat
 	return v.validate.Struct(req)
 }
 
-func validateRole(fl validator.FieldLevel) bool {
-	role := fl.Field().String()
-
-	role = help.NormalizeString(role)
-
-	return role == constants.ROLE_ADMIN || role == constants.ROLE_SUPER_ADMIN || role == constants.ROLE_MAHASISWA || role == constants.ROLE_DOSEN
-}
-
 func validateRoleNonAdmin(fl validator.FieldLevel) bool {
 	role := fl.Field().String()
 	role = help.NormalizeString(role)
 
-	return role != constants.ROLE_ADMIN && role != constants.ROLE_SUPER_ADMIN
+	return role != constants.ROLE_ADMIN_PEGAWAI && role != constants.ROLE_ADMIN_MAHASISWA && role != constants.ROLE_ADMIN_KEUANGAN && role != constants.ROLE_SUPER_ADMIN && role != constants.ROLE_DOSEN && role != constants.ROLE_ADMIN_AKADEMIK
 }
 
 func customExtImage(fl validator.FieldLevel) bool {

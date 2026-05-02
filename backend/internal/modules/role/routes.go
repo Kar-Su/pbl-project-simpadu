@@ -15,11 +15,11 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	jwtService := do.MustInvokeNamed[service.JwtService](injector, constants.JWTService)
 	apiRoutes := router.Group("/api")
 	{
-		apiRoutes.GET("/role", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.GetAllRole)
+		apiRoutes.GET("/role", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_ADMIN_KEUANGAN, constants.ROLE_ADMIN_MAHASISWA), roleController.GetAllRole)
 
-		apiRoutes.PUT("/super/role/:role_name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.Update)
-		apiRoutes.POST("/super/role", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.Create)
-		apiRoutes.DELETE("/super/role/:role_name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN), roleController.Delete)
+		apiRoutes.PUT("/super/role/:role_name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), roleController.Update)
+		apiRoutes.POST("/super/role", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), roleController.Create)
+		apiRoutes.DELETE("/super/role/:role_name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), roleController.Delete)
 
 	}
 
