@@ -1,0 +1,840 @@
+basePath: /api
+definitions:
+  multipart.FileHeader:
+    properties:
+      filename:
+        type: string
+      header:
+        $ref: '#/definitions/textproto.MIMEHeader'
+      size:
+        format: int64
+        type: integer
+    type: object
+  textproto.MIMEHeader:
+    additionalProperties:
+      items:
+        type: string
+      type: array
+    type: object
+  web-hosting_internal_database_entities.Role:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  web-hosting_internal_modules_auth_dto.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        example: MBG-JAYA67
+        type: string
+    required:
+    - refresh_token
+    type: object
+  web-hosting_internal_modules_auth_dto.RefreshTokenResponse:
+    properties:
+      expired_at:
+        example: 172800
+        type: integer
+      refresh_token:
+        example: MBG-JAYA67
+        type: string
+    type: object
+  web-hosting_internal_modules_auth_dto.ResetPasswordRequest:
+    properties:
+      email:
+        example: rezi.gaming@test.com //required
+        type: string
+      new_password:
+        example: inipasswordrezi //required, min 8 char
+        minLength: 8
+        type: string
+    required:
+    - email
+    - new_password
+    type: object
+  web-hosting_internal_modules_auth_dto.TokenResponse:
+    properties:
+      access_token:
+        example: Prabowo-2029
+        type: string
+      refresh_token:
+        example: MBG-JAYA67
+        type: string
+      role_name:
+        example: raja-sawit
+        type: string
+      user_name:
+        example: Rezi
+        type: string
+    type: object
+  web-hosting_internal_modules_role_dto.RoleCreateRequest:
+    properties:
+      role_name:
+        example: raja-sawit // required
+        type: string
+    required:
+    - role_name
+    type: object
+  web-hosting_internal_modules_role_dto.RoleUpdateRequest:
+    properties:
+      role_name:
+        example: raja-solo // required
+        type: string
+    required:
+    - role_name
+    type: object
+  web-hosting_internal_modules_user_dto.UserAdminCreateRequest:
+    type: object
+  web-hosting_internal_modules_user_dto.UserAdminUpdateRequest:
+    type: object
+  web-hosting_internal_modules_user_dto.UserEmailRequest:
+    properties:
+      email:
+        example: rezi@example.com // required, must be a valid email address, cannot
+          be an admin email
+        type: string
+    required:
+    - email
+    type: object
+  web-hosting_internal_modules_user_dto.UserLoginRequest:
+    properties:
+      email:
+        example: rezi@example.com // required, must be a valid email address
+        type: string
+      password:
+        example: inipasswordrezi // required, min 8 characters
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  web-hosting_internal_modules_user_dto.UserNonAdminCreateRequest:
+    type: object
+  web-hosting_internal_modules_user_dto.UserNonAdminUpdateRequest:
+    type: object
+  web-hosting_internal_modules_user_dto.UserResponse:
+    properties:
+      detail_id:
+        example: 1
+        type: integer
+      email:
+        example: rezi@example.com
+        type: string
+      id:
+        example: ijq0rq0jfa //(UUID v7)
+        type: string
+      image_url:
+        example: path/to/image.jpg
+        type: string
+      name:
+        example: rezi
+        type: string
+      role_name:
+        example: raja-sawit
+        type: string
+    type: object
+  web-hosting_internal_package_utils.Response:
+    properties:
+      data: {}
+      error: {}
+      message:
+        type: string
+      meta: {}
+      success:
+        type: boolean
+    type: object
+host: localhost
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: apakek.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: TIM 1 API
+  version: "1.0"
+paths:
+  /api/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Proses autentikasi user untuk mendapatkan Access Token dan Refresh
+        Token
+      parameters:
+      - description: Payload Login
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserLoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      summary: User Login
+      tags:
+      - auth
+  /api/auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: Menghapus session user dan menonaktifkan token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: User Logout
+      tags:
+      - auth
+  /api/auth/refresh-token:
+    post:
+      consumes:
+      - application/json
+      description: Mendapatkan access token baru menggunakan refresh token yang masih
+        valid
+      parameters:
+      - description: Payload Refresh Token
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_auth_dto.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      summary: Refresh Access Token
+      tags:
+      - auth
+  /api/auth/refresh-token/{refresh_token}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mengambil data detail dari sebuah refresh token berdasarkan string token
+        Access:
+      parameters:
+      - description: Refresh Token
+        in: path
+        name: refresh_token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_auth_dto.RefreshTokenResponse'
+              type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      summary: Cari Detail Refresh Token
+      tags:
+      - auth
+  /api/auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Mengubah password user. Hanya bisa dilakukan pemilik akun atau
+        Super Admin.
+      parameters:
+      - description: Payload Reset Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_auth_dto.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Reset Password User
+      tags:
+      - auth
+  /api/me:
+    get:
+      description: Mengambil data profil user yang sedang login berdasarkan token.
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Current User
+      tags:
+      - user
+  /api/super/role:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan role baru ke dalam sistem.
+        Akses: Khusus Super Admin.
+      parameters:
+      - description: Payload Create Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_role_dto.RoleCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_database_entities.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Buat Role Baru
+      tags:
+      - role (super)
+  /api/super/role/{role_name}:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Menghapus role dari sistem berdasarkan nama role.
+        Akses: Khusus Super Admin.
+      parameters:
+      - description: Nama Role yang akan dihapus
+        in: path
+        name: role_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Hapus Role
+      tags:
+      - role (super)
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengubah data role berdasarkan nama role yang ada di URI.
+        Akses: Khusus Super Admin.
+      parameters:
+      - description: Nama Role Saat Ini
+        in: path
+        name: role_name
+        required: true
+        type: string
+      - description: Payload Update Role
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_role_dto.RoleUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_database_entities.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Role
+      tags:
+      - role (super)
+  /api/super/user:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Membuat user admin baru (Pegawai/Admin).
+        Akses: Super Admin.
+      parameters:
+      - description: Payload Admin
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserAdminCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Register Admin User
+      tags:
+      - user (super)
+  /api/super/user/{id}:
+    delete:
+      description: |-
+        Menghapus admin secara permanen.
+        Akses: Super Admin.
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Admin User
+      tags:
+      - user (super)
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengupdate data admin berdasarkan ID.
+        Akses: Super Admin.
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Payload Update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserAdminUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Admin User
+      tags:
+      - user (super)
+  /api/user:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Membuat user non-admin (Mahasiswa/Pegawai).
+        Akses: Super Admin, Admin Mahasiswa, Admin Pegawai.
+      parameters:
+      - description: Payload Non-Admin
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserNonAdminCreateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Register Non-Admin User
+      tags:
+      - user
+  /api/user/{id}:
+    get:
+      description: |-
+        Mengambil data user berdasarkan UUID.
+        Akses: Super Admin.
+      parameters:
+      - description: User UUID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User By ID
+      tags:
+      - user (super)
+  /api/user/email/:
+    get:
+      consumes:
+      - application/json
+      description: Mencari user spesifik menggunakan email.
+      parameters:
+      - description: Email Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserEmailRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User By Email
+      tags:
+      - user
+  /api/user/role/{role_name}:
+    get:
+      description: 'Mengambil daftar user berdasarkan nama role (misal: mahasiswa,
+        pegawai).'
+      parameters:
+      - description: Role Name
+        in: path
+        name: role_name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Users By Role Name
+      tags:
+      - user
+  /api/user/sync/{role_name}/{detail_id}:
+    delete:
+      description: |-
+        Menghapus user non-admin.
+        Akses: Super Admin, Admin Pegawai, Admin Mahasiswa.
+      parameters:
+      - description: Role Name
+        in: path
+        name: role_name
+        required: true
+        type: string
+      - description: Detail ID
+        in: path
+        name: detail_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete User Non-Admin
+      tags:
+      - user
+    get:
+      description: Mendapatkan detail user berdasarkan role dan ID detail.
+      parameters:
+      - description: Role Name
+        in: path
+        name: role_name
+        required: true
+        type: string
+      - description: Detail ID
+        in: path
+        name: detail_id
+        required: true
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Sync/Get User Non-Admin
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update profil user. Hanya bisa dilakukan oleh pemilik akun atau
+        Super Admin.
+      parameters:
+      - description: Role Name
+        in: path
+        name: role_name
+        required: true
+        type: string
+      - description: Detail ID
+        in: path
+        name: detail_id
+        required: true
+        type: integer
+      - description: Update Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserNonAdminUpdateRequest'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+      security:
+      - ApiKeyAuth: []
+      summary: Update User Non-Admin
+      tags:
+      - user
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'Format: Bearer <access token>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -50,6 +50,15 @@ func NewUserController(injector do.Injector, userServ service.UserService, roleS
 	}
 }
 
+// Me godoc
+// @Summary      Get Current User
+// @Description  Mengambil data profil user yang sedang login berdasarkan token.
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Success      200  {object}  utils.Response{data=dto.UserResponse}
+// @Failure      400  {object}  utils.ResponseErr
+// @Failure      500  {object}  utils.ResponseErr
+// @Router       /api/me [get]
 func (c *userController) Me(ctx *gin.Context) {
 	userId := ctx.MustGet("user_id").(string)
 
@@ -70,6 +79,17 @@ func (c *userController) Me(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetUser godoc
+// @Summary      Get User By ID
+// @Description  Mengambil data user berdasarkan UUID.
+// @Description  Akses: Super Admin.
+// @Tags         user (super)
+// @Security     ApiKeyAuth
+// @Param        id   path      string  true  "User UUID"
+// @Success      200  {object}  utils.Response{data=dto.UserResponse}
+// @Failure      400  {object}  utils.ResponseErr
+// @Failure      500  {object}  utils.ResponseErr
+// @Router       /api/user/{id} [get]
 func (c *userController) GetUser(ctx *gin.Context) {
 	userId := ctx.Param("id")
 
@@ -89,6 +109,17 @@ func (c *userController) GetUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetUserNonAdmin godoc
+// @Summary      Sync/Get User Non-Admin
+// @Description  Mendapatkan detail user berdasarkan role dan ID detail.
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Param        role_name  path      string  true  "Role Name"
+// @Param        detail_id  path      int     true  "Detail ID"
+// @Success      200        {object}  utils.Response{data=dto.UserResponse}
+// @Failure      400        {object}  utils.ResponseErr
+// @Failure      500        {object}  utils.ResponseErr
+// @Router       /api/user/sync/{role_name}/{detail_id} [get]
 func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 	var req dto.UserSyncURI
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -123,6 +154,17 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetUserByEmail godoc
+// @Summary      Get User By Email
+// @Description  Mencari user spesifik menggunakan email.
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Accept       json
+// @Param        request  body      dto.UserEmailRequest  true  "Email Payload"
+// @Success      200      {object}  utils.Response{data=dto.UserResponse}
+// @Failure      400      {object}  utils.ResponseErr
+// @Failure      500      {object}  utils.ResponseErr
+// @Router       /api/user/email/ [get]
 func (c *userController) GetUserByEmail(ctx *gin.Context) {
 	var req dto.UserEmailRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -148,6 +190,16 @@ func (c *userController) GetUserByEmail(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetUserByRole godoc
+// @Summary      Get Users By Role Name
+// @Description  Mengambil daftar user berdasarkan nama role (misal: mahasiswa, pegawai).
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Param        role_name  path      string  true  "Role Name"
+// @Success      200        {object}  utils.Response{data=[]dto.UserResponse}
+// @Failure      400        {object}  utils.ResponseErr
+// @Failure      500        {object}  utils.ResponseErr
+// @Router       /api/user/role/{role_name} [get]
 func (c *userController) GetUserByRole(ctx *gin.Context) {
 	var req dto.UserRoleURI
 	if err := ctx.ShouldBindUri(&req); err != nil {
@@ -183,6 +235,20 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// UpdateAdmin godoc
+// @Summary      Update Admin User
+// @Description  Mengupdate data admin berdasarkan ID.
+// @Description  Akses: Super Admin.
+// @Tags         user (super)
+// @Security     ApiKeyAuth
+// @Accept       json
+// @Produce      json
+// @Param        id       path      string true  "User UUID"
+// @Param        request  body      dto.UserAdminUpdateRequest  true  "Payload Update"
+// @Success      200      {object}  utils.Response{data=dto.UserResponse}
+// @Failure      400      {object}  utils.ResponseErr
+// @Failure      500      {object}  utils.ResponseErr
+// @Router       /api/super/user/{id} [put]
 func (c *userController) UpdateAdmin(ctx *gin.Context) {
 	var reqBody dto.UserAdminUpdateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
@@ -208,6 +274,19 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 
 }
 
+// RegisterAdmin godoc
+// @Summary      Register Admin User
+// @Description  Membuat user admin baru (Pegawai/Admin).
+// @Description  Akses: Super Admin.
+// @Tags         user (super)
+// @Security     ApiKeyAuth
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.UserAdminCreateRequest  true  "Payload Admin"
+// @Success      200  {object}  utils.Response
+// @Failure      400  {object}  utils.ResponseErr
+// @Failure      500  {object}  utils.ResponseErr
+// @Router       /api/super/user [post]
 func (c *userController) RegisterAdmin(ctx *gin.Context) {
 	var reqBody dto.UserAdminCreateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
@@ -217,6 +296,11 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 	}
 	err := c.userService.CreateAdmin(ctx.Request.Context(), reqBody)
 	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -225,6 +309,19 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// RegisterNonAdmin godoc
+// @Summary      Register Non-Admin User
+// @Description  Membuat user non-admin (Mahasiswa/Pegawai).
+// @Description  Akses: Super Admin, Admin Mahasiswa, Admin Pegawai.
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Accept       json
+// @Param        request  body      dto.UserNonAdminCreateRequest  true  "Payload Non-Admin"
+// @Success      200      {object}  utils.Response
+// @Failure      400      {object}  utils.ResponseErr
+// @Failure      500      {object}  utils.ResponseErr
+//
+// @Router       /api/user [post]
 func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 	var reqBody dto.UserNonAdminCreateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
@@ -234,6 +331,11 @@ func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 	}
 	err := c.userService.CreateNonAdmin(ctx.Request.Context(), reqBody)
 	if err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_REGISTER_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -242,6 +344,19 @@ func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// UpdateNonAdmin godoc
+// @Summary      Update User Non-Admin
+// @Description  Update profil user. Hanya bisa dilakukan oleh pemilik akun atau Super Admin.
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Accept       json
+// @Param        role_name  path      string                         true  "Role Name"
+// @Param        detail_id  path      int                            true  "Detail ID"
+// @Param        request    body      dto.UserNonAdminUpdateRequest  true  "Update Payload"
+// @Success      200        {object}  utils.Response{data=dto.UserResponse}
+// @Failure      400        {object}  utils.ResponseErr
+// @Failure      500        {object}  utils.ResponseErr
+// @Router       /api/user/sync/{role_name}/{detail_id} [put]
 func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 	var reqUri dto.UserSyncURI
 	if err := ctx.ShouldBindUri(&reqUri); err != nil {
@@ -290,9 +405,25 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// DeleteAdmin godoc
+// @Summary      Delete Admin User
+// @Description  Menghapus admin secara permanen.
+// @Description  Akses: Super Admin.
+// @Tags         user (super)
+// @Security     ApiKeyAuth
+// @Param        id   path      string  true  "User UUID"
+// @Success      200  {object}  utils.Response
+// @Failure      400  {object}  utils.ResponseErr
+// @Failure      500  {object}  utils.ResponseErr
+// @Router       /api/super/user/{id} [delete]
 func (c *userController) DeleteAdmin(ctx *gin.Context) {
 	userId := ctx.Param("id")
 	if err := c.userService.DeleteAdmin(ctx.Request.Context(), uuid.MustParse(userId)); err != nil {
+		if errors.Is(err, constants.ErrInternalErr) {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_USER, err.Error(), nil)
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+			return
+		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_USER, err.Error(), nil)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -301,6 +432,18 @@ func (c *userController) DeleteAdmin(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// DeleteNonAdmin godoc
+// @Summary      Delete User Non-Admin
+// @Description  Menghapus user non-admin.
+// @Description  Akses: Super Admin, Admin Pegawai, Admin Mahasiswa.
+// @Tags         user
+// @Security     ApiKeyAuth
+// @Param        role_name  path      string  true  "Role Name"
+// @Param        detail_id  path      int     true  "Detail ID"
+// @Success      200        {object}  utils.Response
+// @Failure      400        {object}  utils.ResponseErr
+// @Failure      500        {object}  utils.ResponseErr
+// @Router       /api/user/sync/{role_name}/{detail_id} [delete]
 func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 	var reqUri dto.UserSyncURI
 	if err := ctx.ShouldBindUri(&reqUri); err != nil {

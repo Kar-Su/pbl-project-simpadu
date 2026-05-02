@@ -1,11 +1,17 @@
 package utils
 
 type Response struct {
-	Success bool   `json:"success"`
-	Message string `json:"message"`
-	Error   any    `json:"error,omitempty"`
+	Success bool   `json:"success" example:"true"`
+	Message string `json:"message" example:"POKOKNYA SUKSES"`
+	Error   any    `json:"error,omitempty" example:"null"`
 	Data    any    `json:"data,omitempty"`
-	Meta    any    `json:"meta,omitempty"`
+}
+
+type ResponseErr struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"Internal | Request | Unauthorized error"`
+	Error   any    `json:"error,omitempty" example:"Detail errornya"`
+	Data    any    `json:"data,omitempty" example:"null"`
 }
 
 type EmptyObj struct{}

@@ -27,23 +27,23 @@ var (
 
 type (
 	RefreshTokenRequest struct {
-		RefreshToken string `json:"refresh_token" binding:"required"`
+		RefreshToken string `json:"refresh_token" binding:"required" example:"MBG-JAYA67"`
 	}
 
 	TokenResponse struct {
-		UserName     string `json:"user_name"`
-		AccessToken  string `json:"access_token"`
-		RefreshToken string `json:"refresh_token"`
-		RoleName     string `json:"role_name"`
+		UserName     string `json:"user_name" example:"Rezi"`
+		AccessToken  string `json:"access_token" example:"Prabowo-2029"`
+		RefreshToken string `json:"refresh_token" example:"MBG-JAYA67"`
+		RoleName     string `json:"role_name" example:"raja-sawit"`
 	}
 
 	ResetPasswordRequest struct {
-		Email       string `json:"email" binding:"required,email"`
-		NewPassword string `json:"new_password" binding:"required,min=8"`
+		Email       string `json:"email" binding:"required,email" example:"rezi.gaming@test.com //required"`
+		NewPassword string `json:"new_password" binding:"required,min=8" example:"inipasswordrezi //required, min 8 char"`
 	}
 
 	RefreshTokenResponse struct {
-		RefreshToken string `json:"refresh_token"`
-		Exp          int64  `json:"expired_at"`
+		RefreshToken string `json:"refresh_token" example:"MBG-JAYA67"`
+		Exp          int64  `json:"expired_at" example:"172800"`
 	}
 )

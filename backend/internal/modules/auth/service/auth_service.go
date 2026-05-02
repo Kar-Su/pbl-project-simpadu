@@ -142,6 +142,7 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 	}
 
 	return authDto.TokenResponse{
+		UserName:     refreshTokenEntity.User.Name,
 		AccessToken:  accessToken,
 		RefreshToken: refreshTokenNew,
 		RoleName:     refreshTokenEntity.User.Role.Name,

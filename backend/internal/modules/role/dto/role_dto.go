@@ -23,16 +23,16 @@ var (
 
 type (
 	RoleResponse struct {
-		ID   uint   `json:"id"`
-		Name string `json:"name"`
+		ID   uint   `json:"id" example:"67"`
+		Name string `json:"name" example:"raja-sawit"`
 	}
 
 	RoleCreateRequest struct {
-		RoleName string `json:"role_name" binding:"required"`
+		RoleName string `json:"role_name" binding:"required" example:"raja-sawit // required"`
 	}
 
 	RoleUpdateRequest struct {
-		RoleName string `json:"role_name" binding:"required"`
+		RoleName string `json:"role_name" binding:"required" example:"raja-solo // required"`
 	}
 
 	RoleNameURI struct {

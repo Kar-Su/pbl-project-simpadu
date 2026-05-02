@@ -34,6 +34,18 @@ func NewAuthController(injector do.Injector, authService authServ.AuthService, d
 	}
 }
 
+// FindRefreshToken godoc
+// @Summary      Cari Detail Refresh Token
+// @Description  Mengambil data detail dari sebuah refresh token berdasarkan string token
+// @Description Access:
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        refresh_token  path      string  true  "Refresh Token"
+// @Success      200  {object}  utils.Response{data=dto.RefreshTokenResponse}
+// @Failure      404  {object}  utils.Response
+// @Failure      500  {object}  utils.Response
+// @Router       /api/auth/refresh-token/{refresh_token} [get]
 func (c *authController) FindRefreshToken(ctx *gin.Context) {
 	token := ctx.Param("refresh_token")
 
@@ -52,6 +64,17 @@ func (c *authController) FindRefreshToken(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// Login godoc
+// @Summary      User Login
+// @Description  Proses autentikasi user untuk mendapatkan Access Token dan Refresh Token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request body userDto.UserLoginRequest  true  "Payload Login"
+// @Success      200  {object}  utils.Response{data=dto.TokenResponse}
+// @Failure      400  {object}  utils.Response
+// @Failure      500  {object}  utils.Response
+// @Router       /api/auth/login [post]
 func (c *authController) Login(ctx *gin.Context) {
 	var req userDto.UserLoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -75,6 +98,17 @@ func (c *authController) Login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// Logout godoc
+// @Summary      User Logout
+// @Description  Menghapus session user dan menonaktifkan token
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  utils.Response
+// @Failure      400  {object}  utils.Response
+// @Failure      500  {object}  utils.Response
+// @Router       /api/auth/logout [post]
 func (c *authController) Logout(ctx *gin.Context) {
 	userId := ctx.MustGet("user_id").(string)
 
@@ -92,6 +126,18 @@ func (c *authController) Logout(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// RefreshToken godoc
+// @Summary      Refresh Access Token
+// @Description  Mendapatkan access token baru menggunakan refresh token yang masih valid
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        request  body      dto.RefreshTokenRequest  true  "Payload Refresh Token"
+// @Success      200  {object}  utils.Response{data=dto.TokenResponse}
+// @Failure      401  {object}  utils.Response
+// @Failure      400  {object}  utils.ResponseErr
+// @Failure      500  {object}  utils.ResponseErr
+// @Router       /api/auth/refresh-token [post]
 func (c *authController) RefreshToken(ctx *gin.Context) {
 	var req dto.RefreshTokenRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -122,6 +168,19 @@ func (c *authController) RefreshToken(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// ResetPassword godoc
+// @Summary      Reset Password User
+// @Description  Mengubah password user. Hanya bisa dilakukan pemilik akun atau Super Admin.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        request  body 	dto.ResetPasswordRequest  true  "Payload Reset Password"
+// @Success      200  {object}  utils.Response
+// @Failure      401  {object}  utils.ResponseErr
+// @Failure      400  {object}  utils.ResponseErr
+// @Failure      500  {object}  utils.ResponseErr
+// @Router       /api/auth/reset-password [post]
 func (c *authController) ResetPassword(ctx *gin.Context) {
 	var req dto.ResetPasswordRequest
 

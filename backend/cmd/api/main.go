@@ -12,6 +12,11 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do/v2"
+
+	_ "web-hosting/docs" // Ganti dengan path modul di go.mod kamu
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func run(server *gin.Engine) {
@@ -30,6 +35,25 @@ func run(server *gin.Engine) {
 	}
 }
 
+// @title           TIM 1 API
+// @version         1.0
+// @description     apakek.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost
+// @BasePath  /api
+
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in                          header
+// @name                        Authorization
+// @description                 Format: Bearer <access token>
 func main() {
 	injector := do.New()
 
@@ -41,5 +65,8 @@ func main() {
 	user.RegisterRoutes(server, injector)
 	auth.RegisterRoutes(server, injector)
 	role.RegisterRoutes(server, injector)
+
+	server.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	run(server)
 }

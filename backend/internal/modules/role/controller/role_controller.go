@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"net/http"
+	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/role/dto"
 	"web-hosting/internal/modules/role/service"
 	"web-hosting/internal/package/constants"
@@ -13,6 +14,8 @@ import (
 	"github.com/samber/do/v2"
 	"gorm.io/gorm"
 )
+
+var _ = entities.Role{}
 
 type RoleController interface {
 	Create(ctx *gin.Context)
@@ -33,6 +36,19 @@ func NewRoleController(injector do.Injector, roleService service.RoleService, db
 	}
 }
 
+// CreateRole godoc
+// @Summary      Buat Role Baru
+// @Description  Menambahkan role baru ke dalam sistem.
+// @Description  Akses: Khusus Super Admin.
+// @Tags         role (super)
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        request  body      dto.RoleCreateRequest  true  "Payload Create Role"
+// @Success      200  {object}  utils.Response{data=entities.Role}
+// @Failure      400  {object}  utils.Response
+// @Failure      500  {object}  utils.Response
+// @Router       /api/super/role [post]
 func (c *roleController) Create(ctx *gin.Context) {
 	var req dto.RoleCreateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -56,6 +72,20 @@ func (c *roleController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// UpdateRole godoc
+// @Summary      Update Role
+// @Description  Mengubah data role berdasarkan nama role yang ada di URI.
+// @Description  Akses: Khusus Super Admin.
+// @Tags         role (super)
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        role_name  path      string                 true  "Nama Role Saat Ini"
+// @Param        request    body      dto.RoleUpdateRequest  true  "Payload Update Role"
+// @Success      200  {object}  utils.Response{data=entities.Role}
+// @Failure      400  {object}  utils.Response
+// @Failure      500  {object}  utils.Response
+// @Router       /api/super/role/{role_name} [put]
 func (c *roleController) Update(ctx *gin.Context) {
 	var RoleNameURI dto.RoleNameURI
 	if err := ctx.ShouldBindUri(&RoleNameURI); err != nil {
@@ -99,6 +129,19 @@ func (c *roleController) Update(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// DeleteRole godoc
+// @Summary      Hapus Role
+// @Description  Menghapus role dari sistem berdasarkan nama role.
+// @Description  Akses: Khusus Super Admin.
+// @Tags         role (super)
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        role_name  path      string  true  "Nama Role yang akan dihapus"
+// @Success      200  {object}  utils.Response
+// @Failure      400  {object}  utils.Response
+// @Failure      500  {object}  utils.Response
+// @Router       /api/super/role/{role_name} [delete]
 func (c *roleController) Delete(ctx *gin.Context) {
 	var RoleNameURI dto.RoleNameURI
 	log.Printf("roleName: %s\n", RoleNameURI.RoleName)
