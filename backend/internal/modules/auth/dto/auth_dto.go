@@ -31,6 +31,7 @@ type (
 	}
 
 	TokenResponse struct {
+		UserName     string `json:"user_name"`
 		AccessToken  string `json:"access_token"`
 		RefreshToken string `json:"refresh_token"`
 		RoleName     string `json:"role_name"`

@@ -90,6 +90,7 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 	}
 
 	return authDto.TokenResponse{
+		UserName:     user.Name,
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		RoleName:     user.Role.Name,
