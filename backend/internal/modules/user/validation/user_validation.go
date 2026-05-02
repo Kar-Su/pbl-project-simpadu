@@ -54,7 +54,7 @@ func validateRoleNonAdmin(fl validator.FieldLevel) bool {
 	role := fl.Field().String()
 	role = help.NormalizeString(role)
 
-	return role != constants.ROLE_ADMIN_PEGAWAI && role != constants.ROLE_ADMIN_MAHASISWA && role != constants.ROLE_ADMIN_KEUANGAN && role != constants.ROLE_SUPER_ADMIN && role != constants.ROLE_DOSEN && role != constants.ROLE_ADMIN_AKADEMIK
+	return role != constants.ROLE_ADMIN_PEGAWAI && role != constants.ROLE_ADMIN_MAHASISWA && role != constants.ROLE_ADMIN_KEUANGAN && role != constants.ROLE_ADMIN_AKADEMIK && role != constants.ROLE_SUPER_ADMIN
 }
 
 func customExtImage(fl validator.FieldLevel) bool {

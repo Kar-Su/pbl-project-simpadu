@@ -81,7 +81,7 @@ type (
 		Password string                `json:"password" form:"password" binding:"required,min=8" example:"inipasswordrezi // required, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_kode" binding:"required,is_non_admin" example:"raja-nyawit // required, must be a valid role name"`
 		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required,gt=0" example:"1"`
-		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty, custom_ext" example:"path/to/image.jpg"`
+		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 
 	UserAdminUpdateRequest struct {
