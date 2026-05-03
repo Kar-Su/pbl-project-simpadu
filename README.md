@@ -69,8 +69,13 @@ Cara melakukan request API melalui Swagger UI:
 
 https://github.com/user-attachments/assets/bd0f7326-edad-43c3-92aa-148018816216
 
+
+## Contoh Payload JWT
+
+<img width="1035" height="537" alt="Image" src="https://github.com/user-attachments/assets/fc6cc8c8-1d9c-4b52-b5f3-6e6ab0c653b1" />
+
 ---
 
-Jika mengalami masalah, pastikan Docker sudah berjalan dan port yang digunakan tidak bentrok dengan aplikasi lain.
+Jika mengalami masalah, Hubungi Tim 1.
 
 
