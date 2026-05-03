@@ -74,6 +74,7 @@ https://github.com/user-attachments/assets/bd0f7326-edad-43c3-92aa-148018816216
 
 <img width="1035" height="537" alt="Image" src="https://github.com/user-attachments/assets/fc6cc8c8-1d9c-4b52-b5f3-6e6ab0c653b1" />
 
+> **Catatan:** Khusus untuk role admin `detail_id` null.
 ---
 
 Jika mengalami masalah, Hubungi Tim 1.
