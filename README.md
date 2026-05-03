@@ -6,7 +6,8 @@ Berikut adalah panduan untuk menjalankan proyek ini di lingkungan lokal mengguna
 ## Persyaratan
 
 - [Git](https://git-scm.com/)
-- [Docker](https://www.docker.com/) dan [Docker Compose](https://docs.docker.com/compose/)
+- [Docker](https://www.docker.com/)
+-  [Docker Compose](https://docs.docker.com/compose/)
 
 ## Memulai
 
