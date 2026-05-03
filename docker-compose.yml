@@ -29,34 +29,34 @@ services:
       - "traefik.http.services.golang-service.loadbalancer.server.port=${GO_PORT:-8080}"
       - "traefik.http.routers.golang-service.priority=10"
 
-  nextjs:
-    image: nextjs:node24-alpine
-    build:
-      context: ./frontend
-      dockerfile: ../.docker/node-nextjs.Dockerfile
-      target: development
-    container_name: nextjs_pbl
-    restart: unless-stopped
-    command: npm run dev
-    working_dir: /app
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
-    environment:
-      - NODE_ENV=${NODE_ENV:-development}
-      - WATCHPACK_POLLING=true
-    env_file:
-      - .env
-      - frontend/.env
-    networks:
-      - pbl
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nextjs-service.entrypoints=web"
-      - "traefik.http.routers.nextjs-service.rule=PathPrefix(`/`)"
-      - "traefik.http.routers.nextjs-service.priority=1"
-      - "traefik.http.services.nextjs-service.loadbalancer.server.port=3000"
+  # nextjs:
+  #   image: nextjs:node24-alpine
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: ../.docker/node-nextjs.Dockerfile
+  #     target: development
+  #   container_name: nextjs_pbl
+  #   restart: unless-stopped
+  #   command: npm run dev
+  #   working_dir: /app
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #     - /app/.next
+  #   environment:
+  #     - NODE_ENV=${NODE_ENV:-development}
+  #     - WATCHPACK_POLLING=true
+  #   env_file:
+  #     - .env
+  #     - frontend/.env
+  #   networks:
+  #     - pbl
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.nextjs-service.entrypoints=web"
+  #     - "traefik.http.routers.nextjs-service.rule=PathPrefix(`/`)"
+  #     - "traefik.http.routers.nextjs-service.priority=1"
+  #     - "traefik.http.services.nextjs-service.loadbalancer.server.port=3000"
 
   db:
     image: "mysql:8.0"
@@ -86,6 +86,7 @@ services:
       interval: 5s
       timeout: 1s
       retries: 3
+      start_period: 30s
     volumes:
       - ./.docker/mysql/data:/var/lib/mysql
       - ./.docker/mysql/logs:/var/log/mysql

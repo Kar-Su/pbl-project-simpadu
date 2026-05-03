@@ -1,0 +1,26 @@
+[
+  {
+    "role_name": "super-admin"
+  },
+  {
+    "role_name": "admin-akademik"
+  },
+  {
+    "role_name": "admin-pegawai"
+  },
+  {
+    "role_name": "admin-mahasiswa"
+  },
+  {
+    "role_name": "admin-keuangan"
+  },
+  {
+    "role_name": "dosen"
+  },
+  {
+    "role_name": "mahasiswa"
+  },
+  {
+    "role_name": "dummy"
+  }
+]

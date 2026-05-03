@@ -1,11 +1,11 @@
 # .air.toml
 root = "."
 testdata_dir = "testdata"
-tmp_dir = "cmd/tmp"
+tmp_dir = "cmd/api/tmp"
 
 [build]
-  cmd = "go build -o ./cmd/tmp/main ./cmd/main.go"
-  bin = "./cmd/tmp/main"
+  cmd = "go build -o ./cmd/api/tmp/main ./cmd/api/main.go"
+  bin = "./cmd/api/tmp/main"
   full_bin = ""
   args_bin = []
   delay = 1000
