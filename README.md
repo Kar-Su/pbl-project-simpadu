@@ -39,7 +39,7 @@ Salin file `.env.example` yang ada di root proyek dan di dalam folder `backend/`
 
 ### 3. Jalankan Docker Containers
 
-    docker compose up -d
+    docker compose up -d --build
 
 Perintah ini akan membangun (jika diperlukan) dan menjalankan semua layanan dalam mode background. Tunggu hingga semua container siap.
 
