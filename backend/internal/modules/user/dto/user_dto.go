@@ -63,7 +63,7 @@ type (
 	}
 
 	UserEmailRequest struct {
-		Email string `json:"email" binding:"required,email,non_admin_email" example:"rezi@example.com // required, must be a valid email address, cannot be an admin email"`
+		Email string `form:"email" binding:"required,email,non_admin_email"`
 	}
 
 	UserAdminCreateRequest struct {

@@ -26,7 +26,7 @@ const docTemplate = `{
     "paths": {
         "/api/auth/login": {
             "post": {
-                "description": "Proses autentikasi user untuk mendapatkan Access Token dan Refresh Token",
+                "description": "Proses autentikasi user untuk mendapatkan Access Token dan Refresh Token.\n\n**Akses:** Public (tidak memerlukan autentikasi).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email tidak terdaftar -\u003e ` + "`" + `message: \"failed to login user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Password salah -\u003e ` + "`" + `message: \"failed to login user\", error: \"crypto/bcrypt: ...\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to login user\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -52,31 +52,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_TokenResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrLoginFailed"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrLoginInternalServer"
                         }
                     }
                 }
@@ -89,7 +77,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menghapus session user dan menonaktifkan token",
+                "description": "Menghapus session user dan menghapus semua refresh token milik user dari database.\n\n**Akses:** Authenticated User (memerlukan Bearer Token di header Authorization).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Logout gagal (non-internal error) -\u003e ` + "`" + `message: \"failed logout\", error: \"...\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed logout\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -104,19 +92,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrLogoutFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrLogoutFailed"
                         }
                     }
                 }
@@ -124,7 +118,7 @@ const docTemplate = `{
         },
         "/api/auth/refresh-token": {
             "post": {
-                "description": "Mendapatkan access token baru menggunakan refresh token yang masih valid",
+                "description": "Mendapatkan access token baru menggunakan refresh token yang masih valid.\nRefresh token lama akan dihapus dan digantikan dengan refresh token baru.\n\n**Akses:** Public (tidak memerlukan autentikasi, cukup dengan refresh token).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'RefreshToken' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Refresh token tidak ditemukan di database -\u003e ` + "`" + `message: \"failed refresh token\", error: \"refresh token not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Refresh token sudah kedaluwarsa -\u003e ` + "`" + `message: \"failed refresh token\", error: \"refresh token expired\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed refresh token\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -150,37 +144,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_TokenResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRefreshTokenNotFound"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRefreshTokenExpired"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRefreshTokenInternalServer"
                         }
                     }
                 }
@@ -188,7 +170,12 @@ const docTemplate = `{
         },
         "/api/auth/refresh-token/{refresh_token}": {
             "get": {
-                "description": "Mengambil data detail dari sebuah refresh token berdasarkan string token\nAccess:",
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil data detail dari sebuah refresh token berdasarkan string token-nya.\n\n**Akses:** Authenticated User (memerlukan Bearer Token di header Authorization).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `404` + "`" + ` Token tidak ditemukan di database -\u003e ` + "`" + `message: \"failed find refresh token\", error: \"refresh token not found\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed find refresh token\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -202,7 +189,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Refresh Token",
+                        "example": "MBG-JAYA67",
+                        "description": "String Refresh Token",
                         "name": "refresh_token",
                         "in": "path",
                         "required": true
@@ -212,31 +200,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_auth_dto.RefreshTokenResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_RefreshTokenResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrFindRefreshTokenNotFound"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrFindRefreshTokenInternal"
                         }
                     }
                 }
@@ -249,7 +231,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengubah password user. Hanya bisa dilakukan pemilik akun atau Super Admin.",
+                "description": "Mengubah password user berdasarkan email. Hanya pemilik akun atau Super Admin yang diizinkan.\n\n**Akses:** Authenticated User — hanya bisa reset password milik sendiri. Super Admin dapat reset password siapa saja.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email tidak terdaftar -\u003e ` + "`" + `message: \"failed send password reset\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Bukan pemilik akun dan bukan Super Admin -\u003e ` + "`" + `message: \"User unauthorized\", error: \"You are not authorized to reset this password\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed send password reset\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -275,25 +257,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrResetPasswordFailed"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedResetPassword"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrResetPasswordInternalServer"
                         }
                     }
                 }
@@ -306,40 +288,80 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengambil data profil user yang sedang login berdasarkan token.",
+                "description": "Mengambil data profil user yang sedang login berdasarkan JWT token.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "user"
                 ],
-                "summary": "Get Current User",
+                "summary": "Get Current User (Profil Saya)",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/role": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil seluruh daftar role yang tersedia di sistem.\n\n**Akses:** Super Admin, Admin Akademik, Admin Keuangan, Admin Mahasiswa.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get role\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "role"
+                ],
+                "summary": "Ambil Semua Role",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Role-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetRoleFailed"
                         }
                     }
                 }
@@ -352,7 +374,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menambahkan role baru ke dalam sistem.\nAkses: Khusus Super Admin.",
+                "description": "Menambahkan role baru ke dalam sistem.\n\n**Akses:** Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role dengan nama tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create role\", error: \"role already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create role\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -378,31 +400,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_database_entities.Role"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer"
                         }
                     }
                 }
@@ -415,7 +437,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengubah data role berdasarkan nama role yang ada di URI.\nAkses: Khusus Super Admin.",
+                "description": "Mengubah nama role berdasarkan nama role yang sudah ada.\n\n**Akses:** Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"failed to validate role uri\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update role\", error: \"role not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update role\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -429,7 +451,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Nama Role Saat Ini",
+                        "example": "mahasiswa",
+                        "description": "Nama Role yang Akan Diubah",
                         "name": "role_name",
                         "in": "path",
                         "required": true
@@ -448,31 +471,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_database_entities.Role"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateRoleFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateRoleInternalServer"
                         }
                     }
                 }
@@ -483,7 +506,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menghapus role dari sistem berdasarkan nama role.\nAkses: Khusus Super Admin.",
+                "description": "Menghapus role dari sistem secara permanen berdasarkan nama role.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"failed to validate role uri\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to delete role\", error: \"role not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to delete role\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -497,7 +520,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Nama Role yang akan dihapus",
+                        "example": "mahasiswa",
+                        "description": "Nama Role yang Akan Dihapus",
                         "name": "role_name",
                         "in": "path",
                         "required": true
@@ -507,19 +531,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer"
                         }
                     }
                 }
@@ -532,7 +568,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Membuat user admin baru (Pegawai/Admin).\nAkses: Super Admin.",
+                "description": "Membuat akun user admin baru (Admin Akademik, Admin Keuangan, Admin Mahasiswa, Admin Pegawai, dsb).\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah terdaftar -\u003e ` + "`" + `message: \"failed to register user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak valid -\u003e ` + "`" + `message: \"failed to register user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to register user\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -545,12 +581,12 @@ const docTemplate = `{
                 "summary": "Register Admin User",
                 "parameters": [
                     {
-                        "description": "Payload Admin",
+                        "description": "Payload Registrasi Admin",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserAdminCreateRequest"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserAdminCreateRequest"
                         }
                     }
                 ],
@@ -558,19 +594,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserInternalServer"
                         }
                     }
                 }
@@ -583,7 +631,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengupdate data admin berdasarkan ID.\nAkses: Super Admin.",
+                "description": "Mengupdate data user admin (nama, email, password, role, image) berdasarkan UUID.\nSemua field bersifat opsional — hanya field yang diisi yang akan diupdate.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Name' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to update user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah digunakan user lain -\u003e ` + "`" + `message: \"failed to update user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update user\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -597,18 +645,19 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User UUID",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User Admin",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Payload Update",
+                        "description": "Payload Update Admin",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserAdminUpdateRequest"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserAdminUpdateRequest"
                         }
                     }
                 ],
@@ -616,31 +665,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserInternalServer"
                         }
                     }
                 }
@@ -651,7 +700,10 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menghapus admin secara permanen.\nAkses: Super Admin.",
+                "description": "Menghapus akun admin secara permanen dari sistem berdasarkan UUID.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to delete user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to delete user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "user (super)"
                 ],
@@ -659,7 +711,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User UUID",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User Admin",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -669,19 +722,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer"
                         }
                     }
                 }
@@ -694,8 +759,11 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Membuat user non-admin (Mahasiswa/Pegawai).\nAkses: Super Admin, Admin Mahasiswa, Admin Pegawai.",
+                "description": "Membuat akun user non-admin baru (Mahasiswa, Dosen, Pegawai, dsb).\nField ` + "`" + `role_name` + "`" + ` harus merupakan role non-admin (bukan super-admin, admin-*).\n\n**Akses:** Super Admin, Admin Mahasiswa, Admin Pegawai.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah terdaftar -\u003e ` + "`" + `message: \"failed to register user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak valid atau role adalah role admin -\u003e ` + "`" + `message: \"failed to register user\", error: \"invalid not admin role\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to register user\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
+                    "application/json"
+                ],
+                "produces": [
                     "application/json"
                 ],
                 "tags": [
@@ -704,12 +772,12 @@ const docTemplate = `{
                 "summary": "Register Non-Admin User",
                 "parameters": [
                     {
-                        "description": "Payload Non-Admin",
+                        "description": "Payload Registrasi Non-Admin",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserNonAdminCreateRequest"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserNonAdminCreateRequest"
                         }
                     }
                 ],
@@ -717,19 +785,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserInternalServer"
                         }
                     }
                 }
@@ -742,8 +822,11 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mencari user spesifik menggunakan email.",
+                "description": "Mencari dan mengambil data user spesifik menggunakan alamat email.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong atau email tidak valid -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User dengan email tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
+                    "application/json"
+                ],
+                "produces": [
                     "application/json"
                 ],
                 "tags": [
@@ -752,44 +835,35 @@ const docTemplate = `{
                 "summary": "Get User By Email",
                 "parameters": [
                     {
-                        "description": "Email Payload",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserEmailRequest"
-                        }
+                        "type": "string",
+                        "name": "email",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
                         }
                     }
                 }
@@ -802,7 +876,10 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengambil daftar user berdasarkan nama role (misal: mahasiswa, pegawai).",
+                "description": "Mengambil daftar semua user yang memiliki role tertentu.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Gagal mengambil daftar user -\u003e ` + "`" + `message: \"failed to get user\", error: \"...\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "user"
                 ],
@@ -810,7 +887,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role Name",
+                        "example": "mahasiswa",
+                        "description": "Nama Role",
                         "name": "role_name",
                         "in": "path",
                         "required": true
@@ -820,34 +898,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetListUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
                         }
                     }
                 }
@@ -860,22 +929,27 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mendapatkan detail user berdasarkan role dan ID detail.",
+                "description": "Mendapatkan data user non-admin berdasarkan role_name dan detail_id (misalnya NIM mahasiswa atau NIP pegawai).\nEndpoint ini digunakan untuk sinkronisasi data antara sistem eksternal dengan sistem ini.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid (role_name atau detail_id salah format) -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "user"
                 ],
-                "summary": "Sync/Get User Non-Admin",
+                "summary": "Get / Sync User Non-Admin",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role Name",
+                        "example": "mahasiswa",
+                        "description": "Nama Role Non-Admin",
                         "name": "role_name",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Detail ID",
+                        "example": 10,
+                        "description": "ID Detail (misal NIM/NIP)",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
@@ -885,31 +959,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
                         }
                     }
                 }
@@ -920,8 +988,11 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Update profil user. Hanya bisa dilakukan oleh pemilik akun atau Super Admin.",
+                "description": "Mengupdate data profil user non-admin berdasarkan role dan detail_id.\nSemua field body bersifat opsional — hanya field yang diisi yang akan diupdate.\n\n**Akses:** Pemilik akun sendiri (detail_id harus cocok) atau Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Gagal update user -\u003e ` + "`" + `message: \"failed to update user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Bukan pemilik akun dan bukan Super Admin -\u003e ` + "`" + `message: \"failed to update user\", error: \"Unauthorized\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update user\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
+                    "application/json"
+                ],
+                "produces": [
                     "application/json"
                 ],
                 "tags": [
@@ -931,25 +1002,27 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role Name",
+                        "example": "mahasiswa",
+                        "description": "Nama Role Non-Admin",
                         "name": "role_name",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Detail ID",
+                        "example": 10,
+                        "description": "ID Detail (misal NIM/NIP)",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Update Payload",
+                        "description": "Payload Update Non-Admin",
                         "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserNonAdminUpdateRequest"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserNonAdminUpdateRequest"
                         }
                     }
                 ],
@@ -957,31 +1030,25 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedUpdateNonAdmin"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserInternalServer"
                         }
                     }
                 }
@@ -992,7 +1059,10 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menghapus user non-admin.\nAkses: Super Admin, Admin Pegawai, Admin Mahasiswa.",
+                "description": "Menghapus akun user non-admin secara permanen berdasarkan role_name dan detail_id.\n\n**Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to delete user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to delete user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "user"
                 ],
@@ -1000,14 +1070,16 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Role Name",
+                        "example": "mahasiswa",
+                        "description": "Nama Role Non-Admin",
                         "name": "role_name",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "integer",
-                        "description": "Detail ID",
+                        "example": 10,
+                        "description": "ID Detail (misal NIM/NIP)",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
@@ -1017,19 +1089,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer"
                         }
                     }
                 }
@@ -1042,7 +1126,10 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengambil data user berdasarkan UUID.\nAkses: Super Admin.",
+                "description": "Mengambil data lengkap seorang user berdasarkan UUID-nya.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User dengan ID tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "user (super)"
                 ],
@@ -1050,7 +1137,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "User UUID",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -1060,31 +1148,31 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
                         }
                     }
                 }
@@ -1092,30 +1180,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "multipart.FileHeader": {
-            "type": "object",
-            "properties": {
-                "filename": {
-                    "type": "string"
-                },
-                "header": {
-                    "$ref": "#/definitions/textproto.MIMEHeader"
-                },
-                "size": {
-                    "type": "integer",
-                    "format": "int64"
-                }
-            }
-        },
-        "textproto.MIMEHeader": {
-            "type": "object",
-            "additionalProperties": {
-                "type": "array",
-                "items": {
-                    "type": "string"
-                }
-            }
-        },
         "web-hosting_internal_database_entities.Role": {
             "type": "object",
             "properties": {
@@ -1215,24 +1279,6 @@ const docTemplate = `{
                 }
             }
         },
-        "web-hosting_internal_modules_user_dto.UserAdminCreateRequest": {
-            "type": "object"
-        },
-        "web-hosting_internal_modules_user_dto.UserAdminUpdateRequest": {
-            "type": "object"
-        },
-        "web-hosting_internal_modules_user_dto.UserEmailRequest": {
-            "type": "object",
-            "required": [
-                "email"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "rezi@example.com // required, must be a valid email address, cannot be an admin email"
-                }
-            }
-        },
         "web-hosting_internal_modules_user_dto.UserLoginRequest": {
             "type": "object",
             "required": [
@@ -1250,12 +1296,6 @@ const docTemplate = `{
                     "example": "inipasswordrezi // required, min 8 characters"
                 }
             }
-        },
-        "web-hosting_internal_modules_user_dto.UserNonAdminCreateRequest": {
-            "type": "object"
-        },
-        "web-hosting_internal_modules_user_dto.UserNonAdminUpdateRequest": {
-            "type": "object"
         },
         "web-hosting_internal_modules_user_dto.UserResponse": {
             "type": "object",
@@ -1286,15 +1326,900 @@ const docTemplate = `{
                 }
             }
         },
-        "web-hosting_internal_package_utils.Response": {
+        "web-hosting_internal_package_swagger.ErrCreateRoleFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "role already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateRoleInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteRoleFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "role not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteUserFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "user not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/user/019748ae-beef-7abc-b123-abcdef012345"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteUserInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/user/019748ae-beef-7abc-b123-abcdef012345"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrFindRefreshTokenInternal": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed find refresh token"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/refresh-token/MBG-JAYA67"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrFindRefreshTokenNotFound": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "refresh token not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed find refresh token"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/refresh-token/MBG-JAYA67"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrForbiddenAccess": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Forbidden"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Role anda tidak diizinkan"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetListUserFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "role not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/user/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetRoleFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/role"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetUserFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "user not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/me"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetUserInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/me"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrLoginFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "user not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to login user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/login"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrLoginInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to login user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/login"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrLogoutFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed logout"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/logout"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrRefreshTokenExpired": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "refresh token expired"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed refresh token"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/refresh-token"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrRefreshTokenInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed refresh token"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/refresh-token"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrRefreshTokenNotFound": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "refresh token not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed refresh token"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/refresh-token"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrRegisterUserFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "email already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to register user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/user"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrRegisterUserInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to register user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/user"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrResetPasswordFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "user not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed send password reset"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/reset-password"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrResetPasswordInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed send password reset"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/reset-password"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid token"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed_auth"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/logout"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUnauthorizedResetPassword": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "You are not authorized to reset this password"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "User unauthorized"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/auth/reset-password"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUnauthorizedUpdateNonAdmin": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Unauthorized"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/user/sync/mahasiswa/10"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateRoleFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "role not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateRoleInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update role"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateUserFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "user not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/user/019748ae-beef-7abc-b123-abcdef012345"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateUserInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update user"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/super/user/019748ae-beef-7abc-b123-abcdef012345"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.UserAdminCreateRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password",
+                "role_name"
+            ],
+            "properties": {
+                "detail_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "email": {
+                    "type": "string",
+                    "example": "rezi@example.com // required, must be a valid email address"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2,
+                    "example": "rezi // required, min 2 characters, max 255 characters"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "inipasswordrezi // required, min 8 characters"
+                },
+                "role_name": {
+                    "type": "string",
+                    "example": "raja-nyawit // required, must be a valid role name"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.UserAdminUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "detail_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "email": {
+                    "type": "string",
+                    "example": "rezi@example.com // optional, must be a valid email address"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2,
+                    "example": "Rezi // optional, min 2 max 255 characters"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "inipasswordrezi // optional, min 8 characters"
+                },
+                "role_name": {
+                    "type": "string",
+                    "example": "raja-nyawit // optional"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.UserNonAdminCreateRequest": {
+            "type": "object",
+            "required": [
+                "detail_id",
+                "email",
+                "name",
+                "password",
+                "role_name"
+            ],
+            "properties": {
+                "detail_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "email": {
+                    "type": "string",
+                    "example": "rezi@example.com // required, must be a valid email address"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2,
+                    "example": "Rezi // required, min 2 max 255 characters"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "inipasswordrezi // required, min 8 characters"
+                },
+                "role_name": {
+                    "type": "string",
+                    "example": "raja-nyawit // required, must be a valid role name"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.UserNonAdminUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "detail_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "email": {
+                    "type": "string",
+                    "example": "rezi@example.com // optional, must be a valid email address"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "minLength": 2,
+                    "example": "rezi"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "example": "inipasswordrezi // optional, min 8 characters"
+                },
+                "role_name": {
+                    "type": "string",
+                    "example": "raja-nyawit // optional"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-any-any": {
             "type": "object",
             "properties": {
                 "data": {},
                 "error": {},
                 "message": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "Operation successful"
                 },
-                "meta": {},
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Role-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_database_entities.Role"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_database_entities.Role"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_RefreshTokenResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_auth_dto.RefreshTokenResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_TokenResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
                 "success": {
                     "type": "boolean"
                 }
@@ -1315,10 +2240,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost",
-	BasePath:         "/api",
+	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "TIM 1 API",
-	Description:      "apakek.",
+	Description:      "**DEFAULT ROUTE GOLANG /api**.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

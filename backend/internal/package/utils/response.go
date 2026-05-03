@@ -1,36 +1,35 @@
 package utils
 
-type Response struct {
-	Success bool   `json:"success" example:"true"`
-	Message string `json:"message" example:"POKOKNYA SUKSES"`
-	Error   any    `json:"error,omitempty" example:"null"`
-	Data    any    `json:"data,omitempty"`
+type Response[T any, E any] struct {
+	Success bool   `json:"success"`
+	Message string `json:"message" example:"Operation successful"`
+	Path    string `json:"path,omitempty" example:"/api/resource"`
+	Error   E      `json:"error,omitempty"`
+	Data    T      `json:"data,omitempty"`
 }
 
-type ResponseErr struct {
-	Success bool   `json:"success" example:"false"`
-	Message string `json:"message" example:"Internal | Request | Unauthorized error"`
-	Error   any    `json:"error,omitempty" example:"Detail errornya"`
-	Data    any    `json:"data,omitempty" example:"null"`
-}
-
-type EmptyObj struct{}
-
-func BuildResponseSuccess(message string, data any) Response {
-	res := Response{
+func BuildResponseSuccess[T any](message string, data T, path ...string) Response[T, any] {
+	var p string
+	if len(path) > 0 {
+		p = path[0]
+	}
+	return Response[T, any]{
 		Success: true,
 		Message: message,
+		Path:    p,
 		Data:    data,
 	}
-	return res
 }
 
-func BuildResponseFailed(message string, err string, data any) Response {
-	res := Response{
+func BuildResponseFailed[E any](message string, err E, data any, path ...string) Response[any, E] {
+	var p string
+	if len(path) > 0 {
+		p = path[0]
+	}
+	return Response[any, E]{
 		Success: false,
 		Message: message,
+		Path:    p,
 		Error:   err,
-		Data:    data,
 	}
-	return res
 }

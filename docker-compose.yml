@@ -86,6 +86,7 @@ services:
       interval: 5s
       timeout: 1s
       retries: 3
+      start_period: 30s
     volumes:
       - ./.docker/mysql/data:/var/lib/mysql
       - ./.docker/mysql/logs:/var/log/mysql

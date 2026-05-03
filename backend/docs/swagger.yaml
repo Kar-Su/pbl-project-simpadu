@@ -1,21 +1,5 @@
-basePath: /api
+basePath: /
 definitions:
-  multipart.FileHeader:
-    properties:
-      filename:
-        type: string
-      header:
-        $ref: '#/definitions/textproto.MIMEHeader'
-      size:
-        format: int64
-        type: integer
-    type: object
-  textproto.MIMEHeader:
-    additionalProperties:
-      items:
-        type: string
-      type: array
-    type: object
   web-hosting_internal_database_entities.Role:
     properties:
       id:
@@ -84,19 +68,6 @@ definitions:
     required:
     - role_name
     type: object
-  web-hosting_internal_modules_user_dto.UserAdminCreateRequest:
-    type: object
-  web-hosting_internal_modules_user_dto.UserAdminUpdateRequest:
-    type: object
-  web-hosting_internal_modules_user_dto.UserEmailRequest:
-    properties:
-      email:
-        example: rezi@example.com // required, must be a valid email address, cannot
-          be an admin email
-        type: string
-    required:
-    - email
-    type: object
   web-hosting_internal_modules_user_dto.UserLoginRequest:
     properties:
       email:
@@ -109,10 +80,6 @@ definitions:
     required:
     - email
     - password
-    type: object
-  web-hosting_internal_modules_user_dto.UserNonAdminCreateRequest:
-    type: object
-  web-hosting_internal_modules_user_dto.UserNonAdminUpdateRequest:
     type: object
   web-hosting_internal_modules_user_dto.UserResponse:
     properties:
@@ -135,13 +102,649 @@ definitions:
         example: raja-sawit
         type: string
     type: object
-  web-hosting_internal_package_utils.Response:
+  web-hosting_internal_package_swagger.ErrCreateRoleFailed:
+    properties:
+      error:
+        example: role already exists
+        type: string
+      message:
+        example: failed to create role
+        type: string
+      path:
+        example: /api/super/role
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrCreateRoleInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to create role
+        type: string
+      path:
+        example: /api/super/role
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteRoleFailed:
+    properties:
+      error:
+        example: role not found
+        type: string
+      message:
+        example: failed to delete role
+        type: string
+      path:
+        example: /api/super/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to delete role
+        type: string
+      path:
+        example: /api/super/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteUserFailed:
+    properties:
+      error:
+        example: user not found
+        type: string
+      message:
+        example: failed to delete user
+        type: string
+      path:
+        example: /api/super/user/019748ae-beef-7abc-b123-abcdef012345
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteUserInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to delete user
+        type: string
+      path:
+        example: /api/super/user/019748ae-beef-7abc-b123-abcdef012345
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrFindRefreshTokenInternal:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed find refresh token
+        type: string
+      path:
+        example: /api/auth/refresh-token/MBG-JAYA67
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrFindRefreshTokenNotFound:
+    properties:
+      error:
+        example: refresh token not found
+        type: string
+      message:
+        example: failed find refresh token
+        type: string
+      path:
+        example: /api/auth/refresh-token/MBG-JAYA67
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrForbiddenAccess:
+    properties:
+      error:
+        example: Forbidden
+        type: string
+      message:
+        example: Role anda tidak diizinkan
+        type: string
+      path:
+        example: /api/super/role
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetListUserFailed:
+    properties:
+      error:
+        example: role not found
+        type: string
+      message:
+        example: failed to get user
+        type: string
+      path:
+        example: /api/user/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetRoleFailed:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to get role
+        type: string
+      path:
+        example: /api/role
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetUserFailed:
+    properties:
+      error:
+        example: user not found
+        type: string
+      message:
+        example: failed to get user
+        type: string
+      path:
+        example: /api/me
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetUserInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to get user
+        type: string
+      path:
+        example: /api/me
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrLoginFailed:
+    properties:
+      error:
+        example: user not found
+        type: string
+      message:
+        example: failed to login user
+        type: string
+      path:
+        example: /api/auth/login
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrLoginInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to login user
+        type: string
+      path:
+        example: /api/auth/login
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrLogoutFailed:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed logout
+        type: string
+      path:
+        example: /api/auth/logout
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrRefreshTokenExpired:
+    properties:
+      error:
+        example: refresh token expired
+        type: string
+      message:
+        example: failed refresh token
+        type: string
+      path:
+        example: /api/auth/refresh-token
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrRefreshTokenInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed refresh token
+        type: string
+      path:
+        example: /api/auth/refresh-token
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrRefreshTokenNotFound:
+    properties:
+      error:
+        example: refresh token not found
+        type: string
+      message:
+        example: failed refresh token
+        type: string
+      path:
+        example: /api/auth/refresh-token
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrRegisterUserFailed:
+    properties:
+      error:
+        example: email already exists
+        type: string
+      message:
+        example: failed to register user
+        type: string
+      path:
+        example: /api/super/user
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrRegisterUserInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to register user
+        type: string
+      path:
+        example: /api/super/user
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrResetPasswordFailed:
+    properties:
+      error:
+        example: user not found
+        type: string
+      message:
+        example: failed send password reset
+        type: string
+      path:
+        example: /api/auth/reset-password
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrResetPasswordInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed send password reset
+        type: string
+      path:
+        example: /api/auth/reset-password
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken:
+    properties:
+      error:
+        example: invalid token
+        type: string
+      message:
+        example: failed_auth
+        type: string
+      path:
+        example: /api/auth/logout
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUnauthorizedResetPassword:
+    properties:
+      error:
+        example: You are not authorized to reset this password
+        type: string
+      message:
+        example: User unauthorized
+        type: string
+      path:
+        example: /api/auth/reset-password
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUnauthorizedUpdateNonAdmin:
+    properties:
+      error:
+        example: Unauthorized
+        type: string
+      message:
+        example: failed to update user
+        type: string
+      path:
+        example: /api/user/sync/mahasiswa/10
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateRoleFailed:
+    properties:
+      error:
+        example: role not found
+        type: string
+      message:
+        example: failed to update role
+        type: string
+      path:
+        example: /api/super/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateRoleInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to update role
+        type: string
+      path:
+        example: /api/super/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateUserFailed:
+    properties:
+      error:
+        example: user not found
+        type: string
+      message:
+        example: failed to update user
+        type: string
+      path:
+        example: /api/super/user/019748ae-beef-7abc-b123-abcdef012345
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateUserInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to update user
+        type: string
+      path:
+        example: /api/super/user/019748ae-beef-7abc-b123-abcdef012345
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.UserAdminCreateRequest:
+    properties:
+      detail_id:
+        example: 1
+        type: integer
+      email:
+        example: rezi@example.com // required, must be a valid email address
+        type: string
+      name:
+        example: rezi // required, min 2 characters, max 255 characters
+        maxLength: 255
+        minLength: 2
+        type: string
+      password:
+        example: inipasswordrezi // required, min 8 characters
+        minLength: 8
+        type: string
+      role_name:
+        example: raja-nyawit // required, must be a valid role name
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - role_name
+    type: object
+  web-hosting_internal_package_swagger.UserAdminUpdateRequest:
+    properties:
+      detail_id:
+        example: 1
+        type: integer
+      email:
+        example: rezi@example.com // optional, must be a valid email address
+        type: string
+      name:
+        example: Rezi // optional, min 2 max 255 characters
+        maxLength: 255
+        minLength: 2
+        type: string
+      password:
+        example: inipasswordrezi // optional, min 8 characters
+        minLength: 8
+        type: string
+      role_name:
+        example: raja-nyawit // optional
+        type: string
+    type: object
+  web-hosting_internal_package_swagger.UserNonAdminCreateRequest:
+    properties:
+      detail_id:
+        example: 1
+        type: integer
+      email:
+        example: rezi@example.com // required, must be a valid email address
+        type: string
+      name:
+        example: Rezi // required, min 2 max 255 characters
+        maxLength: 255
+        minLength: 2
+        type: string
+      password:
+        example: inipasswordrezi // required, min 8 characters
+        minLength: 8
+        type: string
+      role_name:
+        example: raja-nyawit // required, must be a valid role name
+        type: string
+    required:
+    - detail_id
+    - email
+    - name
+    - password
+    - role_name
+    type: object
+  web-hosting_internal_package_swagger.UserNonAdminUpdateRequest:
+    properties:
+      detail_id:
+        example: 1
+        type: integer
+      email:
+        example: rezi@example.com // optional, must be a valid email address
+        type: string
+      name:
+        example: rezi
+        maxLength: 255
+        minLength: 2
+        type: string
+      password:
+        example: inipasswordrezi // optional, min 8 characters
+        minLength: 8
+        type: string
+      role_name:
+        example: raja-nyawit // optional
+        type: string
+    type: object
+  web-hosting_internal_package_utils.Response-any-any:
     properties:
       data: {}
       error: {}
       message:
+        example: Operation successful
         type: string
-      meta: {}
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Role-any:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/web-hosting_internal_database_entities.Role'
+        type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+        type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_database_entities.Role'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_RefreshTokenResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_auth_dto.RefreshTokenResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_TokenResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
       success:
         type: boolean
     type: object
@@ -151,7 +754,7 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: apakek.
+  description: '**DEFAULT ROUTE GOLANG /api**.'
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -163,8 +766,16 @@ paths:
     post:
       consumes:
       - application/json
-      description: Proses autentikasi user untuk mendapatkan Access Token dan Refresh
-        Token
+      description: |-
+        Proses autentikasi user untuk mendapatkan Access Token dan Refresh Token.
+
+        **Akses:** Public (tidak memerlukan autentikasi).
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get data from body", error: "Key: 'Email' Error:..."`
+        - `400` Email tidak terdaftar -> `message: "failed to login user", error: "user not found"`
+        - `400` Password salah -> `message: "failed to login user", error: "crypto/bcrypt: ..."`
+        - `500` Kesalahan internal server -> `message: "failed to login user", error: "Internal Error"`
       parameters:
       - description: Payload Login
         in: body
@@ -178,20 +789,15 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_TokenResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrLoginFailed'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrLoginInternalServer'
       summary: User Login
       tags:
       - auth
@@ -199,22 +805,36 @@ paths:
     post:
       consumes:
       - application/json
-      description: Menghapus session user dan menonaktifkan token
+      description: |-
+        Menghapus session user dan menghapus semua refresh token milik user dari database.
+
+        **Akses:** Authenticated User (memerlukan Bearer Token di header Authorization).
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `400` Logout gagal (non-internal error) -> `message: "failed logout", error: "..."`
+        - `500` Kesalahan internal server -> `message: "failed logout", error: "Internal Error"`
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrLogoutFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrLogoutFailed'
       security:
       - ApiKeyAuth: []
       summary: User Logout
@@ -224,8 +844,17 @@ paths:
     post:
       consumes:
       - application/json
-      description: Mendapatkan access token baru menggunakan refresh token yang masih
-        valid
+      description: |-
+        Mendapatkan access token baru menggunakan refresh token yang masih valid.
+        Refresh token lama akan dihapus dan digantikan dengan refresh token baru.
+
+        **Akses:** Public (tidak memerlukan autentikasi, cukup dengan refresh token).
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get data from body", error: "Key: 'RefreshToken' Error:..."`
+        - `400` Refresh token tidak ditemukan di database -> `message: "failed refresh token", error: "refresh token not found"`
+        - `401` Refresh token sudah kedaluwarsa -> `message: "failed refresh token", error: "refresh token expired"`
+        - `500` Kesalahan internal server -> `message: "failed refresh token", error: "Internal Error"`
       parameters:
       - description: Payload Refresh Token
         in: body
@@ -239,24 +868,19 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_auth_dto.TokenResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_TokenResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRefreshTokenNotFound'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRefreshTokenExpired'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRefreshTokenInternalServer'
       summary: Refresh Access Token
       tags:
       - auth
@@ -265,10 +889,19 @@ paths:
       consumes:
       - application/json
       description: |-
-        Mengambil data detail dari sebuah refresh token berdasarkan string token
-        Access:
+        Mengambil data detail dari sebuah refresh token berdasarkan string token-nya.
+
+        **Akses:** Authenticated User (memerlukan Bearer Token di header Authorization).
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `404` Token tidak ditemukan di database -> `message: "failed find refresh token", error: "refresh token not found"`
+        - `500` Kesalahan internal server -> `message: "failed find refresh token", error: "Internal Error"`
       parameters:
-      - description: Refresh Token
+      - description: String Refresh Token
+        example: MBG-JAYA67
         in: path
         name: refresh_token
         required: true
@@ -279,20 +912,21 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_auth_dto.RefreshTokenResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_auth_dto_RefreshTokenResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrFindRefreshTokenNotFound'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrFindRefreshTokenInternal'
+      security:
+      - ApiKeyAuth: []
       summary: Cari Detail Refresh Token
       tags:
       - auth
@@ -300,8 +934,19 @@ paths:
     post:
       consumes:
       - application/json
-      description: Mengubah password user. Hanya bisa dilakukan pemilik akun atau
-        Super Admin.
+      description: |-
+        Mengubah password user berdasarkan email. Hanya pemilik akun atau Super Admin yang diizinkan.
+
+        **Akses:** Authenticated User — hanya bisa reset password milik sendiri. Super Admin dapat reset password siapa saja.
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get data from body", error: "Key: 'Email' Error:..."`
+        - `400` Email tidak terdaftar -> `message: "failed send password reset", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `401` Bukan pemilik akun dan bukan Super Admin -> `message: "User unauthorized", error: "You are not authorized to reset this password"`
+        - `500` Kesalahan internal server -> `message: "failed send password reset", error: "Internal Error"`
       parameters:
       - description: Payload Reset Password
         in: body
@@ -315,19 +960,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrResetPasswordFailed'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedResetPassword'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrResetPasswordInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Reset Password User
@@ -335,37 +980,95 @@ paths:
       - auth
   /api/me:
     get:
-      description: Mengambil data profil user yang sedang login berdasarkan token.
+      description: |-
+        Mengambil data profil user yang sedang login berdasarkan JWT token.
+
+        **Akses:** Semua user yang sudah login (Authenticated User).
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `400` User tidak ditemukan -> `message: "failed to get user", error: "user not found"`
+        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
       security:
       - ApiKeyAuth: []
-      summary: Get Current User
+      summary: Get Current User (Profil Saya)
       tags:
       - user
+  /api/role:
+    get:
+      description: |-
+        Mengambil seluruh daftar role yang tersedia di sistem.
+
+        **Akses:** Super Admin, Admin Akademik, Admin Keuangan, Admin Mahasiswa.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to get role", error: "Internal Error"`
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Role-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetRoleFailed'
+      security:
+      - ApiKeyAuth: []
+      summary: Ambil Semua Role
+      tags:
+      - role
   /api/super/role:
     post:
       consumes:
       - application/json
       description: |-
         Menambahkan role baru ke dalam sistem.
-        Akses: Khusus Super Admin.
+
+        **Akses:** Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'RoleName' Error:..."`
+        - `400` Role dengan nama tersebut sudah ada -> `message: "failed to create role", error: "role already exists"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to create role", error: "Internal Error"`
       parameters:
       - description: Payload Create Role
         in: body
@@ -379,20 +1082,23 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_database_entities.Role'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Buat Role Baru
@@ -403,10 +1109,21 @@ paths:
       consumes:
       - application/json
       description: |-
-        Menghapus role dari sistem berdasarkan nama role.
-        Akses: Khusus Super Admin.
+        Menghapus role dari sistem secara permanen berdasarkan nama role.
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'RoleName' Error:..."`
+        - `400` Role dengan nama tersebut tidak ditemukan -> `message: "failed to delete role", error: "role not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to delete role", error: "Internal Error"`
       parameters:
-      - description: Nama Role yang akan dihapus
+      - description: Nama Role yang Akan Dihapus
+        example: mahasiswa
         in: path
         name: role_name
         required: true
@@ -417,15 +1134,23 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Hapus Role
@@ -435,10 +1160,22 @@ paths:
       consumes:
       - application/json
       description: |-
-        Mengubah data role berdasarkan nama role yang ada di URI.
-        Akses: Khusus Super Admin.
+        Mengubah nama role berdasarkan nama role yang sudah ada.
+
+        **Akses:** Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'RoleName' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'RoleName' Error:..."`
+        - `400` Role dengan nama tersebut tidak ditemukan -> `message: "failed to update role", error: "role not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
       parameters:
-      - description: Nama Role Saat Ini
+      - description: Nama Role yang Akan Diubah
+        example: mahasiswa
         in: path
         name: role_name
         required: true
@@ -455,20 +1192,23 @@ paths:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_database_entities.Role'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateRoleFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateRoleInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Update Role
@@ -479,30 +1219,49 @@ paths:
       consumes:
       - application/json
       description: |-
-        Membuat user admin baru (Pegawai/Admin).
-        Akses: Super Admin.
+        Membuat akun user admin baru (Admin Akademik, Admin Keuangan, Admin Mahasiswa, Admin Pegawai, dsb).
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get data from body", error: "Key: 'Email' Error:..."`
+        - `400` Email sudah terdaftar -> `message: "failed to register user", error: "email already exists"`
+        - `400` Role tidak valid -> `message: "failed to register user", error: "role not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to register user", error: "Internal Error"`
       parameters:
-      - description: Payload Admin
+      - description: Payload Registrasi Admin
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserAdminCreateRequest'
+          $ref: '#/definitions/web-hosting_internal_package_swagger.UserAdminCreateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Register Admin User
@@ -511,27 +1270,47 @@ paths:
   /api/super/user/{id}:
     delete:
       description: |-
-        Menghapus admin secara permanen.
-        Akses: Super Admin.
+        Menghapus akun admin secara permanen dari sistem berdasarkan UUID.
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` User tidak ditemukan -> `message: "failed to delete user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to delete user", error: "Internal Error"`
       parameters:
-      - description: User UUID
+      - description: UUID User Admin
+        example: 019748ae-beef-7abc-b123-abcdef012345
         in: path
         name: id
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Delete Admin User
@@ -541,40 +1320,56 @@ paths:
       consumes:
       - application/json
       description: |-
-        Mengupdate data admin berdasarkan ID.
-        Akses: Super Admin.
+        Mengupdate data user admin (nama, email, password, role, image) berdasarkan UUID.
+        Semua field bersifat opsional — hanya field yang diisi yang akan diupdate.
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid -> `message: "failed to get data from body", error: "Key: 'Name' Error:..."`
+        - `400` User tidak ditemukan -> `message: "failed to update user", error: "user not found"`
+        - `400` Email sudah digunakan user lain -> `message: "failed to update user", error: "email already exists"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update user", error: "Internal Error"`
       parameters:
-      - description: User UUID
+      - description: UUID User Admin
+        example: 019748ae-beef-7abc-b123-abcdef012345
         in: path
         name: id
         required: true
         type: string
-      - description: Payload Update
+      - description: Payload Update Admin
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserAdminUpdateRequest'
+          $ref: '#/definitions/web-hosting_internal_package_swagger.UserAdminUpdateRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Update Admin User
@@ -585,28 +1380,50 @@ paths:
       consumes:
       - application/json
       description: |-
-        Membuat user non-admin (Mahasiswa/Pegawai).
-        Akses: Super Admin, Admin Mahasiswa, Admin Pegawai.
+        Membuat akun user non-admin baru (Mahasiswa, Dosen, Pegawai, dsb).
+        Field `role_name` harus merupakan role non-admin (bukan super-admin, admin-*).
+
+        **Akses:** Super Admin, Admin Mahasiswa, Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get data from body", error: "Key: 'Email' Error:..."`
+        - `400` Email sudah terdaftar -> `message: "failed to register user", error: "email already exists"`
+        - `400` Role tidak valid atau role adalah role admin -> `message: "failed to register user", error: "invalid not admin role"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to register user", error: "Internal Error"`
       parameters:
-      - description: Payload Non-Admin
+      - description: Payload Registrasi Non-Admin
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserNonAdminCreateRequest'
+          $ref: '#/definitions/web-hosting_internal_package_swagger.UserNonAdminCreateRequest'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Register Non-Admin User
@@ -615,32 +1432,47 @@ paths:
   /api/user/{id}:
     get:
       description: |-
-        Mengambil data user berdasarkan UUID.
-        Akses: Super Admin.
+        Mengambil data lengkap seorang user berdasarkan UUID-nya.
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` User dengan ID tersebut tidak ditemukan -> `message: "failed to get user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
       parameters:
-      - description: User UUID
+      - description: UUID User
+        example: 019748ae-beef-7abc-b123-abcdef012345
         in: path
         name: id
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Get User By ID
@@ -650,32 +1482,42 @@ paths:
     get:
       consumes:
       - application/json
-      description: Mencari user spesifik menggunakan email.
+      description: |-
+        Mencari dan mengambil data user spesifik menggunakan alamat email.
+
+        **Akses:** Semua user yang sudah login (Authenticated User).
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong atau email tidak valid -> `message: "failed to get data from body", error: "Key: 'Email' Error:..."`
+        - `400` User dengan email tersebut tidak ditemukan -> `message: "failed to get user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
       parameters:
-      - description: Email Payload
-        in: body
-        name: request
+      - in: query
+        name: email
         required: true
-        schema:
-          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserEmailRequest'
+        type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Get User By Email
@@ -683,34 +1525,45 @@ paths:
       - user
   /api/user/role/{role_name}:
     get:
-      description: 'Mengambil daftar user berdasarkan nama role (misal: mahasiswa,
-        pegawai).'
+      description: |-
+        Mengambil daftar semua user yang memiliki role tertentu.
+
+        **Akses:** Semua user yang sudah login (Authenticated User).
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "bad request", error: "Key: 'RoleName' Error:..."`
+        - `400` Role tidak ditemukan -> `message: "failed to get user", error: "role not found"`
+        - `400` Gagal mengambil daftar user -> `message: "failed to get user", error: "..."`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
       parameters:
-      - description: Role Name
+      - description: Nama Role
+        example: mahasiswa
         in: path
         name: role_name
         required: true
         type: string
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-                  type: array
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetListUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Get Users By Role Name
@@ -719,113 +1572,169 @@ paths:
   /api/user/sync/{role_name}/{detail_id}:
     delete:
       description: |-
-        Menghapus user non-admin.
-        Akses: Super Admin, Admin Pegawai, Admin Mahasiswa.
+        Menghapus akun user non-admin secara permanen berdasarkan role_name dan detail_id.
+
+        **Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "bad request", error: "Key: 'RoleName' Error:..."`
+        - `400` Role tidak ditemukan -> `message: "failed to get user", error: "role not found"`
+        - `400` User tidak ditemukan -> `message: "failed to delete user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to delete user", error: "Internal Error"`
       parameters:
-      - description: Role Name
+      - description: Nama Role Non-Admin
+        example: mahasiswa
         in: path
         name: role_name
         required: true
         type: string
-      - description: Detail ID
+      - description: ID Detail (misal NIM/NIP)
+        example: 10
         in: path
         name: detail_id
         required: true
         type: integer
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Delete User Non-Admin
       tags:
       - user
     get:
-      description: Mendapatkan detail user berdasarkan role dan ID detail.
+      description: |-
+        Mendapatkan data user non-admin berdasarkan role_name dan detail_id (misalnya NIM mahasiswa atau NIP pegawai).
+        Endpoint ini digunakan untuk sinkronisasi data antara sistem eksternal dengan sistem ini.
+
+        **Akses:** Semua user yang sudah login (Authenticated User).
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid (role_name atau detail_id salah format) -> `message: "bad request", error: "Key: 'RoleName' Error:..."`
+        - `400` Role tidak ditemukan -> `message: "failed to get user", error: "role not found"`
+        - `400` User tidak ditemukan -> `message: "failed to get user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
       parameters:
-      - description: Role Name
+      - description: Nama Role Non-Admin
+        example: mahasiswa
         in: path
         name: role_name
         required: true
         type: string
-      - description: Detail ID
+      - description: ID Detail (misal NIM/NIP)
+        example: 10
         in: path
         name: detail_id
         required: true
         type: integer
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
       security:
       - ApiKeyAuth: []
-      summary: Sync/Get User Non-Admin
+      summary: Get / Sync User Non-Admin
       tags:
       - user
     put:
       consumes:
       - application/json
-      description: Update profil user. Hanya bisa dilakukan oleh pemilik akun atau
-        Super Admin.
+      description: |-
+        Mengupdate data profil user non-admin berdasarkan role dan detail_id.
+        Semua field body bersifat opsional — hanya field yang diisi yang akan diupdate.
+
+        **Akses:** Pemilik akun sendiri (detail_id harus cocok) atau Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "bad request", error: "Key: 'RoleName' Error:..."`
+        - `400` Body tidak valid -> `message: "failed to get data from body", error: "Key: 'Email' Error:..."`
+        - `400` Role tidak ditemukan -> `message: "failed to get user", error: "role not found"`
+        - `400` Gagal update user -> `message: "failed to update user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `401` Bukan pemilik akun dan bukan Super Admin -> `message: "failed to update user", error: "Unauthorized"`
+        - `500` Kesalahan internal server -> `message: "failed to update user", error: "Internal Error"`
       parameters:
-      - description: Role Name
+      - description: Nama Role Non-Admin
+        example: mahasiswa
         in: path
         name: role_name
         required: true
         type: string
-      - description: Detail ID
+      - description: ID Detail (misal NIM/NIP)
+        example: 10
         in: path
         name: detail_id
         required: true
         type: integer
-      - description: Update Payload
+      - description: Payload Update Non-Admin
         in: body
         name: request
         required: true
         schema:
-          $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserNonAdminUpdateRequest'
+          $ref: '#/definitions/web-hosting_internal_package_swagger.UserNonAdminUpdateRequest'
+      produces:
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            allOf:
-            - $ref: '#/definitions/web-hosting_internal_package_utils.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
-              type: object
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedUpdateNonAdmin'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response'
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserInternalServer'
       security:
       - ApiKeyAuth: []
       summary: Update User Non-Admin

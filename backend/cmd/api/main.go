@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do/v2"
 
-	_ "web-hosting/docs" // Ganti dengan path modul di go.mod kamu
+	_ "web-hosting/docs"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -37,7 +37,7 @@ func run(server *gin.Engine) {
 
 // @title           TIM 1 API
 // @version         1.0
-// @description     apakek.
+// @description     **DEFAULT ROUTE GOLANG /api**.
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support
@@ -48,7 +48,7 @@ func run(server *gin.Engine) {
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host      localhost
-// @BasePath  /api
+// @BasePath  /
 
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
