@@ -3,13 +3,13 @@
 Repository proyek PBL (Project Based Learning) - Sistem Informasi Manajemen Padu (SIMPADU).
 Berikut adalah panduan untuk menjalankan proyek ini di lingkungan lokal menggunakan Docker.
 
-## Persyaratan
+## Requirement
 
 - [Git](https://git-scm.com/)
 - [Docker](https://www.docker.com/)
 -  [Docker Compose](https://docs.docker.com/compose/)
 
-## Memulai
+## Tutorial Penggunaan Repo
 
 ### 1. Clone Repository
 
