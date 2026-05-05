@@ -8,14 +8,14 @@ import (
 )
 
 type User struct {
-	ID       uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
-	Name     string    `gorm:"type:varchar(255);not null" json:"name"`
-	Email    string    `gorm:"type:varchar(255);not null;uniqueIndex" json:"email"`
-	Password string    `gorm:"type:varchar(255);not null" json:"password"`
-	ImageUrl *string   `gorm:"type:varchar(255)" json:"image_url"`
-	RoleID   uint      `gorm:"type:int;not null" json:"role_id"`
-	Role     Role      `gorm:"foreignKey:RoleID;references:ID" json:"role"`
-	DetailID *uint     `gorm:"type:int;index" json:"detail_id"`
+	ID       uuid.UUID  `gorm:"primaryKey;type:char(36)" json:"id"`
+	Name     string     `gorm:"type:varchar(255);not null" json:"name"`
+	Email    string     `gorm:"type:varchar(255);not null;uniqueIndex" json:"email"`
+	Password string     `gorm:"type:varchar(255);not null" json:"password"`
+	ImageUrl *string    `gorm:"type:varchar(255)" json:"image_url"`
+	RoleID   uint       `gorm:"type:int;not null" json:"role_id"`
+	Role     Role       `gorm:"foreignKey:RoleID;references:ID" json:"role"`
+	DetailID *uuid.UUID `gorm:"type:char(36);uniqueIndex" json:"detail_id"`
 
 	Timestamp
 }

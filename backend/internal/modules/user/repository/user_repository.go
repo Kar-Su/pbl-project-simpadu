@@ -14,13 +14,13 @@ type UserRepository interface {
 	Register(ctx context.Context, tx *gorm.DB, user entities.User) error
 	Update(ctx context.Context, tx *gorm.DB, userid uuid.UUID, user entities.User) (entities.User, error)
 	Delete(ctx context.Context, tx *gorm.DB, userId uuid.UUID) error
-	DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) error
+	DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) error
 	GetUserByID(ctx context.Context, tx *gorm.DB, userId uuid.UUID) (entities.User, error)
 	GetUserByEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, error)
 	GetUserByRole(ctx context.Context, tx *gorm.DB, roleId uint) ([]entities.User, error)
-	GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, error)
+	GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, error)
 	CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, bool, error)
-	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, bool, error)
+	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, bool, error)
 }
 
 type userRepository struct {
@@ -70,7 +70,7 @@ func (r *userRepository) Delete(ctx context.Context, tx *gorm.DB, userId uuid.UU
 	return nil
 }
 
-func (r *userRepository) DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) error {
+func (r *userRepository) DeleteByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) error {
 	if tx == nil {
 		tx = r.db
 	}
@@ -113,7 +113,7 @@ func (r *userRepository) GetUserByRole(ctx context.Context, tx *gorm.DB, roleId 
 	return users, nil
 }
 
-func (r *userRepository) GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, error) {
+func (r *userRepository) GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -138,7 +138,7 @@ func (r *userRepository) CheckEmail(ctx context.Context, tx *gorm.DB, email stri
 	return user, true, nil
 }
 
-func (r *userRepository) CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uint) (entities.User, bool, error) {
+func (r *userRepository) CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, bool, error) {
 	if tx == nil {
 		tx = r.db
 	}

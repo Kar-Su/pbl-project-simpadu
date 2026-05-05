@@ -154,7 +154,7 @@ func (c *userController) GetUser(ctx *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        role_name  path      string  true  "Nama Role Non-Admin"  example(mahasiswa)
-// @Param        detail_id  path      int     true  "ID Detail (misal NIM/NIP)"  example(10)
+// @Param        detail_id  path      string  true  "UUID Detail (UUID v7)"  example(01965a1d-7777-7777-7777-777777777777)
 // @Success      200  {object}  utils.Response[dto.UserResponse,any]
 // @Failure      400  {object}  swagger.ErrGetUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
@@ -168,6 +168,13 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, res)
 		return
 	}
+	detailId, err := uuid.Parse(req.DetailId)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil, path)
+		ctx.JSON(http.StatusBadRequest, res)
+		return
+	}
+
 	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), req.RoleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -180,7 +187,7 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 		return
 	}
 
-	result, err := c.userService.GetUserByRoleAndDetailID(ctx.Request.Context(), roleId, req.DetailId)
+	result, err := c.userService.GetUserByRoleAndDetailID(ctx.Request.Context(), roleId, detailId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
@@ -478,7 +485,7 @@ func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        role_name  path      string                         true  "Nama Role Non-Admin"  example(mahasiswa)
-// @Param        detail_id  path      int                            true  "ID Detail (misal NIM/NIP)"  example(10)
+// @Param        detail_id  path      string                         true  "UUID Detail"  example(01965a1d-7777-7777-7777-777777777777)
 // @Param        request    body      swagger.UserNonAdminUpdateRequest  true  "Payload Update Non-Admin"
 // @Success      200  {object}  utils.Response[dto.UserResponse,any]
 // @Failure      400  {object}  swagger.ErrUpdateUserFailed
@@ -494,6 +501,13 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 		return
 	}
 
+	detailId, err := uuid.Parse(reqUri.DetailId)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	var reqBody dto.UserNonAdminUpdateRequest
 	if err := ctx.ShouldBindJSON(&reqBody); err != nil {
 		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil, path)
@@ -502,9 +516,9 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 	}
 
 	userRoleName := ctx.MustGet("role_name").(string)
-	userDetailId := ctx.MustGet("detail_id").(uint)
+	userDetailId := ctx.MustGet("detail_id").(uuid.UUID)
 
-	if userDetailId != reqUri.DetailId && userRoleName != constants.ROLE_SUPER_ADMIN {
+	if userDetailId != detailId && userRoleName != constants.ROLE_SUPER_ADMIN {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, "Unauthorized", nil, path)
 		log.Println(userRoleName)
 		ctx.AbortWithStatusJSON(http.StatusUnauthorized, res)
@@ -523,7 +537,7 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 		return
 	}
 
-	data, err := c.userService.UpdateNonAdmin(ctx.Request.Context(), reqBody, roleId, reqUri.DetailId)
+	data, err := c.userService.UpdateNonAdmin(ctx.Request.Context(), reqBody, roleId, detailId)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
@@ -593,7 +607,7 @@ func (c *userController) DeleteAdmin(ctx *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        role_name  path      string  true  "Nama Role Non-Admin"  example(mahasiswa)
-// @Param        detail_id  path      int     true  "ID Detail (misal NIM/NIP)"  example(10)
+// @Param        detail_id  path      string  true  "UUID Detail"  example(01965a1d-7777-7777-7777-777777777777)
 // @Success      200  {object}  utils.Response[any,any]
 // @Failure      400  {object}  swagger.ErrDeleteUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
@@ -604,6 +618,13 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var reqUri dto.UserSyncURI
 	if err := ctx.ShouldBindUri(&reqUri); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	detailId, err := uuid.Parse(reqUri.DetailId)
+	if err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_BAD_REQUEST, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -621,7 +642,7 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.userService.DeleteNonAdmin(ctx.Request.Context(), roleId, reqUri.DetailId); err != nil {
+	if err := c.userService.DeleteNonAdmin(ctx.Request.Context(), roleId, detailId); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_USER, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return

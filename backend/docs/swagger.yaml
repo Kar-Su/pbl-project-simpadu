@@ -84,8 +84,8 @@ definitions:
   web-hosting_internal_modules_user_dto.UserResponse:
     properties:
       detail_id:
-        example: 1
-        type: integer
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
       email:
         example: rezi@example.com
         type: string
@@ -555,8 +555,8 @@ definitions:
   web-hosting_internal_package_swagger.UserAdminCreateRequest:
     properties:
       detail_id:
-        example: 1
-        type: integer
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
       email:
         example: rezi@example.com // required, must be a valid email address
         type: string
@@ -581,8 +581,8 @@ definitions:
   web-hosting_internal_package_swagger.UserAdminUpdateRequest:
     properties:
       detail_id:
-        example: 1
-        type: integer
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
       email:
         example: rezi@example.com // optional, must be a valid email address
         type: string
@@ -602,8 +602,8 @@ definitions:
   web-hosting_internal_package_swagger.UserNonAdminCreateRequest:
     properties:
       detail_id:
-        example: 1
-        type: integer
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
       email:
         example: rezi@example.com // required, must be a valid email address
         type: string
@@ -629,8 +629,8 @@ definitions:
   web-hosting_internal_package_swagger.UserNonAdminUpdateRequest:
     properties:
       detail_id:
-        example: 1
-        type: integer
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
       email:
         example: rezi@example.com // optional, must be a valid email address
         type: string
@@ -1592,12 +1592,12 @@ paths:
         name: role_name
         required: true
         type: string
-      - description: ID Detail (misal NIM/NIP)
-        example: 10
+      - description: UUID Detail
+        example: 01965a1d-7777-7777-7777-777777777777
         in: path
         name: detail_id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -1648,12 +1648,12 @@ paths:
         name: role_name
         required: true
         type: string
-      - description: ID Detail (misal NIM/NIP)
-        example: 10
+      - description: UUID Detail (UUID v7)
+        example: 01965a1d-7777-7777-7777-777777777777
         in: path
         name: detail_id
         required: true
-        type: integer
+        type: string
       produces:
       - application/json
       responses:
@@ -1704,12 +1704,12 @@ paths:
         name: role_name
         required: true
         type: string
-      - description: ID Detail (misal NIM/NIP)
-        example: 10
+      - description: UUID Detail
+        example: 01965a1d-7777-7777-7777-777777777777
         in: path
         name: detail_id
         required: true
-        type: integer
+        type: string
       - description: Payload Update Non-Admin
         in: body
         name: request

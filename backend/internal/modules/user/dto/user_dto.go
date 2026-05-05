@@ -4,6 +4,8 @@ import (
 	"errors"
 	"mime/multipart"
 	"web-hosting/internal/database/entities"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -46,12 +48,12 @@ var (
 
 type (
 	UserResponse struct {
-		ID       string  `json:"id" example:"ijq0rq0jfa //(UUID v7)"`
-		Name     string  `json:"name" example:"rezi"`
-		Email    string  `json:"email" example:"rezi@example.com"`
-		RoleName string  `json:"role_name" example:"raja-sawit"`
-		DetailId *uint   `json:"detail_id" example:"1"`
-		ImageUrl *string `json:"image_url" example:"path/to/image.jpg"`
+		ID       string     `json:"id" example:"ijq0rq0jfa //(UUID v7)"`
+		Name     string     `json:"name" example:"rezi"`
+		Email    string     `json:"email" example:"rezi@example.com"`
+		RoleName string     `json:"role_name" example:"raja-sawit"`
+		DetailId *uuid.UUID `json:"detail_id" example:"01965a1d-7777-7777-7777-777777777777"`
+		ImageUrl *string    `json:"image_url" example:"path/to/image.jpg"`
 	}
 
 	UserRoleURI struct {
@@ -59,7 +61,7 @@ type (
 	}
 	UserSyncURI struct {
 		UserRoleURI
-		DetailId uint `uri:"detail_id" binding:"required,gt=0"`
+		DetailId string `uri:"detail_id" binding:"required"`
 	}
 
 	UserEmailRequest struct {
@@ -71,7 +73,7 @@ type (
 		Email    string                `json:"email" form:"email" binding:"required,email" example:"rezi@example.com // required, must be a valid email address"`
 		Password string                `json:"password" form:"password" binding:"required,min=8" example:"inipasswordrezi // required, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_kode" binding:"required" example:"raja-nyawit // required, must be a valid role name"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0" example:"1"`
+		DetailId *uuid.UUID            `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 
@@ -80,7 +82,7 @@ type (
 		Email    string                `json:"email" form:"email" binding:"required,email" example:"rezi@example.com // required, must be a valid email address"`
 		Password string                `json:"password" form:"password" binding:"required,min=8" example:"inipasswordrezi // required, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_kode" binding:"required,is_non_admin" example:"raja-nyawit // required, must be a valid role name"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"required,gt=0" example:"1"`
+		DetailId *uuid.UUID            `json:"detail_id" form:"detail_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 
@@ -89,7 +91,7 @@ type (
 		Email    string                `json:"email" form:"email" binding:"omitempty,email" example:"rezi@example.com // optional, must be a valid email address"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8" example:"inipasswordrezi // optional, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty" example:"raja-nyawit // optional"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0" example:"1"`
+		DetailId *uuid.UUID            `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 
@@ -98,7 +100,7 @@ type (
 		Email    string                `json:"email" form:"email" binding:"omitempty,email" example:"rezi@example.com // optional, must be a valid email address"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8" example:"inipasswordrezi // optional, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty,is_non_admin" example:"raja-nyawit // optional"`
-		DetailId *uint                 `json:"detail_id" form:"detail_id" binding:"omitempty,gt=0" example:"1"`
+		DetailId *uuid.UUID            `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 

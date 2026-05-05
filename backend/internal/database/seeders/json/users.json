@@ -2,18 +2,24 @@
   {
     "name": "super admin",
     "email": "super@admin.com",
+    "password": "pass#super",
+    "role_name": "super-admin"
+  },
+  {
+    "name": "admin akademik",
+    "email": "tim1@admin.com",
     "password": "pass#tim1",
     "role_name": "super-admin"
   },
   {
     "name": "admin pegawai",
-    "email": "tim1@admin.com",
+    "email": "tim2@admin.com",
     "password": "pass#tim2",
     "role_name": "admin-akademik"
   },
   {
     "name": "admin mahasiswa",
-    "email": "tim2@admin.com",
+    "email": "tim3@admin.com",
     "password": "pass#tim3",
     "role_name": "admin-mahasiswa"
   },
@@ -28,20 +34,20 @@
     "email": "dummydosen@user.com",
     "password": "pass#dosen",
     "role_name": "dosen",
-    "detail_id": 1000
+    "detail_id": "67a5ee4d-c6a9-4293-af43-a4c673522cd8"
   },
   {
     "name": "dummy mahasiswa",
     "email": "dummymahasiswa@user.com",
     "password": "pass#mahasiswa",
     "role_name": "mahasiswa",
-    "detail_id": 1000
+    "detail_id": "73adba7e-e0e0-44db-814c-04c10083fa18"
   },
   {
     "name": "tumbal",
     "email": "tumbal@user.com",
     "password": "pass#tumbal",
     "role_name": "mahasiswa",
-    "detail_id": 1001
+    "detail_id": "5dce9234-4326-40f1-a07e-f3113eec5412"
   }
 ]

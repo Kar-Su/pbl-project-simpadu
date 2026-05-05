@@ -947,9 +947,9 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "example": 10,
-                        "description": "ID Detail (misal NIM/NIP)",
+                        "type": "string",
+                        "example": "01965a1d-7777-7777-7777-777777777777",
+                        "description": "UUID Detail (UUID v7)",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
@@ -1009,9 +1009,9 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "example": 10,
-                        "description": "ID Detail (misal NIM/NIP)",
+                        "type": "string",
+                        "example": "01965a1d-7777-7777-7777-777777777777",
+                        "description": "UUID Detail",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
@@ -1077,9 +1077,9 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "type": "integer",
-                        "example": 10,
-                        "description": "ID Detail (misal NIM/NIP)",
+                        "type": "string",
+                        "example": "01965a1d-7777-7777-7777-777777777777",
+                        "description": "UUID Detail",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
@@ -1301,8 +1301,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "detail_id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
                 },
                 "email": {
                     "type": "string",
@@ -1966,8 +1966,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "detail_id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
                 },
                 "email": {
                     "type": "string",
@@ -1994,8 +1994,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "detail_id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
                 },
                 "email": {
                     "type": "string",
@@ -2029,8 +2029,8 @@ const docTemplate = `{
             ],
             "properties": {
                 "detail_id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
                 },
                 "email": {
                     "type": "string",
@@ -2057,8 +2057,8 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "detail_id": {
-                    "type": "integer",
-                    "example": 1
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
                 },
                 "email": {
                     "type": "string",

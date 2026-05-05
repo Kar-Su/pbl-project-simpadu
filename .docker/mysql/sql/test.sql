@@ -19,7 +19,7 @@ CREATE TABLE if not exists users (
     password VARCHAR(255) NOT NULL,
     image_url VARCHAR(255),
     role_id int NOT NULL,
-    detail_id char(36),
+    detail_id char(36) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
