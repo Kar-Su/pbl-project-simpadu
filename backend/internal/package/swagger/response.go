@@ -394,3 +394,61 @@ type ErrGetListUserFailed struct {
 	Error   string `json:"error" example:"role not found"`
 	Path    string `json:"path,omitempty" example:"/api/user/role/mahasiswa"`
 }
+
+// JURUSAN
+
+type ErrCreateJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create jurusan"`
+	Error   string `json:"error" example:"jurusan already exists"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrCreateJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrUpdateJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update jurusan"`
+	Error   string `json:"error" example:"jurusan already exists"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrUpdateJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrDeleteJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to Delete jurusan"`
+	Error   string `json:"error" example:"jurusan already exists"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrDeleteJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to Delete jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrGetJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get jurusan"`
+	Error   string `json:"error" example:"jurusan not found"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrGetJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}

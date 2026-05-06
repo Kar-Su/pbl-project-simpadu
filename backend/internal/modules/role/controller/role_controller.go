@@ -56,7 +56,7 @@ func NewRoleController(injector do.Injector, roleService service.RoleService, db
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        request  body      dto.RoleCreateRequest  true  "Payload Create Role"
-// @Success      200      {object}  utils.Response[entities.Role,any]
+// @Success      201      {object}  utils.Response[entities.Role,any]
 // @Failure      400      {object}  swagger.ErrCreateRoleFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
@@ -83,7 +83,7 @@ func (c *roleController) Create(ctx *gin.Context) {
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_ROLE, role, path)
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusCreated, res)
 }
 
 // UpdateRole godoc

@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  web-hosting_internal_database_entities.Jurusan:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   web-hosting_internal_database_entities.Role:
     properties:
       id:
@@ -52,6 +59,22 @@ definitions:
         example: Rezi
         type: string
     type: object
+  web-hosting_internal_modules_jurusan_dto.JurusanRequest:
+    properties:
+      jurusan_name:
+        example: teknik-elektro
+        type: string
+    required:
+    - jurusan_name
+    type: object
+  web-hosting_internal_modules_jurusan_dto.JurusanUpdateRequest:
+    properties:
+      new_name:
+        example: teknik-mesin
+        type: string
+    required:
+    - new_name
+    type: object
   web-hosting_internal_modules_role_dto.RoleCreateRequest:
     properties:
       role_name:
@@ -102,6 +125,36 @@ definitions:
         example: raja-sawit
         type: string
     type: object
+  web-hosting_internal_package_swagger.ErrCreateJurusanFailed:
+    properties:
+      error:
+        example: jurusan already exists
+        type: string
+      message:
+        example: failed to create jurusan
+        type: string
+      path:
+        example: /api/super/jurusan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrCreateJurusanInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to create jurusan
+        type: string
+      path:
+        example: /api/super/jurusan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrCreateRoleFailed:
     properties:
       error:
@@ -127,6 +180,36 @@ definitions:
         type: string
       path:
         example: /api/super/role
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteJurusanFailed:
+    properties:
+      error:
+        example: jurusan already exists
+        type: string
+      message:
+        example: failed to Delete jurusan
+        type: string
+      path:
+        example: /api/super/jurusan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteJurusanInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to Delete jurusan
+        type: string
+      path:
+        example: /api/super/jurusan
         type: string
       success:
         example: false
@@ -492,6 +575,36 @@ definitions:
         example: false
         type: boolean
     type: object
+  web-hosting_internal_package_swagger.ErrUpdateJurusanFailed:
+    properties:
+      error:
+        example: jurusan already exists
+        type: string
+      message:
+        example: failed to update jurusan
+        type: string
+      path:
+        example: /api/super/jurusan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateJurusanInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to update jurusan
+        type: string
+      path:
+        example: /api/super/jurusan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrUpdateRoleFailed:
     properties:
       error:
@@ -660,6 +773,22 @@ definitions:
       success:
         type: boolean
     type: object
+  web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Jurusan-any:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/web-hosting_internal_database_entities.Jurusan'
+        type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
   web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Role-any:
     properties:
       data:
@@ -682,6 +811,20 @@ definitions:
         items:
           $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
         type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_database_entities.Jurusan'
       error: {}
       message:
         example: Operation successful
@@ -978,6 +1121,225 @@ paths:
       summary: Reset Password User
       tags:
       - auth
+  /api/jurusan:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan jurusan baru ke sistem
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'JurusanName' Error:..."`
+        - `400` jurusan dengan nama tersebut sudah ada -> `message: "failed to create jurusan", error: "jurusan already exists"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to create jurusan", error: "Internal Error"`
+      parameters:
+      - description: Jurusan Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateJurusanFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateJurusanInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Jurusan Baru
+      tags:
+      - jurusan
+  /api/jurusan/:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        delete jurusan yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate jurusan Query", error: "Key: 'JurusanName' Error:..."`
+        - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to Delete jurusan", error: "jurusan not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to Delete jurusan", error: "Internal Error"`
+      parameters:
+      - example: teknik-elektro
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Jurusan Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteJurusanFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteJurusanInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Jurusan
+      tags:
+      - jurusan
+    get:
+      consumes:
+      - application/json
+      description: |-
+        melihat jurusan yang sudah ada
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate jurusan Query", error: "Key: 'JurusanName' Error:..."`
+        - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to update jurusan", error: "jurusan not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+      parameters:
+      - example: 1
+        in: query
+        name: id
+        type: integer
+      - example: teknik-elektro
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_database_entities_Jurusan-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateJurusanFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateJurusanInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: get Jurusan
+      tags:
+      - jurusan
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengupdate jurusan yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate jurusan Query", error: "Key: 'JurusanName' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'JurusanName' Error:..."`
+        - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to update jurusan", error: "jurusan not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+      parameters:
+      - example: teknik-elektro
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Jurusan Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateJurusanFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateJurusanInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Jurusan
+      tags:
+      - jurusan
   /api/me:
     get:
       description: |-
@@ -1079,8 +1441,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any'
         "400":
@@ -1242,8 +1604,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
@@ -1404,8 +1766,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Created
           schema:
             $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":

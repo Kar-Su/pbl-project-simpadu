@@ -384,7 +384,7 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        request  body      swagger.UserAdminCreateRequest  true  "Payload Registrasi Admin"
-// @Success      200  {object}  utils.Response[any,any]
+// @Success      201  {object}  utils.Response[any,any]
 // @Failure      400  {object}  swagger.ErrRegisterUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
@@ -410,7 +410,7 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 		return
 	}
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, any(nil), path)
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusCreated, res)
 }
 
 // RegisterNonAdmin godoc
@@ -434,7 +434,7 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        request  body      swagger.UserNonAdminCreateRequest  true  "Payload Registrasi Non-Admin"
-// @Success      200  {object}  utils.Response[any,any]
+// @Success      201  {object}  utils.Response[any,any]
 // @Failure      400  {object}  swagger.ErrRegisterUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
@@ -460,7 +460,7 @@ func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 		return
 	}
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_REGISTER_USER, any(nil), path)
-	ctx.JSON(http.StatusOK, res)
+	ctx.JSON(http.StatusCreated, res)
 }
 
 // UpdateNonAdmin godoc

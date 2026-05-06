@@ -43,42 +43,50 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 
 CREATE TABLE IF NOT EXISTS jurusan(
     id int PRIMARY KEY AUTO_INCREMENT,
-    nama VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
 
-    UNIQUE INDEX idx_jurusan_nama (nama)
+    UNIQUE INDEX idx_jurusan_name (name)
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS prodi(
     id int PRIMARY KEY AUTO_INCREMENT,
-    nama VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    jenjang enum('D3', 'D4') NOT NULL,
     jurusan_id int NOT NULL,
 
-    UNIQUE INDEX idx_prodi_nama (nama),
+    UNIQUE INDEX idx_prodi_name (name),
     INDEX idx_prodi_jurusan (jurusan_id),
     CONSTRAINT fk_prodi_jurusan FOREIGN KEY (jurusan_id) REFERENCES jurusan(id) ON DELETE CASCADE
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS mata_kuliah(
     id char(36) PRIMARY KEY,
-    nama_mk VARCHAR(255) NOT NULL,
-    sks int NOT NULL
+    kode char(12) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    sks int NOT NULL,
+
+    UNIQUE INDEX idx_mata_kuliah_kode (kode)
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS kurikulum(
     id char(36) PRIMARY KEY,
-    nama_kurikulum VARCHAR(255) NOT NULL,
+    kode char(12) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     prodi_id int NOT NULL,
 
+    UNIQUE INDEX idx_kurikulum_kode (kode),
     CONSTRAINT fk_kurikulum_prodi FOREIGN KEY (prodi_id) REFERENCES prodi(id) ON DELETE CASCADE
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS kurikulum_mk(
-    kurikulum_id char(36) NOT NULL,
-    mata_kuliah_id char(36) NOT NULL,
+    kurikulum_kode char(12) NOT NULL,
+    mk_kode char(12) NOT NULL,
+    semester int NOT NULL,
+    wajib boolean NOT NULL DEFAULT false,
 
-    PRIMARY KEY (kurikulum_id, mata_kuliah_id),
-    CONSTRAINT fk_kurikulum_mk_kurikulum FOREIGN KEY (kurikulum_id) REFERENCES kurikulum(id) ON DELETE CASCADE,
-    CONSTRAINT fk_kurikulum_mk_mata_kuliah FOREIGN KEY (mata_kuliah_id) REFERENCES mata_kuliah(id) ON DELETE CASCADE
+    PRIMARY KEY (kurikulum_kode, mk_kode),
+    CONSTRAINT fk_kurikulum_mk_kurikulum FOREIGN KEY (kurikulum_kode) REFERENCES kurikulum(kode) ON DELETE CASCADE,
+    CONSTRAINT fk_kurikulum_mk_mata_kuliah FOREIGN KEY (mk_kode) REFERENCES mata_kuliah(kode) ON DELETE CASCADE
 ) engine=InnoDB;
 
 CREATE TABLE IF NOT EXISTS tahun_akademik(
@@ -92,7 +100,7 @@ CREATE TABLE IF NOT EXISTS tahun_akademik(
 
 CREATE TABLE IF NOT EXISTS kelas(
     id char(36) PRIMARY KEY,
-    nama_kelas VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     tahun_akademik_id int NOT NULL,
     kurikulum_id char(36) NOT NULL,
     prodi_id int NOT NULL,

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "dasar-pemrograman",
+    "kode": "mk-dp-001",
+    "sks": 2
+  },
+  {
+    "name": "data-struktur-algoritma",
+    "kode": "mk-dsa-001",
+    "sks": 3
+  },
+  {
+    "name": "iot",
+    "kode": "mk-iot-001",
+    "sks": 3
+  },
+  {
+    "name": "fisika-dasar",
+    "kode": "mk-fd-001",
+    "sks": 3
+  }
+]

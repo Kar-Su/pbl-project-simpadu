@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"web-hosting/internal/modules/auth"
+	"web-hosting/internal/modules/jurusan"
 	"web-hosting/internal/modules/role"
 	"web-hosting/internal/modules/user"
 	"web-hosting/internal/package/env"
@@ -65,6 +66,7 @@ func main() {
 	user.RegisterRoutes(server, injector)
 	auth.RegisterRoutes(server, injector)
 	role.RegisterRoutes(server, injector)
+	jurusan.RegisterRoutes(server, injector)
 
 	server.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

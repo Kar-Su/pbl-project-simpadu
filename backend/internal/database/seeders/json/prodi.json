@@ -1,0 +1,22 @@
+[
+  {
+    "name": "teknik-informatika",
+    "jenjang": "D3",
+    "jurusan_id": 1
+  },
+  {
+    "name": "sistem-informasi-kota-cerdas",
+    "jenjang": "D4",
+    "jurusan_id": 1
+  },
+  {
+    "name": "teknik-mesin",
+    "jenjang": "D3",
+    "jurusan_id": 2
+  },
+  {
+    "name": "alat-berat",
+    "jenjang": "D4",
+    "jurusan_id": 2
+  }
+]
