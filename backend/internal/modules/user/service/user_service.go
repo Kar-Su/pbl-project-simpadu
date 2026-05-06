@@ -19,11 +19,11 @@ type UserService interface {
 	CreateAdmin(ctx context.Context, req dto.UserAdminCreateRequest) error
 	CreateNonAdmin(ctx context.Context, req dto.UserNonAdminCreateRequest) error
 	UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRequest, userId uuid.UUID) (dto.UserResponse, error)
-	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error)
+	UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uuid.UUID) (dto.UserResponse, error)
 	DeleteAdmin(ctx context.Context, userId uuid.UUID) error
-	DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error
+	DeleteNonAdmin(ctx context.Context, roleId uint, detailId uuid.UUID) error
 	GetUserByID(ctx context.Context, userId uuid.UUID) (dto.UserResponse, error)
-	GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uint) (dto.UserResponse, error)
+	GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uuid.UUID) (dto.UserResponse, error)
 	GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error)
 	GetUserByRole(ctx context.Context, roleId uint) ([]dto.UserResponse, error)
 }
@@ -147,7 +147,11 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 		user.RoleID = roleId
 	}
 	if req.DetailId != nil {
-		user.DetailID = req.DetailId
+		if req.DetailId.String() == "null" {
+			user.DetailID = nil
+		} else {
+			user.DetailID = req.DetailId
+		}
 	}
 	if req.Image != nil {
 		fileName := req.Image.Filename
@@ -161,7 +165,7 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 	return dto.ToUserResponse(updatedUser), nil
 }
 
-func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uint) (dto.UserResponse, error) {
+func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUpdateRequest, roleId uint, detailId uuid.UUID) (dto.UserResponse, error) {
 	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
@@ -216,7 +220,7 @@ func (s *userService) DeleteAdmin(ctx context.Context, userId uuid.UUID) error {
 	return nil
 }
 
-func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId uint) error {
+func (s *userService) DeleteNonAdmin(ctx context.Context, roleId uint, detailId uuid.UUID) error {
 	user, isExist, err := s.userRepository.CheckRoleWithDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
@@ -269,7 +273,7 @@ func (s *userService) GetUserByRole(ctx context.Context, roleId uint) ([]dto.Use
 	return responses, nil
 }
 
-func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uint) (dto.UserResponse, error) {
+func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uuid.UUID) (dto.UserResponse, error) {
 	user, err := s.userRepository.GetUserByRoleAndDetailID(ctx, s.db, roleId, detailId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

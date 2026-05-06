@@ -394,3 +394,118 @@ type ErrGetListUserFailed struct {
 	Error   string `json:"error" example:"role not found"`
 	Path    string `json:"path,omitempty" example:"/api/user/role/mahasiswa"`
 }
+
+// JURUSAN
+
+type ErrCreateJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create jurusan"`
+	Error   string `json:"error" example:"jurusan already exists"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrCreateJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrUpdateJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update jurusan"`
+	Error   string `json:"error" example:"jurusan already exists"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrUpdateJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/super/jurusan"`
+}
+
+type ErrDeleteJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to Delete jurusan"`
+	Error   string `json:"error" example:"jurusan already exists"`
+	Path    string `json:"path,omitempty" example:"/api/jurusan"`
+}
+
+type ErrDeleteJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to Delete jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/jurusan"`
+}
+
+type ErrGetJurusanFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get jurusan"`
+	Error   string `json:"error" example:"jurusan not found"`
+	Path    string `json:"path,omitempty" example:"/api/jurusan"`
+}
+
+type ErrGetJurusanInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get jurusan"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/jurusan"`
+}
+
+// Prodi
+type ErrCreateProdiFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create prodi"`
+	Error   string `json:"error" example:"prodi already exists"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrCreateProdiInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create prodi"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrUpdateProdiFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update prodi"`
+	Error   string `json:"error" example:"prodi already exists"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrUpdateProdiInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update prodi"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrDeleteProdiFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to Delete prodi"`
+	Error   string `json:"error" example:"prodi already exists"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrDeleteProdiInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to Delete prodi"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrGetProdiFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get prodi"`
+	Error   string `json:"error" example:"prodi not found"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}
+
+type ErrGetProdiInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get prodi"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/prodi"`
+}

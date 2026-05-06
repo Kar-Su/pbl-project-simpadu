@@ -26,8 +26,8 @@ type roleService struct {
 	db       *gorm.DB
 }
 
-func NewRoleService(roleRepo repository.RoleRepository) RoleService {
-	return &roleService{roleRepo: roleRepo}
+func NewRoleService(roleRepo repository.RoleRepository, db *gorm.DB) RoleService {
+	return &roleService{roleRepo: roleRepo, db: db}
 }
 
 func (s *roleService) Create(ctx context.Context, req dto.RoleCreateRequest) (entities.Role, error) {

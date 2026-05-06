@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"web-hosting/internal/modules/auth"
+	"web-hosting/internal/modules/jurusan"
+	"web-hosting/internal/modules/prodi"
 	"web-hosting/internal/modules/role"
 	"web-hosting/internal/modules/user"
 	"web-hosting/internal/package/env"
@@ -37,7 +39,8 @@ func run(server *gin.Engine) {
 
 // @title           TIM 1 API
 // @version         1.0
-// @description     **DEFAULT ROUTE GOLANG /api**.
+// @description     **DUMMY DATA LINK**.
+// @description     **https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support
@@ -65,6 +68,8 @@ func main() {
 	user.RegisterRoutes(server, injector)
 	auth.RegisterRoutes(server, injector)
 	role.RegisterRoutes(server, injector)
+	jurusan.RegisterRoutes(server, injector)
+	prodi.RegisterRoutes(server, injector)
 
 	server.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
