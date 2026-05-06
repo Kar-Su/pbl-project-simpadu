@@ -8,7 +8,7 @@ import (
 )
 
 type JurusanRepository interface {
-	Create(ctx context.Context, tx *gorm.DB, jurusanName string) (entities.Jurusan, error)
+	Create(ctx context.Context, tx *gorm.DB, jurusanName string) error
 	Update(ctx context.Context, tx *gorm.DB, jurusanName string, jurusan entities.Jurusan) (entities.Jurusan, error)
 	Delete(ctx context.Context, tx *gorm.DB, jurusanName string) error
 	GetByName(ctx context.Context, tx *gorm.DB, jurusanName string) (entities.Jurusan, error)
@@ -24,16 +24,16 @@ func NewJurusanRepository(db *gorm.DB) JurusanRepository {
 	return &jurusanRepository{db: db}
 }
 
-func (r *jurusanRepository) Create(ctx context.Context, tx *gorm.DB, jurusanName string) (entities.Jurusan, error) {
+func (r *jurusanRepository) Create(ctx context.Context, tx *gorm.DB, jurusanName string) error {
 	if tx == nil {
 		tx = r.db
 	}
 
 	jurusan := entities.Jurusan{Name: jurusanName}
 	if err := tx.WithContext(ctx).Create(&jurusan).Error; err != nil {
-		return entities.Jurusan{}, err
+		return err
 	}
-	return jurusan, nil
+	return nil
 }
 
 func (r *jurusanRepository) Update(ctx context.Context, tx *gorm.DB, jurusanName string, jurusan entities.Jurusan) (entities.Jurusan, error) {
@@ -43,15 +43,26 @@ func (r *jurusanRepository) Update(ctx context.Context, tx *gorm.DB, jurusanName
 	if err := tx.WithContext(ctx).Where("name = ?", jurusanName).Updates(&jurusan).Error; err != nil {
 		return entities.Jurusan{}, err
 	}
-	return jurusan, nil
+
+	updatedJurusan, err := r.GetByName(ctx, tx, jurusanName)
+	if err != nil {
+		return entities.Jurusan{}, err
+	}
+	return updatedJurusan, nil
 }
 
 func (r *jurusanRepository) Delete(ctx context.Context, tx *gorm.DB, jurusanName string) error {
 	if tx == nil {
 		tx = r.db
 	}
-	if err := tx.WithContext(ctx).Where("name = ?", jurusanName).Delete(&entities.Jurusan{}).Error; err != nil {
-		return err
+	result := tx.WithContext(ctx).Where("name = ?", jurusanName).Delete(&entities.Jurusan{})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
 	}
 	return nil
 }

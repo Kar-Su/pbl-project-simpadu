@@ -1,6 +1,9 @@
 package dto
 
-import "errors"
+import (
+	"errors"
+	"web-hosting/internal/database/entities"
+)
 
 const (
 	MESSAGE_FAILED_GET_ALL        = "failed to get all jurusan"
@@ -44,3 +47,10 @@ type (
 		JurusanID   uint   `form:"id" example:"1"`
 	}
 )
+
+func ToJurusanResponse(jurusanEntity entities.Jurusan) JurusanResponse {
+	return JurusanResponse{
+		ID:   jurusanEntity.ID,
+		Name: jurusanEntity.Name,
+	}
+}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/jurusan/dto"
 	"web-hosting/internal/modules/jurusan/repository"
 	"web-hosting/internal/package/constants"
@@ -14,12 +13,12 @@ import (
 )
 
 type JurusanService interface {
-	CreateJurusan(ctx context.Context, req dto.JurusanRequest) (entities.Jurusan, error)
-	UpdateJurusan(ctx context.Context, req dto.JurusanUpdateRequest, jurusanName string) (entities.Jurusan, error)
+	CreateJurusan(ctx context.Context, req dto.JurusanRequest) error
+	UpdateJurusan(ctx context.Context, req dto.JurusanUpdateRequest, jurusanName string) (dto.JurusanResponse, error)
 	DeleteJurusan(ctx context.Context, jurusanName string) error
-	GetJurusanByName(ctx context.Context, jurusanName string) (entities.Jurusan, error)
-	GetAllJurusan(ctx context.Context) ([]entities.Jurusan, error)
-	GetJurusanById(ctx context.Context, jurusanId uint) (entities.Jurusan, error)
+	GetJurusanByName(ctx context.Context, jurusanName string) (dto.JurusanResponse, error)
+	GetAllJurusan(ctx context.Context) ([]dto.JurusanResponse, error)
+	GetJurusanById(ctx context.Context, jurusanId uint) (dto.JurusanResponse, error)
 }
 
 type jurusanService struct {
@@ -31,31 +30,31 @@ func NewJurusanService(jurusanRepo repository.JurusanRepository, db *gorm.DB) Ju
 	return &jurusanService{jurusanRepo: jurusanRepo, db: db}
 }
 
-func (s *jurusanService) CreateJurusan(ctx context.Context, req dto.JurusanRequest) (entities.Jurusan, error) {
+func (s *jurusanService) CreateJurusan(ctx context.Context, req dto.JurusanRequest) error {
 	normName := helpers.NormalizeString(req.JurusanName)
 
-	jurusan, err := s.jurusanRepo.Create(ctx, s.db, normName)
+	err := s.jurusanRepo.Create(ctx, s.db, normName)
 	if err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return entities.Jurusan{}, dto.ErrJurusanAlreadyExists
+			return dto.ErrJurusanAlreadyExists
 		}
 		log.Printf("Internal Error: %v", err)
-		return entities.Jurusan{}, constants.ErrInternalErr
+		return constants.ErrInternalErr
 	}
 
-	return jurusan, nil
+	return nil
 }
 
-func (s *jurusanService) UpdateJurusan(ctx context.Context, req dto.JurusanUpdateRequest, jurusanName string) (entities.Jurusan, error) {
+func (s *jurusanService) UpdateJurusan(ctx context.Context, req dto.JurusanUpdateRequest, jurusanName string) (dto.JurusanResponse, error) {
 	normName := helpers.NormalizeString(req.NewName)
 
 	jurusan, err := s.jurusanRepo.GetByName(ctx, s.db, jurusanName)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Jurusan{}, dto.ErrJurusanNotFound
+			return dto.JurusanResponse{}, dto.ErrJurusanNotFound
 		}
 		log.Printf("Internal Error: %v", err)
-		return entities.Jurusan{}, constants.ErrInternalErr
+		return dto.JurusanResponse{}, constants.ErrInternalErr
 	}
 
 	jurusan.Name = normName
@@ -63,10 +62,10 @@ func (s *jurusanService) UpdateJurusan(ctx context.Context, req dto.JurusanUpdat
 	updatedJurusan, err := s.jurusanRepo.Update(ctx, s.db, jurusanName, jurusan)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
-		return entities.Jurusan{}, constants.ErrInternalErr
+		return dto.JurusanResponse{}, constants.ErrInternalErr
 	}
 
-	return updatedJurusan, nil
+	return dto.ToJurusanResponse(updatedJurusan), nil
 }
 
 func (s *jurusanService) DeleteJurusan(ctx context.Context, jurusanName string) error {
@@ -88,20 +87,20 @@ func (s *jurusanService) DeleteJurusan(ctx context.Context, jurusanName string) 
 	return nil
 }
 
-func (s *jurusanService) GetJurusanByName(ctx context.Context, jurusanName string) (entities.Jurusan, error) {
+func (s *jurusanService) GetJurusanByName(ctx context.Context, jurusanName string) (dto.JurusanResponse, error) {
 	jurusan, err := s.jurusanRepo.GetByName(ctx, s.db, jurusanName)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Jurusan{}, dto.ErrJurusanNotFound
+			return dto.JurusanResponse{}, dto.ErrJurusanNotFound
 		}
 		log.Printf("Internal Error: %v", err)
-		return entities.Jurusan{}, constants.ErrInternalErr
+		return dto.JurusanResponse{}, constants.ErrInternalErr
 	}
 
-	return jurusan, nil
+	return dto.ToJurusanResponse(jurusan), nil
 }
 
-func (s *jurusanService) GetAllJurusan(ctx context.Context) ([]entities.Jurusan, error) {
+func (s *jurusanService) GetAllJurusan(ctx context.Context) ([]dto.JurusanResponse, error) {
 	jurusan, err := s.jurusanRepo.GetAll(ctx, s.db)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -111,18 +110,23 @@ func (s *jurusanService) GetAllJurusan(ctx context.Context) ([]entities.Jurusan,
 		return nil, constants.ErrInternalErr
 	}
 
-	return jurusan, nil
+	responses := make([]dto.JurusanResponse, len(jurusan))
+	for i, j := range jurusan {
+		responses[i] = dto.ToJurusanResponse(j)
+	}
+
+	return responses, nil
 }
 
-func (s *jurusanService) GetJurusanById(ctx context.Context, jurusanId uint) (entities.Jurusan, error) {
+func (s *jurusanService) GetJurusanById(ctx context.Context, jurusanId uint) (dto.JurusanResponse, error) {
 	jurusan, err := s.jurusanRepo.GetById(ctx, s.db, jurusanId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return entities.Jurusan{}, dto.ErrJurusanNotFound
+			return dto.JurusanResponse{}, dto.ErrJurusanNotFound
 		}
 		log.Printf("Internal Error: %v", err)
-		return entities.Jurusan{}, constants.ErrInternalErr
+		return dto.JurusanResponse{}, constants.ErrInternalErr
 	}
 
-	return jurusan, nil
+	return dto.ToJurusanResponse(jurusan), nil
 }

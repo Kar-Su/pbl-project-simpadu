@@ -154,7 +154,7 @@ func (c *userController) GetUser(ctx *gin.Context) {
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        role_name  path      string  true  "Nama Role Non-Admin"  example(mahasiswa)
-// @Param        detail_id  path      string  true  "UUID Detail (UUID v7)"  example(01965a1d-7777-7777-7777-777777777777)
+// @Param        detail_id  path      string  true  "UUID Detail"  example(01965a1d-7777-7777-7777-777777777777)
 // @Success      200  {object}  utils.Response[dto.UserResponse,any]
 // @Failure      400  {object}  swagger.ErrGetUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken

@@ -67,6 +67,15 @@ definitions:
     required:
     - jurusan_name
     type: object
+  web-hosting_internal_modules_jurusan_dto.JurusanResponse:
+    properties:
+      id:
+        example: 1
+        type: integer
+      name:
+        example: teknik-elektro
+        type: string
+    type: object
   web-hosting_internal_modules_jurusan_dto.JurusanUpdateRequest:
     properties:
       new_name:
@@ -74,6 +83,51 @@ definitions:
         type: string
     required:
     - new_name
+    type: object
+  web-hosting_internal_modules_prodi_dto.ProdiCreateRequest:
+    properties:
+      jenjang:
+        enum:
+        - D3
+        - D4
+        example: D3
+        type: string
+      jurusan_name:
+        example: teknik-elektro
+        type: string
+      name:
+        example: teknik-elektro
+        type: string
+    required:
+    - jenjang
+    - jurusan_name
+    - name
+    type: object
+  web-hosting_internal_modules_prodi_dto.ProdiResponse:
+    properties:
+      id:
+        example: 1
+        type: integer
+      jenjang:
+        example: D3
+        type: string
+      jurusan:
+        $ref: '#/definitions/web-hosting_internal_database_entities.Jurusan'
+      name:
+        example: teknik-elektro
+        type: string
+    type: object
+  web-hosting_internal_modules_prodi_dto.ProdiUpdateRequest:
+    properties:
+      jenjang:
+        example: D3
+        type: string
+      jurusan_id:
+        example: 1
+        type: integer
+      name:
+        example: teknik-elektro
+        type: string
     type: object
   web-hosting_internal_modules_role_dto.RoleCreateRequest:
     properties:
@@ -155,6 +209,36 @@ definitions:
         example: false
         type: boolean
     type: object
+  web-hosting_internal_package_swagger.ErrCreateProdiFailed:
+    properties:
+      error:
+        example: prodi already exists
+        type: string
+      message:
+        example: failed to create prodi
+        type: string
+      path:
+        example: /api/prodi
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrCreateProdiInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to create prodi
+        type: string
+      path:
+        example: /api/prodi
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrCreateRoleFailed:
     properties:
       error:
@@ -194,7 +278,7 @@ definitions:
         example: failed to Delete jurusan
         type: string
       path:
-        example: /api/super/jurusan
+        example: /api/jurusan
         type: string
       success:
         example: false
@@ -209,7 +293,37 @@ definitions:
         example: failed to Delete jurusan
         type: string
       path:
-        example: /api/super/jurusan
+        example: /api/jurusan
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteProdiFailed:
+    properties:
+      error:
+        example: prodi already exists
+        type: string
+      message:
+        example: failed to Delete prodi
+        type: string
+      path:
+        example: /api/prodi
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteProdiInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to Delete prodi
+        type: string
+      path:
+        example: /api/prodi
         type: string
       success:
         example: false
@@ -330,6 +444,36 @@ definitions:
         type: string
       path:
         example: /api/user/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetProdiFailed:
+    properties:
+      error:
+        example: prodi not found
+        type: string
+      message:
+        example: failed to get prodi
+        type: string
+      path:
+        example: /api/prodi
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetProdiInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to get prodi
+        type: string
+      path:
+        example: /api/prodi
         type: string
       success:
         example: false
@@ -605,6 +749,36 @@ definitions:
         example: false
         type: boolean
     type: object
+  web-hosting_internal_package_swagger.ErrUpdateProdiFailed:
+    properties:
+      error:
+        example: prodi already exists
+        type: string
+      message:
+        example: failed to update prodi
+        type: string
+      path:
+        example: /api/prodi
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to update prodi
+        type: string
+      path:
+        example: /api/prodi
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrUpdateRoleFailed:
     properties:
       error:
@@ -805,6 +979,22 @@ definitions:
       success:
         type: boolean
     type: object
+  web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_prodi_dto.ProdiResponse'
+        type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
   web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any:
     properties:
       data:
@@ -877,6 +1067,34 @@ definitions:
       success:
         type: boolean
     type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_jurusan_dto_JurusanResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_prodi_dto.ProdiResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
   web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any:
     properties:
       data:
@@ -897,7 +1115,9 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: '**DEFAULT ROUTE GOLANG /api**.'
+  description: |-
+    **DUMMY DATA LINK**.
+    **https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -1151,7 +1371,7 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "400":
           description: Bad Request
           schema:
@@ -1196,12 +1416,6 @@ paths:
         name: name
         required: true
         type: string
-      - description: Jurusan Request
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanRequest'
       produces:
       - application/json
       responses:
@@ -1318,7 +1532,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_jurusan_dto_JurusanResponse-any'
         "400":
           description: Bad Request
           schema:
@@ -1377,6 +1591,271 @@ paths:
       summary: Get Current User (Profil Saya)
       tags:
       - user
+  /api/prodi:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan prodi baru ke sistem
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'ProdiName' Error:..."`
+        - `400` prodi dengan nama tersebut sudah ada -> `message: "failed to create prodi", error: "prodi already exists"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to create prodi", error: "Internal Error"`
+      parameters:
+      - description: Prodi Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_prodi_dto.ProdiCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateProdiFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateProdiInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Prodi Baru
+      tags:
+      - prodi
+  /api/prodi/:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        delete prodi yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate prodi Query", error: "Key: 'ProdiName' Error:..."`
+        - `400` prodi dengan nama tersebut tidak ditemukan -> `message: "failed to Delete prodi", error: "prodi not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to Delete prodi", error: "Internal Error"`
+      parameters:
+      - example: teknik-elektro
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteProdiFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteProdiInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Prodi
+      tags:
+      - prodi
+    get:
+      consumes:
+      - application/json
+      description: |-
+        melihat data prodi yang sudah ada
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate prodi Query", error: "Key: 'ProdiName' Error:..."`
+        - `400` prodi dengan nama tersebut tidak ditemukan -> `message: "failed to update prodi", error: "prodi not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update prodi", error: "Internal Error"`
+      parameters:
+      - example: 1
+        in: query
+        name: id
+        type: integer
+      - example: teknik-elektro
+        in: query
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetProdiFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: get data prodi
+      tags:
+      - prodi
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengupdate prodi yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate prodi Query", error: "Key: 'ProdiName' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'ProdiName' Error:..."`
+        - `400` prodi dengan nama tersebut tidak ditemukan -> `message: "failed to update prodi", error: "prodi not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update prodi", error: "Internal Error"`
+      parameters:
+      - example: teknik-elektro
+        in: query
+        name: name
+        required: true
+        type: string
+      - description: Prodi Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_prodi_dto.ProdiUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Prodi
+      tags:
+      - prodi
+  /api/prodi/jurusan/{jurusan_name}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        melihat data prodi yang sudah ada
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Uri tidak valid -> `message: "failed to validate prodi Uri", error: "Key: 'JurusanName' Error:..."`
+        - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to get jurusan", error: "jurusan not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to get prodi", error: "Internal Error"`
+      parameters:
+      - description: Jurusan Name
+        example: teknik-elektro
+        in: path
+        name: jurusan_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetProdiFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetProdiInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: get data prodi berdasarkan nama jurusan
+      tags:
+      - prodi
   /api/role:
     get:
       description: |-
@@ -2010,7 +2489,7 @@ paths:
         name: role_name
         required: true
         type: string
-      - description: UUID Detail (UUID v7)
+      - description: UUID Detail
         example: 01965a1d-7777-7777-7777-777777777777
         in: path
         name: detail_id

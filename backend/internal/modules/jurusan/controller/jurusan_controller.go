@@ -54,7 +54,7 @@ func NewJurusanController(injector do.Injector, jurusanService service.JurusanSe
 // @Produce json
 // @Security ApiKeyAuth
 // @Param request body dto.JurusanRequest true "Jurusan Request"
-// @Success      201      {object}  utils.Response[entities.Jurusan,any]
+// @Success      201      {object}  utils.Response[any,any]
 // @Failure      400      {object}  swagger.ErrCreateJurusanFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
@@ -69,7 +69,7 @@ func (c *jurusanController) CreateJurusan(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 	}
 
-	jurusan, err := c.jurusanService.CreateJurusan(ctx.Request.Context(), req)
+	err := c.jurusanService.CreateJurusan(ctx.Request.Context(), req)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_JURUSAN, err.Error(), nil, path)
@@ -79,7 +79,7 @@ func (c *jurusanController) CreateJurusan(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 	}
 
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_JURUSAN, jurusan, path)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_JURUSAN, any(nil), path)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -104,7 +104,7 @@ func (c *jurusanController) CreateJurusan(ctx *gin.Context) {
 // @Security ApiKeyAuth
 // @Param name query dto.JurusanNameQuery true "Jurusan Name"
 // @Param request body dto.JurusanUpdateRequest true "Jurusan Request"
-// @Success      200      {object}  utils.Response[entities.Jurusan,any]
+// @Success      200      {object}  utils.Response[dto.JurusanResponse,any]
 // @Failure      400      {object}  swagger.ErrUpdateJurusanFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
@@ -162,7 +162,6 @@ func (c *jurusanController) UpdateJurusan(ctx *gin.Context) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Param name query dto.JurusanNameQuery true "Jurusan Name"
-// @Param request body dto.JurusanRequest true "Jurusan Request"
 // @Success      200      {object}  utils.Response[any,any]
 // @Failure      400      {object}  swagger.ErrDeleteJurusanFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken

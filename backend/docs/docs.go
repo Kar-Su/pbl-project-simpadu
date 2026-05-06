@@ -314,7 +314,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "400": {
@@ -448,7 +448,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Jurusan-any"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_jurusan_dto_JurusanResponse-any"
                         }
                     },
                     "400": {
@@ -501,15 +501,6 @@ const docTemplate = `{
                         "name": "name",
                         "in": "query",
                         "required": true
-                    },
-                    {
-                        "description": "Jurusan Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanRequest"
-                        }
                     }
                 ],
                 "responses": {
@@ -584,6 +575,324 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/prodi": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan prodi baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create prodi\", error: \"prodi already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create prodi\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "prodi"
+                ],
+                "summary": "Create Prodi Baru",
+                "parameters": [
+                    {
+                        "description": "Prodi Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_prodi_dto.ProdiCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateProdiFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateProdiInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/prodi/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat data prodi yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Query\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "prodi"
+                ],
+                "summary": "get data prodi",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "name": "name",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate prodi yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Query\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "prodi"
+                ],
+                "summary": "Update Prodi",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "Prodi Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_prodi_dto.ProdiUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "delete prodi yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Query\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete prodi\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete prodi\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "prodi"
+                ],
+                "summary": "Delete Prodi",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteProdiFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteProdiInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/prodi/jurusan/{jurusan_name}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat data prodi yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Uri tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Uri\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get prodi\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "prodi"
+                ],
+                "summary": "get data prodi berdasarkan nama jurusan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "description": "Jurusan Name",
+                        "name": "jurusan_name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiInternalServer"
                         }
                     }
                 }
@@ -1214,7 +1523,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "01965a1d-7777-7777-7777-777777777777",
-                        "description": "UUID Detail (UUID v7)",
+                        "description": "UUID Detail",
                         "name": "detail_id",
                         "in": "path",
                         "required": true
@@ -1543,6 +1852,19 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_modules_jurusan_dto.JurusanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "teknik-elektro"
+                }
+            }
+        },
         "web-hosting_internal_modules_jurusan_dto.JurusanUpdateRequest": {
             "type": "object",
             "required": [
@@ -1552,6 +1874,69 @@ const docTemplate = `{
                 "new_name": {
                     "type": "string",
                     "example": "teknik-mesin"
+                }
+            }
+        },
+        "web-hosting_internal_modules_prodi_dto.ProdiCreateRequest": {
+            "type": "object",
+            "required": [
+                "jenjang",
+                "jurusan_name",
+                "name"
+            ],
+            "properties": {
+                "jenjang": {
+                    "type": "string",
+                    "enum": [
+                        "D3",
+                        "D4"
+                    ],
+                    "example": "D3"
+                },
+                "jurusan_name": {
+                    "type": "string",
+                    "example": "teknik-elektro"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "teknik-elektro"
+                }
+            }
+        },
+        "web-hosting_internal_modules_prodi_dto.ProdiResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "jenjang": {
+                    "type": "string",
+                    "example": "D3"
+                },
+                "jurusan": {
+                    "$ref": "#/definitions/web-hosting_internal_database_entities.Jurusan"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "teknik-elektro"
+                }
+            }
+        },
+        "web-hosting_internal_modules_prodi_dto.ProdiUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "jenjang": {
+                    "type": "string",
+                    "example": "D3"
+                },
+                "jurusan_id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "teknik-elektro"
                 }
             }
         },
@@ -1668,6 +2053,48 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrCreateProdiFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "prodi already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateProdiInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrCreateRoleFailed": {
             "type": "object",
             "properties": {
@@ -1723,7 +2150,7 @@ const docTemplate = `{
                 },
                 "path": {
                     "type": "string",
-                    "example": "/api/super/jurusan"
+                    "example": "/api/jurusan"
                 },
                 "success": {
                     "type": "boolean",
@@ -1744,7 +2171,49 @@ const docTemplate = `{
                 },
                 "path": {
                     "type": "string",
-                    "example": "/api/super/jurusan"
+                    "example": "/api/jurusan"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteProdiFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "prodi already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to Delete prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteProdiInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to Delete prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
                 },
                 "success": {
                     "type": "boolean",
@@ -1913,6 +2382,48 @@ const docTemplate = `{
                 "path": {
                     "type": "string",
                     "example": "/api/user/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetProdiFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "prodi not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetProdiInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
                 },
                 "success": {
                     "type": "boolean",
@@ -2298,6 +2809,48 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrUpdateProdiFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "prodi already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update prodi"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/prodi"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrUpdateRoleFailed": {
             "type": "object",
             "properties": {
@@ -2571,6 +3124,29 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_prodi_dto.ProdiResponse"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any": {
             "type": "object",
             "properties": {
@@ -2674,6 +3250,46 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_jurusan_dto_JurusanResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_prodi_dto.ProdiResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any": {
             "type": "object",
             "properties": {
@@ -2712,7 +3328,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "TIM 1 API",
-	Description:      "**DEFAULT ROUTE GOLANG /api**.",
+	Description:      "**DUMMY DATA LINK**.\n**https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
