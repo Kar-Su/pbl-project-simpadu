@@ -18,6 +18,13 @@ func Seeder(db *gorm.DB) error {
 	if err := seeds.ListUsersSeed(ctx, db, roleRepo); err != nil {
 		return err
 	}
+	if err := seeds.ListJurusanSeed(ctx, db); err != nil {
+		return err
+	}
+
+	if err := seeds.ListSeedProdi(ctx, db); err != nil {
+		return err
+	}
 
 	return nil
 }
