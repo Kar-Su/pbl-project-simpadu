@@ -9,13 +9,13 @@
     "name": "admin akademik",
     "email": "tim1@admin.com",
     "password": "pass#tim1",
-    "role_name": "super-admin"
+    "role_name": "admin-akademik"
   },
   {
     "name": "admin pegawai",
     "email": "tim2@admin.com",
     "password": "pass#tim2",
-    "role_name": "admin-akademik"
+    "role_name": "admin-pegawai"
   },
   {
     "name": "admin mahasiswa",
