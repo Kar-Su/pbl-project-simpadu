@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
     ports:
-      - "3306:3306"
+      - "6033:3306"
     # expose:
     #   - "3306"
     environment:
@@ -155,29 +155,29 @@ services:
     networks:
       - web_hosting
 
-  # phpmyadmin:
-  #   image: "phpmyadmin/phpmyadmin:latest"
-  #   container_name: phpmyadmin_pbl
-  #   restart: unless-stopped
-  #   # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
-  #   # port:
-  #   #   - "8080:80"
-  #   ports:
-  #     - "80"
-  #   links:
-  #     - db
-  #   environment:
-  #     PMA_HOST: db
-  #     # PMA_PORT sebaiknya dihapus jika tidak ingin akses langsung dari luar container
-  #     # PMA_PORT: 3306
-  #     PMA_ARBITRARY: 1
-  #     PMA_ABSOLUTE_URI: https://pma.${DOMAIN:-localhost}/
-  #   networks:
-  #     - web_hosting
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.pma-service.entrypoints=web"
-  #     - "traefik.http.routers.pma-service.rule=Host(`pma.${DOMAIN:-localhost}`)"
+  phpmyadmin:
+    image: "phpmyadmin/phpmyadmin:latest"
+    container_name: phpmyadmin_pbl
+    restart: unless-stopped
+    # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+    # port:
+    #   - "8080:80"
+    # ports:
+    #   - "80"
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      # PMA_PORT sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+      # PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      PMA_ABSOLUTE_URI: https://pma.${DOMAIN:-localhost}/
+    networks:
+      - web_hosting
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pma-service.entrypoints=web"
+      - "traefik.http.routers.pma-service.rule=Host(`pma.${DOMAIN:-localhost}`)"
 
   # redis:
   #   image: "redis:alpine"
