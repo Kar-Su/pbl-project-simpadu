@@ -3324,11 +3324,11 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost",
+	Host:             "",
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "TIM 1 API",
-	Description:      "**DUMMY DATA LINK**.\n**https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.",
+	Description:      "**BARANG SIAPA YANG UPDATE/HAPUS DATA SEMBARANGAN DAPAT KECUPAN DARI HAFIZ**.\n**BUAT DATA BARU JIKA INGIN HAPUS/UPDATE**.\n\n**DUMMY DATA LINK:**\n**https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**\n\n**TUTORIAL LINK:***\n**https://github.com/Kar-Su/pbl-project-simpadu**",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

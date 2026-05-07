@@ -1,6 +1,5 @@
 .idea
 .vscode
-docker-compose-prod.yml
 
 .env
 *.env
@@ -20,3 +19,5 @@ yarn-error.log*
 .eslintcache
 
 tmp
+
+.air.toml

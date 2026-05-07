@@ -1109,15 +1109,20 @@ definitions:
       success:
         type: boolean
     type: object
-host: localhost
 info:
   contact:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
   description: |-
-    **DUMMY DATA LINK**.
-    **https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.
+    **BARANG SIAPA YANG UPDATE/HAPUS DATA SEMBARANGAN DAPAT KECUPAN DARI HAFIZ**.
+    **BUAT DATA BARU JIKA INGIN HAPUS/UPDATE**.
+
+    **DUMMY DATA LINK:**
+    **https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**
+
+    **TUTORIAL LINK:***
+    **https://github.com/Kar-Su/pbl-project-simpadu**
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
