@@ -28,7 +28,7 @@ type jurusanController struct {
 	db             *gorm.DB
 }
 
-func NewJurusanController(injector do.Injector, jurusanService service.JurusanService, db *gorm.DB) *jurusanController {
+func NewJurusanController(injector do.Injector, jurusanService service.JurusanService, db *gorm.DB) JurusanController {
 	return &jurusanController{
 		jurusanService: jurusanService,
 		db:             db,
@@ -213,8 +213,8 @@ func (c *jurusanController) DeleteJurusan(ctx *gin.Context) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Param name query dto.JurusanQuery false "Jurusan Name Or ID"
-// @Success      200      {object}  utils.Response[entities.Jurusan,any]
-// @Success      200      {object}  utils.Response[[]entities.Jurusan,any]
+// @Success      200      {object}  utils.Response[dto.JurusanResponse,any]
+// @Success      200      {object}  utils.Response[[]dto.JurusanResponse,any]
 // @Failure      400      {object}  swagger.ErrUpdateJurusanFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess

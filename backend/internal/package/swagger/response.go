@@ -509,3 +509,60 @@ type ErrGetProdiInternalServer struct {
 	Error   string `json:"error" example:"Internal Error"`
 	Path    string `json:"path,omitempty" example:"/api/prodi"`
 }
+
+// MK
+type ErrCreateMkFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create mata-kuliah"`
+	Error   string `json:"error" example:"prodi already exists"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrCreateMkInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create prodi"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrUpdateMkFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update mata-kuliah"`
+	Error   string `json:"error" example:"mata-kuliah already exists"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrUpdateMkInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update mata-kuliah"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrDeleteMkFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete mata-kuliah"`
+	Error   string `json:"error" example:"mata-kuliah already exists"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrDeleteMkInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete mata-kuliah"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrGetMkFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get mata-kuliah"`
+	Error   string `json:"error" example:"mata-kuliah not found"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
+
+type ErrGetMkInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get mata-kuliah"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
+}
