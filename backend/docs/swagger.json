@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "**DUMMY DATA LINK**.\n**https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.",
+        "description": "**BARANG SIAPA YANG UPDATE/HAPUS DATA SEMBARANGAN DAPAT KECUPAN DARI HAFIZ**.\n**BUAT DATA BARU JIKA INGIN HAPUS/UPDATE**.\n\n**DUMMY DATA LINK:**\n**https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**\n\n**TUTORIAL LINK:***\n**https://github.com/Kar-Su/pbl-project-simpadu**",
         "title": "TIM 1 API",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
@@ -15,7 +15,6 @@
         },
         "version": "1.0"
     },
-    "host": "localhost",
     "basePath": "/",
     "paths": {
         "/api/auth/login": {

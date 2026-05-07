@@ -15,32 +15,50 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/samber/do/v2"
 
-	_ "web-hosting/docs"
+	"web-hosting/docs"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
+
+var SWAGGER_PATH string
 
 func run(server *gin.Engine) {
 	// server.Static("/assets", "./assets")
 	port := env.GetWithDefault[string]("GO_PORT", "8080")
 
 	var serve string
-	if env.GetWithDefault[string]("GO_APP", "localhost") == "localhost" {
+	app := env.GetWithDefault[string]("GO_APP", "localhost")
+	if app == "localhost" {
 		serve = "0.0.0.0:" + port
+		docs.SwaggerInfo.Host = "localhost"
+		SWAGGER_PATH = "/api/swagger/*any"
+		server.Use(cors.Default())
 	} else {
 		serve = ":" + port
+		docs.SwaggerInfo.Host = app
+		SWAGGER_PATH = "/swagger/*any"
+	}
+	log.Printf("API docs url: %v", SWAGGER_PATH)
+	server.GET(SWAGGER_PATH, ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	log.Printf("server is running on %s", app)
+	if err := server.Run(serve); err != nil {
+		log.Fatalf("error running server: %s", err)
 	}
 
-	if err := server.Run(serve); err != nil {
-		log.Fatalf("error running server: %v", err)
-	}
 }
 
 // @title           TIM 1 API
 // @version         1.0
-// @description     **DUMMY DATA LINK**.
-// @description     **https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**.
+// @description     **BARANG SIAPA YANG UPDATE/HAPUS DATA SEMBARANGAN DAPAT KECUPAN DARI HAFIZ**.
+// @description     **BUAT DATA BARU JIKA INGIN HAPUS/UPDATE**.
+// @description
+// @description     **DUMMY DATA LINK:**
+// @description     **https://github.com/Kar-Su/pbl-project-simpadu/tree/main/backend/internal/database/seeders/json**
+// @description
+// @description 	**TUTORIAL LINK:***
+// @description     **https://github.com/Kar-Su/pbl-project-simpadu**
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support
@@ -50,7 +68,6 @@ func run(server *gin.Engine) {
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost
 // @BasePath  /
 
 // @securityDefinitions.apikey  ApiKeyAuth
@@ -61,7 +78,6 @@ func main() {
 	injector := do.New()
 
 	server := gin.Default()
-	server.Use(cors.Default())
 
 	providers.RegisterProviders(injector)
 
@@ -70,8 +86,6 @@ func main() {
 	role.RegisterRoutes(server, injector)
 	jurusan.RegisterRoutes(server, injector)
 	prodi.RegisterRoutes(server, injector)
-
-	server.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	run(server)
 }
