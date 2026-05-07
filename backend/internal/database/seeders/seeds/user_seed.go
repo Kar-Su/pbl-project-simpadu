@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"io"
+	"log"
 	"os"
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/role/repository"
@@ -37,7 +38,10 @@ func ListUsersSeed(ctx context.Context, db *gorm.DB, roleRepo repository.RoleRep
 		}
 
 		normRoleName := helpers.NormalizeString(user.RoleName)
-		roleId, _ := roleRepo.GetRoleIdByRoleName(ctx, db, normRoleName)
+		roleId, err := roleRepo.GetRoleIdByRoleName(ctx, db, normRoleName)
+		if err != nil {
+			log.Printf("Error seed: %s", err)
+		}
 		userEntity.RoleID = roleId
 		if user.DetailId != nil {
 			userEntity.DetailID = user.DetailId
