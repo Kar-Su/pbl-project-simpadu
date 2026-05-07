@@ -1,0 +1,197 @@
+services:
+  # php:
+  #   build:
+  #     args:
+  #       user: ${APP_USER_NAME:-dev}
+  #       uid: ${APP_USER_ID:-1000}
+  #     context: .
+  #     dockerfile: ./.docker/php/php.build.Dockerfile
+  #   image: php-bff
+  #   container_name: php_web_hosting
+  #   restart: unless-stopped
+  #   working_dir: /var/www
+  #   volumes:
+  #     - ./laravel/:/var/www
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #     # - redis
+  #   env_file:
+  #     - .env
+  #     - ./laravel/.env
+  #   networks:
+  # - web_hosting
+
+  # PRODUCTION CONFIG
+  # golang:
+  #   build:
+  #     context: .
+  #     dockerfile: ./.docker/golang/golang.build.Dockerfile
+  #   container_name: golang_web_hosting
+  #   restart: unless-stopped
+  #   expose:
+  #     - "8080"
+  #   env_file:
+  #     - .env
+  #     - ./golang/.env
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   networks:
+  #     - web_hosting
+
+  # DEVELOPMENT CONFIG HOT RELOAD (AIR)
+  golang:
+    build:
+      context: ./backend
+      dockerfile: ../.docker/golang-air.Dockerfile
+    container_name: golang_pbl
+    restart: unless-stopped
+    # expose:
+    #   - "8080"
+    working_dir: /golang
+    volumes:
+      - ./backend:/golang
+    environment:
+      - ENV=development
+    env_file:
+      - .env
+      - backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - web_hosting
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.golang-service.entrypoints=web"
+      - "traefik.http.routers.golang-service.rule=Host(`${DOMAIN_BE:-localhost}`)"
+      - "traefik.http.services.golang-service.loadbalancer.server.port=8080"
+      - "traefik.http.routers.golang-service.priority=1"
+
+  db:
+    image: "mysql:8.0"
+    container_name: mysql_pbl
+    restart: unless-stopped
+    # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+    ports:
+      - "3306:3306"
+    # expose:
+    #   - "3306"
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-uroot",
+          "-p${DB_ROOT_PASSWORD}",
+        ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - ./.docker/mysql/data:/var/lib/mysql
+      - ./.docker/mysql/logs:/var/log/mysql
+      - ./.docker/mysql/sql:/docker-entrypoint-initdb.d
+    networks:
+      - web_hosting
+
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: nginx_web_hosting
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - php
+  #   # expose:
+  #   #   - "80"
+  #   volumes:
+  #     - ./laravel:/var/www
+  #     - ./.docker/nginx:/etc/nginx/conf.d
+  #   networks:
+  #     - web_hosting
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.nginx-service.entrypoints=web"
+  #     - "traefik.http.routers.nginx-service.rule=Host(`${DOMAIN:-localhost}`)"
+  #     - "traefik.http.routers.nginx-service.priority=1"
+
+  traefik:
+    image: traefik:latest
+    container_name: traefik_pbl
+    restart: unless-stopped
+    command:
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entryPoints.web.address=:80"
+      - "--accessLog=true"
+      - "--log.level=INFO"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - web_hosting
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-service.entrypoints=web"
+      - "traefik.http.routers.traefik-service.rule=Host(`dashboard.${DOMgAIN:-localhost}`)"
+      - "traefik.http.routers.traefik-service.service=api@internal"
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_web_hosting
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TOKEN} --protocol http2
+    volumes:
+      - ./.docker/cloudflare:/etc/cloudflared
+    networks:
+      - web_hosting
+
+  # phpmyadmin:
+  #   image: "phpmyadmin/phpmyadmin:latest"
+  #   container_name: phpmyadmin_pbl
+  #   restart: unless-stopped
+  #   # Ports sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+  #   # port:
+  #   #   - "8080:80"
+  #   ports:
+  #     - "80"
+  #   links:
+  #     - db
+  #   environment:
+  #     PMA_HOST: db
+  #     # PMA_PORT sebaiknya dihapus jika tidak ingin akses langsung dari luar container
+  #     # PMA_PORT: 3306
+  #     PMA_ARBITRARY: 1
+  #     PMA_ABSOLUTE_URI: https://pma.${DOMAIN:-localhost}/
+  #   networks:
+  #     - web_hosting
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.pma-service.entrypoints=web"
+  #     - "traefik.http.routers.pma-service.rule=Host(`pma.${DOMAIN:-localhost}`)"
+
+  # redis:
+  #   image: "redis:alpine"
+  #   container_name: redis_bejalar_web
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./.docker/redis/data/:/data
+  #   # port:
+  #   #   - "6379:6379"
+  #   expose:
+  #     - "6379"
+  #   networks:
+  #     - web_hosting
+
+networks:
+  web_hosting:
+    driver: bridge
