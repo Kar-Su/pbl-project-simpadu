@@ -3356,7 +3356,7 @@ paths:
       - ApiKeyAuth: []
       summary: Buat Role Baru
       tags:
-      - role (super)
+      - role
   /api/super/role/{role_name}:
     delete:
       consumes:
@@ -3408,7 +3408,7 @@ paths:
       - ApiKeyAuth: []
       summary: Hapus Role
       tags:
-      - role (super)
+      - role
     put:
       consumes:
       - application/json
@@ -3466,7 +3466,7 @@ paths:
       - ApiKeyAuth: []
       summary: Update Role
       tags:
-      - role (super)
+      - role
   /api/super/user:
     post:
       consumes:

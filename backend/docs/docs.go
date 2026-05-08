@@ -1703,7 +1703,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role (super)"
+                    "role"
                 ],
                 "summary": "Buat Role Baru",
                 "parameters": [
@@ -1766,7 +1766,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role (super)"
+                    "role"
                 ],
                 "summary": "Update Role",
                 "parameters": [
@@ -1835,7 +1835,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "role (super)"
+                    "role"
                 ],
                 "summary": "Hapus Role",
                 "parameters": [

@@ -1696,7 +1696,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role (super)"
+                    "role"
                 ],
                 "summary": "Buat Role Baru",
                 "parameters": [
@@ -1759,7 +1759,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role (super)"
+                    "role"
                 ],
                 "summary": "Update Role",
                 "parameters": [
@@ -1828,7 +1828,7 @@
                     "application/json"
                 ],
                 "tags": [
-                    "role (super)"
+                    "role"
                 ],
                 "summary": "Hapus Role",
                 "parameters": [
