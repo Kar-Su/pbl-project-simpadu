@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"web-hosting/internal/database/entities"
 
 	"github.com/google/uuid"
@@ -18,6 +19,7 @@ type (
 		GetByKode(ctx context.Context, tx *gorm.DB, kodeMk string) (entities.MataKuliah, error)
 		GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.MataKuliah, error)
 		GetAll(ctx context.Context, tx *gorm.DB) ([]entities.MataKuliah, error)
+		CheckMkExists(ctx context.Context, tx *gorm.DB, kodeMk string) (bool, error)
 	}
 
 	mkRepository struct {
@@ -148,4 +150,19 @@ func (r *mkRepository) GetAll(ctx context.Context, tx *gorm.DB) ([]entities.Mata
 	}
 
 	return mks, nil
+}
+
+func (r *mkRepository) CheckMkExists(ctx context.Context, tx *gorm.DB, kodeMk string) (bool, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	if err := tx.WithContext(ctx).Model(&entities.MataKuliah{}).Select("kode").Where("kode = ?", kodeMk).First(&entities.MataKuliah{}).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
 }

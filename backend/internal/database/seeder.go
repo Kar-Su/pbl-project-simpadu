@@ -56,5 +56,13 @@ func SeedDummy(db *gorm.DB) error {
 		return err
 	}
 
+	if err := seeds.ListKurikulumSeed(ctx, db); err != nil {
+		return err
+	}
+
+	if err := seeds.ListKurikulumPivotSeed(ctx, db); err != nil {
+		return err
+	}
+
 	return nil
 }

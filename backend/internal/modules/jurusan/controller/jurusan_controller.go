@@ -203,12 +203,12 @@ func (c *jurusanController) DeleteJurusan(ctx *gin.Context) {
 // @Description
 // @Description  **Error yang mungkin terjadi:**
 // @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate jurusan Query", error: "Key: 'JurusanName' Error:..."`
-// @Description  - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to update jurusan", error: "jurusan not found"`
+// @Description  - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to Get jurusan", error: "jurusan not found"`
 // @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
 // @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
 // @Description  - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to Get jurusan", error: "Internal Error"`
 // @Tags jurusan
 // @Accept json
 // @Produce json
@@ -216,10 +216,10 @@ func (c *jurusanController) DeleteJurusan(ctx *gin.Context) {
 // @Param name query dto.JurusanQuery false "Jurusan Name Or ID (Pilih salah satu)"
 // @Success      200      {object}  utils.Response[dto.JurusanResponse,any]
 // @Success      200      {object}  utils.Response[[]dto.JurusanResponse,any]
-// @Failure      400      {object}  swagger.ErrUpdateJurusanFailed
+// @Failure      400      {object}  swagger.ErrGetJurusanFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
-// @Failure      500      {object}  swagger.ErrUpdateJurusanInternalServer
+// @Failure      500      {object}  swagger.ErrGetJurusanInternalServer
 // @Router /api/jurusan/ [get]
 func (c *jurusanController) GetJurusan(ctx *gin.Context) {
 	path := ctx.Request.URL.Path

@@ -117,9 +117,14 @@ func (c *userController) Me(ctx *gin.Context) {
 // @Router       /api/user/{id} [get]
 func (c *userController) GetUser(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
-	userId := ctx.Param("id")
+	userId, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 
-	result, err := c.userService.GetUserByID(ctx.Request.Context(), uuid.MustParse(userId))
+	result, err := c.userService.GetUserByID(ctx.Request.Context(), userId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
@@ -347,8 +352,13 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 		return
 	}
 
-	userId := ctx.Param("id")
-	data, err := c.userService.UpdateAdmin(ctx.Request.Context(), reqBody, uuid.MustParse(userId))
+	userId, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+	data, err := c.userService.UpdateAdmin(ctx.Request.Context(), reqBody, userId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, err.Error(), nil, path)
@@ -573,8 +583,14 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 // @Router       /api/super/user/{id} [delete]
 func (c *userController) DeleteAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
-	userId := ctx.Param("id")
-	if err := c.userService.DeleteAdmin(ctx.Request.Context(), uuid.MustParse(userId)); err != nil {
+	userId, err := uuid.Parse(ctx.Param("id"))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_USER, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	if err := c.userService.DeleteAdmin(ctx.Request.Context(), userId); err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_USER, err.Error(), nil, path)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)

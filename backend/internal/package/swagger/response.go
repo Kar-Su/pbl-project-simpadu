@@ -631,3 +631,103 @@ type AkademikResponse struct {
 	TahunAkhir   string `json:"tahun_akhir" example:"2025-01-01"`
 	Status       string `json:"status" example:"aktif"`
 }
+
+// Kurikulum
+type ErrCreateKurikulumFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create kurikulum"`
+	Error   string `json:"error" example:"kurikulum already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrCreateKurikulumInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrUpdateKurikulumFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update kurikulum"`
+	Error   string `json:"error" example:"kurikulum already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrUpdateKurikulumInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrDeleteKurikulumFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete kurikulum"`
+	Error   string `json:"error" example:"kurikulum already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrDeleteKurikulumInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrGetKurikulumFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get kurikulum"`
+	Error   string `json:"error" example:"kurikulum not found"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+type ErrGetKurikulumInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum"`
+}
+
+// PIVOT KURIKULUM
+type ErrCreateKurikulumPivotFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create pivot kurikulum"`
+	Error   string `json:"error" example:"kurikulum already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum/mata-kuliah"`
+}
+
+type ErrCreateKurikulumPivotInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create pivot kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum/mata-kuliah"`
+}
+
+type ErrUpdateKurikulumPivotFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update pivot kurikulum"`
+	Error   string `json:"error" example:"kurikulum already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"`
+}
+
+type ErrUpdateKurikulumPivotInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update pivot kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"`
+}
+
+type ErrDeleteKurikulumPivotFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete pivot kurikulum"`
+	Error   string `json:"error" example:"kurikulum already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"`
+}
+
+type ErrDeleteKurikulumPivotInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete pivot kurikulum"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"`
+}

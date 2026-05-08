@@ -120,6 +120,12 @@ func (c *mkController) UpdateMk(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 	}
 
+	if QueryParams.ID == "" && QueryParams.Kode == "" {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, dto.ErrQueryParams, nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	var req dto.MkUpdateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, err.Error(), nil, path)
@@ -134,7 +140,12 @@ func (c *mkController) UpdateMk(ctx *gin.Context) {
 	)
 
 	if QueryParams.ID != "" {
-		mkId := uuid.MustParse(QueryParams.ID)
+		mkId, err := uuid.Parse(QueryParams.ID)
+		if err != nil {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+			return
+		}
 		mkResponse, err = c.mkService.UpdateMkById(ctx, mkId, req)
 	} else if QueryParams.Kode != "" {
 		QueryParams.Kode = helpers.NormalizeString(QueryParams.Kode)
@@ -195,6 +206,12 @@ func (c *mkController) DeleteMk(ctx *gin.Context) {
 		return
 	}
 
+	if QueryParams.ID == "" && QueryParams.Kode == "" {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_MK, dto.ErrQueryParams, nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	var (
 		err     error
 		status  int
@@ -202,7 +219,12 @@ func (c *mkController) DeleteMk(ctx *gin.Context) {
 	)
 
 	if QueryParams.ID != "" {
-		mkId := uuid.MustParse(QueryParams.ID)
+		mkId, err := uuid.Parse(QueryParams.ID)
+		if err != nil {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_MK, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+			return
+		}
 		err = c.mkService.DeleteMkById(ctx, mkId)
 	} else if QueryParams.Kode != "" {
 		QueryParams.Kode = helpers.NormalizeString(QueryParams.Kode)
@@ -279,7 +301,12 @@ func (c *mkController) GetMk(ctx *gin.Context) {
 	}
 
 	if QueryParams.ID != "" {
-		mkId := uuid.MustParse(QueryParams.ID)
+		mkId, err := uuid.Parse(QueryParams.ID)
+		if err != nil {
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+			return
+		}
 		result, err = c.mkService.GetMkById(ctx, mkId)
 	} else if QueryParams.Kode != "" {
 		QueryParams.Kode = helpers.NormalizeString(QueryParams.Kode)
@@ -289,7 +316,7 @@ func (c *mkController) GetMk(ctx *gin.Context) {
 	}
 
 	if err != nil {
-		status = http.StatusInternalServerError
+		status = http.StatusBadRequest
 		message = dto.MESSAGE_FAILED_GET_MK
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError

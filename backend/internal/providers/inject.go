@@ -25,6 +25,10 @@ import (
 	userRepo "web-hosting/internal/modules/user/repository"
 	userService "web-hosting/internal/modules/user/service"
 
+	kurikulumController "web-hosting/internal/modules/kurikulum/controller"
+	kurikulumRepo "web-hosting/internal/modules/kurikulum/repository"
+	kurikulumService "web-hosting/internal/modules/kurikulum/service"
+
 	"web-hosting/internal/package/constants"
 
 	"github.com/samber/do/v2"
@@ -62,6 +66,8 @@ func RegisterProviders(injector do.Injector) {
 	prodiRepo := prodiRepo.NewProdiRepository(db)
 	mkRepo := mkRepo.NewMkRepository(db)
 	akademikRepo := akademikRepo.NewTahunAkademikRepository(db)
+	kRepo := kurikulumRepo.NewKurikulumRepository(db)
+	kPivotRepo := kurikulumRepo.NewKurikulumMKRepository(db)
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
@@ -70,6 +76,8 @@ func RegisterProviders(injector do.Injector) {
 	prodiService := prodiService.NewProdiService(prodiRepo, jurusanService, db)
 	mkService := mkService.NewMkService(mkRepo, db)
 	akademikService := akademikService.NewTahunAkademikService(akademikRepo, db)
+	kService := kurikulumService.NewKurikulumService(kRepo, prodiService, db)
+	kPivotService := kurikulumService.NewKurikulumMKService(db, kRepo, kPivotRepo, mkRepo)
 
 	do.Provide(injector, func(i do.Injector) (userController.UserController, error) {
 		return userController.NewUserController(i, userService, roleService), nil
@@ -81,6 +89,13 @@ func RegisterProviders(injector do.Injector) {
 
 	do.Provide(injector, func(i do.Injector) (roleController.RoleController, error) {
 		return roleController.NewRoleController(i, roleService, db), nil
+	})
+
+	do.Provide(injector, func(i do.Injector) (kurikulumController.KurikulumController, error) {
+		return kurikulumController.NewKurikulumController(i, kService, db), nil
+	})
+	do.Provide(injector, func(i do.Injector) (kurikulumController.PivotController, error) {
+		return kurikulumController.NewPivotController(i, kPivotService, db), nil
 	})
 
 	do.Provide(injector, func(i do.Injector) (jurusanController.JurusanController, error) {

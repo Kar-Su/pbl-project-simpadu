@@ -344,7 +344,7 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "melihat jurusan yang sudah ada\nPilih salah satu query id/name\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter Query tidak valid -\u003e `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"`\n- `400` jurusan dengan nama tersebut tidak ditemukan -\u003e `message: \"failed to update jurusan\", error: \"jurusan not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` jurusan user tidak memiliki akses -\u003e `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to update jurusan\", error: \"Internal Error\"`",
+                "description": "melihat jurusan yang sudah ada\nPilih salah satu query id/name\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter Query tidak valid -\u003e `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"`\n- `400` jurusan dengan nama tersebut tidak ditemukan -\u003e `message: \"failed to Get jurusan\", error: \"jurusan not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` jurusan user tidak memiliki akses -\u003e `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Get jurusan\", error: \"Internal Error\"`",
                 "consumes": [
                     "application/json"
                 ],
@@ -379,7 +379,7 @@
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateJurusanFailed"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetJurusanFailed"
                         }
                     },
                     "401": {
@@ -397,7 +397,7 @@
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateJurusanInternalServer"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetJurusanInternalServer"
                         }
                     }
                 }
@@ -525,6 +525,484 @@
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteJurusanInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kurikulum": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan kurikulum baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum dengan nama tersebut sudah ada -\u003e `message: \"failed to create kurikulum\", error: \"kurikulum already exists\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` user tidak memiliki akses -\u003e `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to create kurikulum\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Create Kurikulum Baru",
+                "parameters": [
+                    {
+                        "description": "Kurikulum Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kurikulum/": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat kurikulum yang sudah ada\nPilih salah satu query id/name\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter Query tidak valid -\u003e `message: \"failed to validate kurikulum Query\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum dengan nama tersebut tidak ditemukan -\u003e `message: \"failed to Get kurikulum\", error: \"kurikulum not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kurikulum user tidak memiliki akses -\u003e `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Get kurikulum\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "get Kurikulum",
+                "parameters": [
+                    {
+                        "maxLength": 36,
+                        "type": "string",
+                        "example": "000-000-000-000",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 12,
+                        "type": "string",
+                        "example": "myhutao-2024",
+                        "name": "kode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate kurikulum yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter Query tidak valid -\u003e `message: \"failed to validate kurikulum Query\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum dengan nama tersebut tidak ditemukan -\u003e `message: \"failed to update kurikulum\", error: \"kurikulum not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` role user tidak memiliki akses -\u003e `message: \"role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to update role\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Update Kurikulum",
+                "parameters": [
+                    {
+                        "maxLength": 36,
+                        "type": "string",
+                        "example": "000-000-000-000",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 12,
+                        "type": "string",
+                        "example": "myhutao-2024",
+                        "name": "kode",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Kurikulum Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "delete kurikulum yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter Query tidak valid -\u003e `message: \"failed to validate kurikulum Query\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum dengan nama tersebut tidak ditemukan -\u003e `message: \"failed to Delete kurikulum\", error: \"kurikulum not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kurikulum user tidak memiliki akses -\u003e `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Delete kurikulum\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Delete Kurikulum",
+                "parameters": [
+                    {
+                        "maxLength": 36,
+                        "type": "string",
+                        "example": "000-000-000-000",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "maxLength": 12,
+                        "type": "string",
+                        "example": "myhutao-2024",
+                        "name": "kode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kurikulum/mata-kuliah": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan kurikulum baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum dengan nama tersebut sudah ada -\u003e `message: \"failed to create kurikulum\", error: \"kurikulum already exists\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` user tidak memiliki akses -\u003e `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to create kurikulum\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Create Kurikulum Pivot mata kuliah Baru",
+                "parameters": [
+                    {
+                        "description": "Kurikulum Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.PivotCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumPivotFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumPivotInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate kurikulum yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"failed to validate kurikulum URI\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum dengan nama tersebut tidak ditemukan -\u003e `message: \"failed to update kurikulum\", error: \"kurikulum not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kurikulum user tidak memiliki akses -\u003e `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to update kurikulum\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Update Kurikulum Pivot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Kurikulum kode",
+                        "name": "kurikulum_kode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "mata kuliah kode",
+                        "name": "mk_kode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Kurikulum Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kurikulum_dto_PivotResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumPivotFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumPivotInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "delete kurikulum pivot yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"failed to validate kurikulum URI\", error: \"Key: 'KurikulumName' Error:...\"`\n- `400` kurikulum pivot dengan kode tersebut tidak ditemukan -\u003e `message: \"failed to Delete kurikulum pivot\", error: \"kurikulum pivot not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kurikulum pivot user tidak memiliki akses -\u003e `message: \"kurikulum pivot anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Delete kurikulum pivot\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Delete Kurikulum Pivot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Kurikulum kode",
+                        "name": "kurikulum_kode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "mata kuliah kode",
+                        "name": "mk_kode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumPivotFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumPivotInternalServer"
                         }
                     }
                 }
@@ -2391,6 +2869,23 @@
                 }
             }
         },
+        "web-hosting_internal_database_entities.MataKuliah": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "kode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sks": {
+                    "type": "integer"
+                }
+            }
+        },
         "web-hosting_internal_database_entities.Role": {
             "type": "object",
             "properties": {
@@ -2500,6 +2995,190 @@
                 "new_name": {
                     "type": "string",
                     "example": "teknik-mesin"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.JurusanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "name": {
+                    "type": "string",
+                    "example": "teknik-elektro"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.KurikulumCreateRequest": {
+            "type": "object",
+            "required": [
+                "kode",
+                "name",
+                "prodi_name"
+            ],
+            "properties": {
+                "kode": {
+                    "type": "string",
+                    "maxLength": 12,
+                    "example": "myhutao-2024"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Merdeka Belajar"
+                },
+                "prodi_name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "teknik-informatika"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.KurikulumMKResponse": {
+            "type": "object",
+            "properties": {
+                "mata_kuliah": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.MataKuliahResponse"
+                },
+                "semester": {
+                    "type": "integer",
+                    "example": 3
+                },
+                "wajib": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.KurikulumResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "0000-0000"
+                },
+                "kode": {
+                    "type": "string",
+                    "example": "my-hutao"
+                },
+                "kurikulum_mk": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumMKResponse"
+                    }
+                },
+                "name": {
+                    "type": "string",
+                    "example": "My Hutao"
+                },
+                "prodi": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.ProdiResponse"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.KurikulumUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "kode": {
+                    "type": "string",
+                    "maxLength": 12,
+                    "example": "myhutao-2024"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "Merdeka Belajar"
+                },
+                "prodi_name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "example": "teknik-informatika"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.MataKuliahResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "MK001"
+                },
+                "kode": {
+                    "type": "string",
+                    "example": "MK001"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Pemrograman Berorientasi Objek"
+                },
+                "sks": {
+                    "type": "integer",
+                    "example": 3
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.PivotCreateRequest": {
+            "type": "object",
+            "required": [
+                "kurikulum_kode",
+                "mk_kode",
+                "semester",
+                "wajib"
+            ],
+            "properties": {
+                "kurikulum_kode": {
+                    "type": "string",
+                    "maxLength": 12
+                },
+                "mk_kode": {
+                    "type": "string",
+                    "maxLength": 12
+                },
+                "semester": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "wajib": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.PivotResponse": {
+            "type": "object",
+            "properties": {
+                "kurikulum_kode": {
+                    "type": "string"
+                },
+                "mata_kuliah": {
+                    "$ref": "#/definitions/web-hosting_internal_database_entities.MataKuliah"
+                },
+                "semester": {
+                    "type": "integer"
+                },
+                "wajib": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kurikulum_dto.ProdiResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "jenjang": {
+                    "type": "string",
+                    "example": "D3"
+                },
+                "jurusan": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.JurusanResponse"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "teknik informatika"
                 }
             }
         },
@@ -2823,6 +3502,90 @@
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrCreateKurikulumFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateKurikulumInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateKurikulumPivotFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create pivot kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum/mata-kuliah"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateKurikulumPivotInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create pivot kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum/mata-kuliah"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrCreateMkFailed": {
             "type": "object",
             "properties": {
@@ -3026,6 +3789,90 @@
                 "path": {
                     "type": "string",
                     "example": "/api/jurusan"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteKurikulumFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteKurikulumInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteKurikulumPivotFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete pivot kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteKurikulumPivotInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete pivot kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"
                 },
                 "success": {
                     "type": "boolean",
@@ -3299,6 +4146,90 @@
                 "path": {
                     "type": "string",
                     "example": "/api/super/role"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetJurusanFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "jurusan not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get jurusan"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/jurusan"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetJurusanInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get jurusan"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/jurusan"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetKurikulumFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetKurikulumInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
                 },
                 "success": {
                     "type": "boolean",
@@ -3789,6 +4720,90 @@
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrUpdateKurikulumFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateKurikulumInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateKurikulumPivotFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kurikulum already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update pivot kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateKurikulumPivotInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update pivot kurikulum"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrUpdateMkFailed": {
             "type": "object",
             "properties": {
@@ -4188,6 +5203,29 @@
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumResponse"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_mk_dto_MkResponse-any": {
             "type": "object",
             "properties": {
@@ -4345,6 +5383,46 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kurikulum_dto_PivotResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.PivotResponse"
                 },
                 "error": {},
                 "message": {
