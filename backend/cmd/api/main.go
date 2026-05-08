@@ -12,6 +12,7 @@ import (
 	"web-hosting/internal/modules/user"
 	"web-hosting/internal/package/env"
 	"web-hosting/internal/providers"
+	"web-hosting/internal/workers"
 
 	_ "github.com/common-nighthawk/go-figure"
 	"github.com/gin-contrib/cors"
@@ -92,6 +93,9 @@ func main() {
 	mk.RegisterRoutes(server, injector)
 	akademik.RegisterRoutes(server, injector)
 	kurikulum.RegisterRoutes(server, injector)
+
+	worker := do.MustInvoke[workers.Schedule](injector)
+	worker.StartSchedule()
 
 	run(server)
 }

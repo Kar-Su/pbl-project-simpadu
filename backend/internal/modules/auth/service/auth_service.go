@@ -22,7 +22,9 @@ type AuthService interface {
 	Logout(ctx context.Context, userId string) error
 	RefreshToken(ctx context.Context, req authDto.RefreshTokenRequest) (authDto.TokenResponse, error)
 	ResetPassword(ctx context.Context, req authDto.ResetPasswordRequest) error
+	CleanupExpiredTokens(ctx context.Context) error
 }
+
 type authService struct {
 	useRepo          userRepo.UserRepository
 	refreshTokenRepo repository.RefreshTokenRepository
@@ -171,5 +173,15 @@ func (s *authService) ResetPassword(ctx context.Context, req authDto.ResetPasswo
 		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
 	}
+	return nil
+}
+
+func (s *authService) CleanupExpiredTokens(ctx context.Context) error {
+	err := s.refreshTokenRepo.DeleteExpired(ctx, nil)
+	if err != nil {
+		log.Printf("Gagal menghapus token kadaluarsa: %v", err)
+		return err
+	}
+	log.Println("Berhasil membersihkan token yang kadaluarsa.")
 	return nil
 }

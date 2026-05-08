@@ -24,6 +24,7 @@ import (
 	userController "web-hosting/internal/modules/user/controller"
 	userRepo "web-hosting/internal/modules/user/repository"
 	userService "web-hosting/internal/modules/user/service"
+	"web-hosting/internal/workers"
 
 	kurikulumController "web-hosting/internal/modules/kurikulum/controller"
 	kurikulumRepo "web-hosting/internal/modules/kurikulum/repository"
@@ -71,7 +72,7 @@ func RegisterProviders(injector do.Injector) {
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
-	authService := authService.NewAuthService(userRepo, refreshTokenRepo, jwtService, db)
+	// authService := authService.NewAuthService(userRepo, refreshTokenRepo, jwtService, db)
 	jurusanService := jurusanService.NewJurusanService(jurusanRepo, db)
 	prodiService := prodiService.NewProdiService(prodiRepo, jurusanService, db)
 	mkService := mkService.NewMkService(mkRepo, db)
@@ -79,11 +80,21 @@ func RegisterProviders(injector do.Injector) {
 	kService := kurikulumService.NewKurikulumService(kRepo, prodiService, db)
 	kPivotService := kurikulumService.NewKurikulumMKService(db, kRepo, kPivotRepo, mkRepo)
 
+	do.Provide(injector, func(i do.Injector) (authService.AuthService, error) {
+		return authService.NewAuthService(userRepo, refreshTokenRepo, jwtService, db), nil
+	})
+
+	do.Provide(injector, func(i do.Injector) (workers.Schedule, error) {
+		authService := do.MustInvoke[authService.AuthService](i)
+		return workers.NewSchedule(i, authService), nil
+	})
+
 	do.Provide(injector, func(i do.Injector) (userController.UserController, error) {
 		return userController.NewUserController(i, userService, roleService), nil
 	})
 
 	do.Provide(injector, func(i do.Injector) (authController.AuthController, error) {
+		authService := do.MustInvoke[authService.AuthService](i)
 		return authController.NewAuthController(i, authService, db), nil
 	})
 
