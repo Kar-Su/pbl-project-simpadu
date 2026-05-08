@@ -1,0 +1,26 @@
+[
+  {
+    "id": 20241,
+    "tipe_semester": "ganjil",
+    "tahun_awal": "2024-01-01",
+    "tahun_akhir": "2024-06-30"
+  },
+  {
+    "id": 20242,
+    "tipe_semester": "genap",
+    "tahun_awal": "2024-07-01",
+    "tahun_akhir": "2024-12-30"
+  },
+  {
+    "id": 20251,
+    "tipe_semester": "ganjil",
+    "tahun_awal": "2025-01-01",
+    "tahun_akhir": "2025-06-30"
+  },
+  {
+    "id": 20252,
+    "tipe_semester": "genap",
+    "tahun_awal": "2025-07-01",
+    "tahun_akhir": "2025-12-30"
+  }
+]

@@ -1,6 +1,8 @@
 package validation
 
 import (
+	"strings"
+
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 )
@@ -22,7 +24,7 @@ func NewProdiValidation() *ProdiValidation {
 }
 
 func validateJenjang(fl validator.FieldLevel) bool {
-	jenjang := fl.Field().String()
+	jenjang := strings.ToUpper(fl.Field().String())
 
 	return jenjang == "D3" || jenjang == "D4"
 }

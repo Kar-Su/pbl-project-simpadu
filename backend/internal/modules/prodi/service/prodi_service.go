@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"log"
+	"strings"
 	"web-hosting/internal/database/entities"
 	jurusanDto "web-hosting/internal/modules/jurusan/dto"
 	jurusanService "web-hosting/internal/modules/jurusan/service"
@@ -51,7 +52,7 @@ func (s *prodiService) CreateProdi(ctx context.Context, req dto.ProdiCreateReque
 
 	prodiEntity := entities.Prodi{
 		Name:      req.Name,
-		Jenjang:   req.Jenjang,
+		Jenjang:   strings.ToUpper(req.Jenjang),
 		JurusanID: jurusan.ID,
 	}
 
@@ -74,7 +75,7 @@ func (s *prodiService) UpdateProdi(ctx context.Context, prodiName string, req dt
 		prodiEntity.Name = helpers.NormalizeString(req.Name)
 	}
 	if req.Jenjang != "" {
-		prodiEntity.Jenjang = req.Jenjang
+		prodiEntity.Jenjang = strings.ToUpper(req.Jenjang)
 	}
 	if req.JurusanID != 0 {
 		prodiEntity.JurusanID = req.JurusanID

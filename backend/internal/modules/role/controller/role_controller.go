@@ -51,7 +51,7 @@ func NewRoleController(injector do.Injector, roleService service.RoleService, db
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
 // @Description  - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
 // @Description  - `500` Kesalahan internal server -> `message: "failed to create role", error: "Internal Error"`
-// @Tags         role (super)
+// @Tags         role
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
@@ -101,7 +101,7 @@ func (c *roleController) Create(ctx *gin.Context) {
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
 // @Description  - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
 // @Description  - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
-// @Tags         role (super)
+// @Tags         role
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
@@ -171,7 +171,7 @@ func (c *roleController) Update(ctx *gin.Context) {
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
 // @Description  - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
 // @Description  - `500` Kesalahan internal server -> `message: "failed to delete role", error: "Internal Error"`
-// @Tags         role (super)
+// @Tags         role
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth

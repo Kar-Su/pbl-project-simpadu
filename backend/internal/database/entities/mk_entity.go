@@ -8,7 +8,7 @@ import (
 type MataKuliah struct {
 	ID   uuid.UUID `gorm:"primaryKey;type:char(36)" json:"id"`
 	Kode string    `gorm:"not null;type:varchar(12)" json:"kode"`
-	Name string    `gorm:"not null;type:varchar(255)" json:"nama"`
+	Name string    `gorm:"not null;type:varchar(255)" json:"name"`
 	Sks  uint      `gorm:"not null;type:int" json:"sks"`
 }
 

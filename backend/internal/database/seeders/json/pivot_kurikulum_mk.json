@@ -1,0 +1,32 @@
+[
+  {
+    "kurikulum_kode": "mbg-01",
+    "mk_kode": "mk-dp-001",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "mbg-01",
+    "mk_kode": "mk-fd-001",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "mbg-01",
+    "mk_kode": "mk-dsa-001",
+    "semester": 2,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "mbg-02",
+    "mk_kode": "mk-iot-001",
+    "semester": 3,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "mbg-02",
+    "mk_kode": "mk-dsa-001",
+    "semester": 2,
+    "wajib": true
+  }
+]

@@ -2,8 +2,11 @@ package main
 
 import (
 	"log"
+	"web-hosting/internal/modules/akademik"
 	"web-hosting/internal/modules/auth"
 	"web-hosting/internal/modules/jurusan"
+	"web-hosting/internal/modules/kurikulum"
+	"web-hosting/internal/modules/mk"
 	"web-hosting/internal/modules/prodi"
 	"web-hosting/internal/modules/role"
 	"web-hosting/internal/modules/user"
@@ -86,6 +89,9 @@ func main() {
 	role.RegisterRoutes(server, injector)
 	jurusan.RegisterRoutes(server, injector)
 	prodi.RegisterRoutes(server, injector)
+	mk.RegisterRoutes(server, injector)
+	akademik.RegisterRoutes(server, injector)
+	kurikulum.RegisterRoutes(server, injector)
 
 	run(server)
 }

@@ -64,8 +64,8 @@ type (
 		DetailId string `uri:"detail_id" binding:"required"`
 	}
 
-	UserEmailRequest struct {
-		Email string `form:"email" binding:"required,email,non_admin_email"`
+	UserEmailUri struct {
+		Email string `uri:"email" binding:"required,email,non_admin_email"`
 	}
 
 	UserAdminCreateRequest struct {
