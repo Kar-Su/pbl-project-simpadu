@@ -20,6 +20,7 @@ const (
 var (
 	ErrProdiNotFound      = errors.New("prodi not found")
 	ErrProdiAlreadyExists = errors.New("prodi already exists")
+	ErrQueryParams        = errors.New("Invalid Query Params, only one of params (id, name) should be provided")
 )
 
 type (
@@ -44,7 +45,7 @@ type (
 
 	ProdiQuery struct {
 		ID   uint   `form:"id" example:"1"`
-		Name string `form:"name" example:"teknik-elektro"`
+		Name string `form:"name" example:"teknik-elektro (Pilih salah satu)"`
 	}
 
 	ProdiNameQuery struct {

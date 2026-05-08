@@ -22,6 +22,7 @@ const (
 var (
 	ErrJurusanNotFound      = errors.New("jurusan not found")
 	ErrJurusanAlreadyExists = errors.New("jurusan already exists")
+	ErrInvalidQuery         = errors.New("invalid query, choice only one of query, provide either id or name")
 )
 
 type (
@@ -43,7 +44,7 @@ type (
 	}
 
 	JurusanQuery struct {
-		JurusanName string `form:"name" example:"teknik-elektro"`
+		JurusanName string `form:"name" example:"teknik-elektro (Pilih salah satu)"`
 		JurusanID   uint   `form:"id" example:"1"`
 	}
 )

@@ -246,7 +246,7 @@ func (c *mkController) DeleteMk(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param query query dto.MkQuery false "Mata Kuliah Name Or ID"
+// @Param query query dto.MkQuery false "Mata Kuliah Name Or ID (Pilih salah satu)"
 // @Success      200      {object}  utils.Response[dto.MkResponse,any]
 // @Success      200      {object}  utils.Response[[]dto.MkResponse,any]
 // @Failure      400      {object}  swagger.ErrUpdateMkFailed
@@ -270,6 +270,13 @@ func (c *mkController) GetMk(ctx *gin.Context) {
 		message string
 		result  any
 	)
+
+	if QueryParams.ID != "" && QueryParams.Kode != "" {
+		err = dto.ErrQueryParams
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 
 	if QueryParams.ID != "" {
 		mkId := uuid.MustParse(QueryParams.ID)

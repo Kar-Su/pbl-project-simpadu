@@ -351,7 +351,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "melihat jurusan yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
+                "description": "melihat jurusan yang sudah ada\nPilih salah satu query id/name\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -371,7 +371,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "teknik-elektro",
+                        "example": "teknik-elektro (Pilih salah satu)",
                         "name": "name",
                         "in": "query"
                     }
@@ -628,7 +628,7 @@ const docTemplate = `{
                     {
                         "maxLength": 12,
                         "type": "string",
-                        "example": "MK001",
+                        "example": "MK001 (Pilih salah satu)",
                         "name": "kode",
                         "in": "query"
                     }
@@ -693,7 +693,7 @@ const docTemplate = `{
                     {
                         "maxLength": 12,
                         "type": "string",
-                        "example": "MK001",
+                        "example": "MK001 (Pilih salah satu)",
                         "name": "kode",
                         "in": "query"
                     },
@@ -767,7 +767,7 @@ const docTemplate = `{
                     {
                         "maxLength": 12,
                         "type": "string",
-                        "example": "MK001",
+                        "example": "MK001 (Pilih salah satu)",
                         "name": "kode",
                         "in": "query"
                     }
@@ -939,7 +939,7 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "example": "teknik-elektro",
+                        "example": "teknik-elektro (Pilih salah satu)",
                         "name": "name",
                         "in": "query"
                     }
@@ -1595,6 +1595,368 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/tahun-akademik": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat tahun akademik yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate tahun akademik Query\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update tahun akademik\", error: \"tahun akademik not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tahun-akademik"
+                ],
+                "summary": "get semua Tahun Akademik",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_package_swagger_AkademikResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan tahun akademik baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan nama tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create tahun akademik\", error: \"tahun akademik already exists\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan tahun awal \u003e akhir -\u003e ` + "`" + `message: \"failed to create tahun akademik\", error: \"invalid tahun awal/akhir akademik \"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"tahun akademik anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create tahun akademik\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tahun-akademik"
+                ],
+                "summary": "Create Tahun Akademik Baru",
+                "parameters": [
+                    {
+                        "description": "Tahun Akademik Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.AkademikCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateTahunAkademikFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateTahunAkademikInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tahun-akademik/status/{status}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat tahun akademik yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate tahun akademik Query\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update tahun akademik\", error: \"tahun akademik not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tahun-akademik"
+                ],
+                "summary": "get tahun Akademik berdasarkan status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Status tahun akademik",
+                        "name": "status",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_package_swagger_AkademikResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/tahun-akademik/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat tahun akademik yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate tahun akademik Query\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update tahun akademik\", error: \"tahun akademik not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tahun-akademik"
+                ],
+                "summary": "get Tahun Akademik",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tahun Akademik ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_swagger_AkademikResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate tahun akademik yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate tahun akademik Query\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan tahun awal \u003e akhir -\u003e ` + "`" + `message: \"failed to create tahun akademik\", error: \"invalid tahun awal/akhir akademik \"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update tahun akademik\", error: \"tahun akademik not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tahun-akademik"
+                ],
+                "summary": "Update Tahun Akademik",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tahun Akademik ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Tahun Akademik Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.AkademikUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_swagger_AkademikResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateTahunAkademikFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateTahunAkademikInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "delete tahun akademik yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate tahun akademik Query\", error: \"Key: 'TahunAkademikName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` tahun akademik dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete tahun akademik\", error: \"tahun akademik not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete tahun akademik\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tahun-akademik"
+                ],
+                "summary": "Delete Tahun Akademik",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Tahun Akademik ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteTahunAkademikFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteTahunAkademikInternalServer"
+                        }
+                    }
+                }
+            }
+        },
         "/api/user": {
             "post": {
                 "security": [
@@ -1658,7 +2020,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/email/": {
+        "/api/user/email/{email}": {
             "get": {
                 "security": [
                     {
@@ -1679,8 +2041,10 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "example": "rezi@example.com",
+                        "description": "Payload Email User",
                         "name": "email",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -2345,6 +2709,85 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_swagger.AkademikCreateRequest": {
+            "type": "object",
+            "required": [
+                "id",
+                "tahun_akhir",
+                "tahun_awal",
+                "tipe_semester"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 20241
+                },
+                "tahun_akhir": {
+                    "type": "string",
+                    "example": "2025-01-01"
+                },
+                "tahun_awal": {
+                    "type": "string",
+                    "example": "2024-01-01"
+                },
+                "tipe_semester": {
+                    "type": "string",
+                    "example": "genap"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.AkademikResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 20241
+                },
+                "status": {
+                    "type": "string",
+                    "example": "aktif"
+                },
+                "tahun_akhir": {
+                    "type": "string",
+                    "example": "2025-01-01"
+                },
+                "tahun_awal": {
+                    "type": "string",
+                    "example": "2024-01-01"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "semester"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.AkademikUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "example": 20241
+                },
+                "status": {
+                    "type": "string",
+                    "example": "aktif"
+                },
+                "tahun_akhir": {
+                    "type": "string",
+                    "example": "2025-01-01"
+                },
+                "tahun_awal": {
+                    "type": "string",
+                    "example": "2024-01-01"
+                },
+                "tipe_semester": {
+                    "type": "string",
+                    "example": "genap"
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrCreateJurusanFailed": {
             "type": "object",
             "properties": {
@@ -2513,6 +2956,48 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrCreateTahunAkademikFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "tahun akademik already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateTahunAkademikInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrDeleteJurusanFailed": {
             "type": "object",
             "properties": {
@@ -2674,6 +3159,48 @@ const docTemplate = `{
                 "path": {
                     "type": "string",
                     "example": "/api/super/role/mahasiswa"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteTahunAkademikFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "tahun akademik already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteTahunAkademikInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
                 },
                 "success": {
                     "type": "boolean",
@@ -2863,6 +3390,48 @@ const docTemplate = `{
                 "path": {
                     "type": "string",
                     "example": "/api/role"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "tahun akademik not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
                 },
                 "success": {
                     "type": "boolean",
@@ -3353,6 +3922,48 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrUpdateTahunAkademikFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "tahun akademik already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateTahunAkademikInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update tahun akademik"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/tahun-akademik"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrUpdateUserFailed": {
             "type": "object",
             "properties": {
@@ -3653,6 +4264,29 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_package_swagger_AkademikResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_package_swagger.AkademikResponse"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any": {
             "type": "object",
             "properties": {
@@ -3778,6 +4412,26 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_swagger_AkademikResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_swagger.AkademikResponse"
                 },
                 "error": {},
                 "message": {

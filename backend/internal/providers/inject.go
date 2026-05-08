@@ -3,6 +3,9 @@ package providers
 import (
 	"web-hosting/internal/configs"
 	"web-hosting/internal/database/entities"
+	akademikController "web-hosting/internal/modules/akademik/controller"
+	akademikRepo "web-hosting/internal/modules/akademik/repository"
+	akademikService "web-hosting/internal/modules/akademik/service"
 	authController "web-hosting/internal/modules/auth/controller"
 	authRepo "web-hosting/internal/modules/auth/repository"
 	authService "web-hosting/internal/modules/auth/service"
@@ -58,6 +61,7 @@ func RegisterProviders(injector do.Injector) {
 	jurusanRepo := jurusanRepo.NewJurusanRepository(db)
 	prodiRepo := prodiRepo.NewProdiRepository(db)
 	mkRepo := mkRepo.NewMkRepository(db)
+	akademikRepo := akademikRepo.NewTahunAkademikRepository(db)
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
@@ -65,6 +69,7 @@ func RegisterProviders(injector do.Injector) {
 	jurusanService := jurusanService.NewJurusanService(jurusanRepo, db)
 	prodiService := prodiService.NewProdiService(prodiRepo, jurusanService, db)
 	mkService := mkService.NewMkService(mkRepo, db)
+	akademikService := akademikService.NewTahunAkademikService(akademikRepo, db)
 
 	do.Provide(injector, func(i do.Injector) (userController.UserController, error) {
 		return userController.NewUserController(i, userService, roleService), nil
@@ -87,5 +92,8 @@ func RegisterProviders(injector do.Injector) {
 	})
 	do.Provide(injector, func(i do.Injector) (mkController.MkController, error) {
 		return mkController.NewMkController(i, mkService, db), nil
+	})
+	do.Provide(injector, func(i do.Injector) (akademikController.TahunAkademikController, error) {
+		return akademikController.NewTahunAkademikController(i, akademikService, db), nil
 	})
 }

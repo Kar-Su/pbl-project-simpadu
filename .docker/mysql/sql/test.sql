@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS tahun_akademik(
     tipe_semester ENUM('ganjil', 'genap') NOT NULL,
     tahun_awal date NOT NULL,
     tahun_akhir date NOT NULL,
+    status ENUM('aktif', 'nonaktif') NOT NULL DEFAULT 'aktif',
 
     UNIQUE INDEX idx_tahun_akademik_tahun (tahun_awal, tahun_akhir)
 ) engine=InnoDB;

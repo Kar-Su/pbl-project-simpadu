@@ -219,16 +219,16 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        email  query      dto.UserEmailRequest  true  "Payload Email User" example(rezi@example.com)
+// @Param        email  path      string  true  "Payload Email User" example(rezi@example.com)
 // @Success      200  {object}  utils.Response[dto.UserResponse,any]
 // @Failure      400  {object}  swagger.ErrGetUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/email/ [get]
+// @Router       /api/user/email/{email} [get]
 func (c *userController) GetUserByEmail(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
-	var req dto.UserEmailRequest
-	if err := ctx.ShouldBindQuery(&req); err != nil {
+	var req dto.UserEmailUri
+	if err := ctx.ShouldBindUri(&req); err != nil {
 		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return

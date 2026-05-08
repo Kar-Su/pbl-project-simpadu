@@ -197,6 +197,7 @@ func (c *jurusanController) DeleteJurusan(ctx *gin.Context) {
 // GetJurusan godoc
 // @Summary get Jurusan
 // @Description melihat jurusan yang sudah ada
+// @Description Pilih salah satu query id/name
 // @Description
 // @Description  **Akses:** Logged User
 // @Description
@@ -212,7 +213,7 @@ func (c *jurusanController) DeleteJurusan(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.JurusanQuery false "Jurusan Name Or ID"
+// @Param name query dto.JurusanQuery false "Jurusan Name Or ID (Pilih salah satu)"
 // @Success      200      {object}  utils.Response[dto.JurusanResponse,any]
 // @Success      200      {object}  utils.Response[[]dto.JurusanResponse,any]
 // @Failure      400      {object}  swagger.ErrUpdateJurusanFailed
@@ -235,6 +236,13 @@ func (c *jurusanController) GetJurusan(ctx *gin.Context) {
 		err     error
 		message string
 	)
+
+	if query.JurusanID != 0 && query.JurusanName != "" {
+		err = dto.ErrInvalidQuery
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_JURUSAN, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 
 	if query.JurusanID != 0 {
 		jurusan, err = c.jurusanService.GetJurusanById(ctx.Request.Context(), query.JurusanID)

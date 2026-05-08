@@ -227,6 +227,64 @@ definitions:
         example: raja-sawit
         type: string
     type: object
+  web-hosting_internal_package_swagger.AkademikCreateRequest:
+    properties:
+      id:
+        example: 20241
+        minimum: 0
+        type: integer
+      tahun_akhir:
+        example: "2025-01-01"
+        type: string
+      tahun_awal:
+        example: "2024-01-01"
+        type: string
+      tipe_semester:
+        example: genap
+        type: string
+    required:
+    - id
+    - tahun_akhir
+    - tahun_awal
+    - tipe_semester
+    type: object
+  web-hosting_internal_package_swagger.AkademikResponse:
+    properties:
+      id:
+        example: 20241
+        type: integer
+      status:
+        example: aktif
+        type: string
+      tahun_akhir:
+        example: "2025-01-01"
+        type: string
+      tahun_awal:
+        example: "2024-01-01"
+        type: string
+      type:
+        example: semester
+        type: string
+    type: object
+  web-hosting_internal_package_swagger.AkademikUpdateRequest:
+    properties:
+      id:
+        example: 20241
+        minimum: 0
+        type: integer
+      status:
+        example: aktif
+        type: string
+      tahun_akhir:
+        example: "2025-01-01"
+        type: string
+      tahun_awal:
+        example: "2024-01-01"
+        type: string
+      tipe_semester:
+        example: genap
+        type: string
+    type: object
   web-hosting_internal_package_swagger.ErrCreateJurusanFailed:
     properties:
       error:
@@ -347,6 +405,36 @@ definitions:
         example: false
         type: boolean
     type: object
+  web-hosting_internal_package_swagger.ErrCreateTahunAkademikFailed:
+    properties:
+      error:
+        example: tahun akademik already exists
+        type: string
+      message:
+        example: failed to create tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrCreateTahunAkademikInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to create tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrDeleteJurusanFailed:
     properties:
       error:
@@ -462,6 +550,36 @@ definitions:
         type: string
       path:
         example: /api/super/role/mahasiswa
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteTahunAkademikFailed:
+    properties:
+      error:
+        example: tahun akademik already exists
+        type: string
+      message:
+        example: failed to delete tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrDeleteTahunAkademikInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to delete tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
         type: string
       success:
         example: false
@@ -597,6 +715,36 @@ definitions:
         type: string
       path:
         example: /api/role
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed:
+    properties:
+      error:
+        example: tahun akademik not found
+        type: string
+      message:
+        example: failed to get tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to get tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
         type: string
       success:
         example: false
@@ -947,6 +1095,36 @@ definitions:
         example: false
         type: boolean
     type: object
+  web-hosting_internal_package_swagger.ErrUpdateTahunAkademikFailed:
+    properties:
+      error:
+        example: tahun akademik already exists
+        type: string
+      message:
+        example: failed to update tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  web-hosting_internal_package_swagger.ErrUpdateTahunAkademikInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to update tahun akademik
+        type: string
+      path:
+        example: /api/tahun-akademik
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrUpdateUserFailed:
     properties:
       error:
@@ -1165,6 +1343,22 @@ definitions:
       success:
         type: boolean
     type: object
+  web-hosting_internal_package_utils.Response-array_web-hosting_internal_package_swagger_AkademikResponse-any:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/web-hosting_internal_package_swagger.AkademikResponse'
+        type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
   web-hosting_internal_package_utils.Response-web-hosting_internal_database_entities_Role-any:
     properties:
       data:
@@ -1253,6 +1447,20 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/web-hosting_internal_modules_user_dto.UserResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_package_swagger_AkademikResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_package_swagger.AkademikResponse'
       error: {}
       message:
         example: Operation successful
@@ -1608,6 +1816,7 @@ paths:
       - application/json
       description: |-
         melihat jurusan yang sudah ada
+        Pilih salah satu query id/name
 
         **Akses:** Logged User
 
@@ -1624,7 +1833,7 @@ paths:
         in: query
         name: id
         type: integer
-      - example: teknik-elektro
+      - example: teknik-elektro (Pilih salah satu)
         in: query
         name: name
         type: string
@@ -1787,7 +1996,7 @@ paths:
         in: query
         name: id
         type: string
-      - example: MK001
+      - example: MK001 (Pilih salah satu)
         in: query
         maxLength: 12
         name: kode
@@ -1841,7 +2050,7 @@ paths:
         in: query
         name: id
         type: string
-      - example: MK001
+      - example: MK001 (Pilih salah satu)
         in: query
         maxLength: 12
         name: kode
@@ -1896,7 +2105,7 @@ paths:
         in: query
         name: id
         type: string
-      - example: MK001
+      - example: MK001 (Pilih salah satu)
         in: query
         maxLength: 12
         name: kode
@@ -2096,7 +2305,7 @@ paths:
         in: query
         name: id
         type: integer
-      - example: teknik-elektro
+      - example: teknik-elektro (Pilih salah satu)
         in: query
         name: name
         type: string
@@ -2597,6 +2806,313 @@ paths:
       summary: Update Admin User
       tags:
       - user (super)
+  /api/tahun-akademik:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        melihat tahun akademik yang sudah ada
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate tahun akademik Query", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` tahun akademik dengan nama tersebut tidak ditemukan -> `message: "failed to update tahun akademik", error: "tahun akademik not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_package_swagger_AkademikResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: get semua Tahun Akademik
+      tags:
+      - tahun-akademik
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan tahun akademik baru ke sistem
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` tahun akademik dengan nama tersebut sudah ada -> `message: "failed to create tahun akademik", error: "tahun akademik already exists"`
+        - `400` tahun akademik dengan tahun awal > akhir -> `message: "failed to create tahun akademik", error: "invalid tahun awal/akhir akademik "`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` user tidak memiliki akses -> `message: "tahun akademik anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to create tahun akademik", error: "Internal Error"`
+      parameters:
+      - description: Tahun Akademik Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_package_swagger.AkademikCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateTahunAkademikFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateTahunAkademikInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Tahun Akademik Baru
+      tags:
+      - tahun-akademik
+  /api/tahun-akademik/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        delete tahun akademik yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate tahun akademik Query", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` tahun akademik dengan nama tersebut tidak ditemukan -> `message: "failed to Delete tahun akademik", error: "tahun akademik not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to Delete tahun akademik", error: "Internal Error"`
+      parameters:
+      - description: Tahun Akademik ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteTahunAkademikFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteTahunAkademikInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete Tahun Akademik
+      tags:
+      - tahun-akademik
+    get:
+      consumes:
+      - application/json
+      description: |-
+        melihat tahun akademik yang sudah ada
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate tahun akademik Query", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` tahun akademik dengan nama tersebut tidak ditemukan -> `message: "failed to update tahun akademik", error: "tahun akademik not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+      parameters:
+      - description: Tahun Akademik ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_swagger_AkademikResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: get Tahun Akademik
+      tags:
+      - tahun-akademik
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengupdate tahun akademik yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate tahun akademik Query", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` tahun akademik dengan tahun awal > akhir -> `message: "failed to create tahun akademik", error: "invalid tahun awal/akhir akademik "`
+        - `400` tahun akademik dengan nama tersebut tidak ditemukan -> `message: "failed to update tahun akademik", error: "tahun akademik not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+      parameters:
+      - description: Tahun Akademik ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Tahun Akademik Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_package_swagger.AkademikUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_swagger_AkademikResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateTahunAkademikFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateTahunAkademikInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Tahun Akademik
+      tags:
+      - tahun-akademik
+  /api/tahun-akademik/status/{status}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        melihat tahun akademik yang sudah ada
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter Query tidak valid -> `message: "failed to validate tahun akademik Query", error: "Key: 'TahunAkademikName' Error:..."`
+        - `400` tahun akademik dengan nama tersebut tidak ditemukan -> `message: "failed to update tahun akademik", error: "tahun akademik not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` jurusan user tidak memiliki akses -> `message: "jurusan anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update jurusan", error: "Internal Error"`
+      parameters:
+      - description: Status tahun akademik
+        in: path
+        name: status
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_package_swagger_AkademikResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetTahunAkademikInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: get tahun Akademik berdasarkan status
+      tags:
+      - tahun-akademik
   /api/user:
     post:
       consumes:
@@ -2700,7 +3216,7 @@ paths:
       summary: Get User By ID
       tags:
       - user (super)
-  /api/user/email/:
+  /api/user/email/{email}:
     get:
       consumes:
       - application/json
@@ -2717,7 +3233,9 @@ paths:
         - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
         - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
       parameters:
-      - in: query
+      - description: Payload Email User
+        example: rezi@example.com
+        in: path
         name: email
         required: true
         type: string

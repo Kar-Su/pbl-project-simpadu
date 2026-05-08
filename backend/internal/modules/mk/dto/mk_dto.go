@@ -20,7 +20,7 @@ const (
 var (
 	ErrMkNotFound      = errors.New("Mata Kuliah Not Found")
 	ErrMkAlreadyExists = errors.New("Mata Kuliah Already Exists")
-	ErrQueryParams     = errors.New("no query params provided")
+	ErrQueryParams     = errors.New("Invalid Query Params, only one of params (id, kode) should be provided")
 )
 
 type (
@@ -45,7 +45,7 @@ type (
 
 	MkQuery struct {
 		ID   string `form:"id" example:"12345678-1234-1234-1234-123456789012"`
-		Kode string `form:"kode" binding:"max=12" example:"MK001"`
+		Kode string `form:"kode" binding:"max=12" example:"MK001 (Pilih salah satu)"`
 	}
 )
 

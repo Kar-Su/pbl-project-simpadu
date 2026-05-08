@@ -566,3 +566,68 @@ type ErrGetMkInternalServer struct {
 	Error   string `json:"error" example:"Internal Error"`
 	Path    string `json:"path,omitempty" example:"/api/mata-kuliah"`
 }
+
+// AKADEMIK
+type ErrCreateTahunAkademikFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create tahun akademik"`
+	Error   string `json:"error" example:"tahun akademik already exists"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrCreateTahunAkademikInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create tahun akademik"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrUpdateTahunAkademikFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update tahun akademik"`
+	Error   string `json:"error" example:"tahun akademik already exists"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrUpdateTahunAkademikInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update tahun akademik"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrDeleteTahunAkademikFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete tahun akademik"`
+	Error   string `json:"error" example:"tahun akademik already exists"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrDeleteTahunAkademikInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete tahun akademik"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrGetTahunAkademikFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get tahun akademik"`
+	Error   string `json:"error" example:"tahun akademik not found"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type ErrGetTahunAkademikInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get tahun akademik"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/tahun-akademik"`
+}
+
+type AkademikResponse struct {
+	ID           uint   `json:"id" example:"20241"`
+	TipeSemester string `json:"type" example:"semester"`
+	TahunAwal    string `json:"tahun_awal" example:"2024-01-01"`
+	TahunAkhir   string `json:"tahun_akhir" example:"2025-01-01"`
+	Status       string `json:"status" example:"aktif"`
+}

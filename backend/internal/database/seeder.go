@@ -52,5 +52,9 @@ func SeedDummy(db *gorm.DB) error {
 		return err
 	}
 
+	if err := seeds.ListSeedAkademik(ctx, db); err != nil {
+		return err
+	}
+
 	return nil
 }

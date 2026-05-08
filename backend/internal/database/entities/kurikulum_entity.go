@@ -11,7 +11,7 @@ type Kurikulum struct {
 	Name       string       `gorm:"not null;type:varchar(255)" json:"nama"`
 	ProdiID    uint         `gorm:"not null;type:int" json:"prodi_id"`
 	Prodi      Prodi        `gorm:"foreignKey:ProdiID" json:"prodi"`
-	MataKuliah []MataKuliah `gorm:"many2many:kurikulum_mk" json:"mata_kuliah"`
+	MataKuliah []MataKuliah `gorm:"many2many:kurikulum_mk;foreignKey:Kode;joinForeignKey:KurikulumKode;References:Kode;joinReferences:MKKode" json:"mata_kuliah"`
 }
 
 func (Kurikulum) TableName() string {

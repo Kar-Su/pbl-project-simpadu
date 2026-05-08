@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"web-hosting/internal/modules/prodi/dto"
 	"web-hosting/internal/modules/prodi/service"
+	"web-hosting/internal/modules/prodi/validation"
 	"web-hosting/internal/package/constants"
 	"web-hosting/internal/package/helpers"
 	_ "web-hosting/internal/package/swagger"
@@ -25,15 +26,18 @@ type (
 	}
 
 	prodiController struct {
-		prodiService service.ProdiService
-		db           *gorm.DB
+		prodiService   service.ProdiService
+		prodiValidator *validation.ProdiValidation
+		db             *gorm.DB
 	}
 )
 
 func NewProdiController(injector do.Injector, prodiService service.ProdiService, db *gorm.DB) ProdiController {
+	prodiValidation := validation.NewProdiValidation()
 	return &prodiController{
-		prodiService: prodiService,
-		db:           db,
+		prodiService:   prodiService,
+		prodiValidator: prodiValidation,
+		db:             db,
 	}
 }
 
@@ -216,7 +220,7 @@ func (c *prodiController) DeleteProdi(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.ProdiQuery false "Prodi Name Or ID"
+// @Param name query dto.ProdiQuery false "Prodi Name Or ID (Pilih salah satu)"
 // @Success      200      {object}  utils.Response[dto.ProdiResponse,any]
 // @Success      200      {object}  utils.Response[[]dto.ProdiResponse,any]
 // @Failure      400      {object}  swagger.ErrGetProdiFailed
@@ -239,6 +243,13 @@ func (c *prodiController) GetProdi(ctx *gin.Context) {
 		err     error
 		message string
 	)
+
+	if prodiQuery.ID != 0 && prodiQuery.Name != "" {
+		err = dto.ErrQueryParams
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_PRODI, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 
 	if prodiQuery.Name != "" {
 		prodiQuery.Name = helpers.NormalizeString(prodiQuery.Name)
