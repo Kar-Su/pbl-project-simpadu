@@ -25,6 +25,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 		apiRoutes.GET("/user/role/:role_name", middlewares.AuthMiddleware(jwtService), userController.GetUserByRole)
 		apiRoutes.GET("/user/", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
 		apiRoutes.POST("/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_MAHASISWA, constants.ROLE_ADMIN_PEGAWAI), userController.RegisterNonAdmin)
+		apiRoutes.GET("/user/count", middlewares.AuthMiddleware(jwtService), userController.CountAllUsers)
 
 		apiRoutes.GET("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.GetUserNonAdmin)
 		apiRoutes.PUT("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.UpdateNonAdmin)

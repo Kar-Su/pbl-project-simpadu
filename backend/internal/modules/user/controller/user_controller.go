@@ -30,6 +30,7 @@ type UserController interface {
 	UpdateNonAdmin(ctx *gin.Context)
 	DeleteAdmin(ctx *gin.Context)
 	DeleteNonAdmin(ctx *gin.Context)
+	CountAllUsers(ctx *gin.Context)
 }
 
 type userController struct {
@@ -664,5 +665,37 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 		return
 	}
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_USER, any(nil), path)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// CountAllUsers godoc
+// @Summary      Count All Users
+// @Description  Menghitung jumlah total user.
+// @Description
+// @Description  **Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to count all users", error: "Internal Error"`
+// @Tags         user
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Success      200  {object}  utils.Response[int64,any]
+// @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403  {object}  swagger.ErrForbiddenAccess
+// @Failure      500  {object}  swagger.ErrCountAllUsersInternalServer
+// @Router       /api/user/count [get]
+func (c *userController) CountAllUsers(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+	count, err := c.userService.CountAllUsers(ctx.Request.Context())
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_COUNT_ALL_USERS, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+		return
+	}
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_COUNT_ALL_USERS, count, path)
 	ctx.JSON(http.StatusOK, res)
 }

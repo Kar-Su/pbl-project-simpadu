@@ -21,15 +21,17 @@ const (
 	MESSAGE_FAILED_TOKEN_INVALID   = "token invalid"
 	MESSAGE_FAILED_DENIED_ACCESS   = "access denied"
 	MESSAGE_FAILED_BAD_REQUEST     = "bad request"
+	MESSAGE_FAILED_COUNT_ALL_USERS = "failed to count all users"
 
 	// SUCCESS
-	MESSAGE_SUCCESS_REGISTER_USER  = "user registered successfully"
-	MESSAGE_SUCCESS_LOGIN_USER     = "user logged in successfully"
-	MESSAGE_SUCCESS_GET_USER       = "user retrieved successfully"
-	MESSAGE_SUCCESS_GET_LIST_USER  = "list of users retrieved successfully"
-	MESSAGE_SUCCESS_UPDATE_USER    = "user updated successfully"
-	MESSAGE_SUCCESS_DELETE_USER    = "user deleted successfully"
-	MESSAGE_SUCCESS_PROSES_REQUEST = "request processed successfully"
+	MESSAGE_SUCCESS_REGISTER_USER   = "user registered successfully"
+	MESSAGE_SUCCESS_LOGIN_USER      = "user logged in successfully"
+	MESSAGE_SUCCESS_GET_USER        = "user retrieved successfully"
+	MESSAGE_SUCCESS_GET_LIST_USER   = "list of users retrieved successfully"
+	MESSAGE_SUCCESS_UPDATE_USER     = "user updated successfully"
+	MESSAGE_SUCCESS_DELETE_USER     = "user deleted successfully"
+	MESSAGE_SUCCESS_PROSES_REQUEST  = "request processed successfully"
+	MESSAGE_SUCCESS_COUNT_ALL_USERS = "count of all users retrieved successfully"
 )
 
 var (

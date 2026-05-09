@@ -384,6 +384,13 @@ type ErrDeleteUserInternalServer struct {
 	Path    string `json:"path,omitempty" example:"/api/super/user/019748ae-beef-7abc-b123-abcdef012345"`
 }
 
+type ErrCountAllUsersInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to count all users"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/user/count"`
+}
+
 // ErrGetListUserFailed dikembalikan ketika pengambilan daftar user gagal.
 //
 // Kemungkinan error:

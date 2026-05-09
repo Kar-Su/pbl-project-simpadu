@@ -26,6 +26,7 @@ type UserService interface {
 	GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uuid.UUID) (dto.UserResponse, error)
 	GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error)
 	GetUserByRole(ctx context.Context, roleId uint) ([]dto.UserResponse, error)
+	CountAllUsers(ctx context.Context) (int64, error)
 }
 
 type userService struct {
@@ -302,4 +303,13 @@ func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint,
 		return dto.UserResponse{}, constants.ErrInternalErr
 	}
 	return dto.ToUserResponse(user), nil
+}
+
+func (s *userService) CountAllUsers(ctx context.Context) (int64, error) {
+	count, err := s.userRepository.CountAllUsers(ctx, s.db)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return 0, constants.ErrInternalErr
+	}
+	return count, nil
 }

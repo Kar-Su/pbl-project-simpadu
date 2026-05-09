@@ -427,6 +427,21 @@ definitions:
         example: genap
         type: string
     type: object
+  web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer:
+    properties:
+      error:
+        example: Internal Error
+        type: string
+      message:
+        example: failed to count all users
+        type: string
+      path:
+        example: /api/user/count
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
   web-hosting_internal_package_swagger.ErrCreateJurusanFailed:
     properties:
       error:
@@ -1747,6 +1762,20 @@ definitions:
         items:
           $ref: '#/definitions/web-hosting_internal_package_swagger.AkademikResponse'
         type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-int64-any:
+    properties:
+      data:
+        type: integer
       error: {}
       message:
         example: Operation successful
@@ -3486,7 +3515,7 @@ paths:
         - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
         - `500` Kesalahan internal server -> `message: "failed to register user", error: "Internal Error"`
       parameters:
-      - description: Payload Registrasi Admin
+      - description: Payload Registrasi
         in: body
         name: request
         required: true
@@ -3588,13 +3617,13 @@ paths:
         - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
         - `500` Kesalahan internal server -> `message: "failed to update user", error: "Internal Error"`
       parameters:
-      - description: UUID User Admin
+      - description: UUID User
         example: 019748ae-beef-7abc-b123-abcdef012345
         in: path
         name: id
         required: true
         type: string
-      - description: Payload Update Admin
+      - description: Payload Update
         in: body
         name: request
         required: true
@@ -4032,6 +4061,43 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get User By Email
+      tags:
+      - user
+  /api/user/count:
+    get:
+      description: |-
+        Menghitung jumlah total user.
+
+        **Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to count all users", error: "Internal Error"`
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-int64-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Count All Users
       tags:
       - user
   /api/user/role/{role_name}:

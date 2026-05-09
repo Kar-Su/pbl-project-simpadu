@@ -1902,7 +1902,7 @@ const docTemplate = `{
                 "summary": "Register Admin User",
                 "parameters": [
                     {
-                        "description": "Payload Registrasi Admin",
+                        "description": "Payload Registrasi",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -1967,13 +1967,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "019748ae-beef-7abc-b123-abcdef012345",
-                        "description": "UUID User Admin",
+                        "description": "UUID User",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Payload Update Admin",
+                        "description": "Payload Update",
                         "name": "request",
                         "in": "body",
                         "required": true,
@@ -2547,6 +2547,49 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menghitung jumlah total user.\n\n**Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to count all users\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Count All Users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-int64-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer"
                         }
                     }
                 }
@@ -3462,6 +3505,27 @@ const docTemplate = `{
                 "tipe_semester": {
                     "type": "string",
                     "example": "genap"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to count all users"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/user/count"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },
@@ -5308,6 +5372,26 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/web-hosting_internal_package_swagger.AkademikResponse"
                     }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-int64-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "integer"
                 },
                 "error": {},
                 "message": {

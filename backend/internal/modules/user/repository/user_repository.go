@@ -21,6 +21,7 @@ type UserRepository interface {
 	GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, error)
 	CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, bool, error)
 	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, bool, error)
+	CountAllUsers(ctx context.Context, tx *gorm.DB) (int64, error)
 }
 
 type userRepository struct {
@@ -151,4 +152,15 @@ func (r *userRepository) CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB,
 		return entities.User{}, false, err
 	}
 	return user, true, nil
+}
+
+func (r *userRepository) CountAllUsers(ctx context.Context, tx *gorm.DB) (int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var count int64
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }
