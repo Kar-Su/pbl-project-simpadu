@@ -17,13 +17,13 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	{
 		apiRoutes.GET("/me", middlewares.AuthMiddleware(jwtService), userController.Me)
 
-		apiRoutes.GET("/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.GetUser)
+		apiRoutes.GET("/user/super/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.GetUser)
 		apiRoutes.POST("/super/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.RegisterAdmin)
 		apiRoutes.PUT("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.UpdateAdmin)
 		apiRoutes.DELETE("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.DeleteAdmin)
 
 		apiRoutes.GET("/user/role/:role_name", middlewares.AuthMiddleware(jwtService), userController.GetUserByRole)
-		apiRoutes.GET("/user/email/:email", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
+		apiRoutes.GET("/user/", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
 		apiRoutes.POST("/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_MAHASISWA, constants.ROLE_ADMIN_PEGAWAI), userController.RegisterNonAdmin)
 
 		apiRoutes.GET("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.GetUserNonAdmin)

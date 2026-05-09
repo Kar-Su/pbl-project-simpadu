@@ -138,19 +138,19 @@ func (s *userService) UpdateAdmin(ctx context.Context, req dto.UserAdminUpdateRe
 	if roleName := req.RoleName; roleName != "" {
 		roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
 		if err != nil {
-			if errors.Is(err, gorm.ErrRecordNotFound) {
-				return dto.UserResponse{}, dto.ErrRoleNotFound
-			}
-			log.Printf("Internal Error: %v", err)
-			return dto.UserResponse{}, constants.ErrInternalErr
+			return dto.UserResponse{}, err
 		}
 		user.RoleID = roleId
 	}
 	if req.DetailId != nil {
-		if req.DetailId.String() == "null" {
+		if *req.DetailId == "null" {
 			user.DetailID = nil
 		} else {
-			user.DetailID = req.DetailId
+			detailId, err := uuid.Parse(*req.DetailId)
+			if err != nil {
+				return dto.UserResponse{}, err
+			}
+			user.DetailID = &detailId
 		}
 	}
 	if req.Image != nil {
@@ -196,6 +196,25 @@ func (s *userService) UpdateNonAdmin(ctx context.Context, req dto.UserNonAdminUp
 			user.ImageUrl = &fileName
 		}
 	}
+	if req.RoleName != "" {
+		roleId, err := s.roleService.GetRoleIdByRoleName(ctx, req.RoleName)
+		if err != nil {
+			return dto.UserResponse{}, err
+		}
+		user.RoleID = roleId
+	}
+	if req.DetailId != nil {
+		if *req.DetailId == "null" {
+			user.DetailID = nil
+		} else {
+			detailId, err := uuid.Parse(*req.DetailId)
+			if err != nil {
+				return dto.UserResponse{}, err
+			}
+			user.DetailID = &detailId
+		}
+	}
+
 	updatedUser, err := s.userRepository.Update(ctx, s.db, user.ID, user)
 	if err != nil {
 		return dto.UserResponse{}, dto.ErrUpdateUser

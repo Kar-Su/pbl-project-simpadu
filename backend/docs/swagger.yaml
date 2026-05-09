@@ -3989,56 +3989,7 @@ paths:
       summary: Register Non-Admin User
       tags:
       - user
-  /api/user/{id}:
-    get:
-      description: |-
-        Mengambil data lengkap seorang user berdasarkan UUID-nya.
-
-        **Akses:** Khusus Super Admin.
-
-        **Error yang mungkin terjadi:**
-        - `400` User dengan ID tersebut tidak ditemukan -> `message: "failed to get user", error: "user not found"`
-        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
-        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
-      parameters:
-      - description: UUID User
-        example: 019748ae-beef-7abc-b123-abcdef012345
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
-      security:
-      - ApiKeyAuth: []
-      summary: Get User By ID
-      tags:
-      - user (super)
-  /api/user/email/{email}:
+  /api/user/:
     get:
       consumes:
       - application/json
@@ -4055,9 +4006,7 @@ paths:
         - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
         - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
       parameters:
-      - description: Payload Email User
-        example: rezi@example.com
-        in: path
+      - in: query
         name: email
         required: true
         type: string
@@ -4131,6 +4080,55 @@ paths:
       summary: Get Users By Role Name
       tags:
       - user
+  /api/user/super/{id}:
+    get:
+      description: |-
+        Mengambil data lengkap seorang user berdasarkan UUID-nya.
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` User dengan ID tersebut tidak ditemukan -> `message: "failed to get user", error: "user not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to get user", error: "Internal Error"`
+      parameters:
+      - description: UUID User
+        example: 019748ae-beef-7abc-b123-abcdef012345
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Get User By ID
+      tags:
+      - user (super)
   /api/user/sync/{role_name}/{detail_id}:
     delete:
       description: |-
