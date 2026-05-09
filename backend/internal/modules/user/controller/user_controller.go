@@ -72,10 +72,10 @@ func NewUserController(injector do.Injector, userServ service.UserService, roleS
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
 // @Router       /api/me [get]
 func (c *userController) Me(ctx *gin.Context) {
-	userId := ctx.MustGet("user_id").(string)
+	userId := ctx.MustGet("user_id").(uuid.UUID)
 	path := ctx.Request.URL.Path
 
-	result, err := c.userService.GetUserByID(ctx.Request.Context(), uuid.MustParse(userId))
+	result, err := c.userService.GetUserByID(ctx.Request.Context(), userId)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
@@ -114,7 +114,7 @@ func (c *userController) Me(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/{id} [get]
+// @Router       /api/user/super/{id} [get]
 func (c *userController) GetUser(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	userId, err := uuid.Parse(ctx.Param("id"))
@@ -224,16 +224,16 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        email  path      string  true  "Payload Email User" example(rezi@example.com)
+// @Param        email  query      dto.UserEmailQuery  true  "Payload Email User" example(rezi@example.com)
 // @Success      200  {object}  utils.Response[dto.UserResponse,any]
 // @Failure      400  {object}  swagger.ErrGetUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/email/{email} [get]
+// @Router       /api/user/ [get]
 func (c *userController) GetUserByEmail(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
-	var req dto.UserEmailUri
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	var req dto.UserEmailQuery
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		res := utils.BuildResponseFailed(constants.MESAGE_FAILED_GET_DATA_FROM_BODY, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
@@ -335,8 +335,8 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        id       path      string                      true  "UUID User Admin"  example(019748ae-beef-7abc-b123-abcdef012345)
-// @Param        request  body      swagger.UserAdminUpdateRequest  true  "Payload Update Admin"
+// @Param        id       path      string                      true  "UUID User"  example(019748ae-beef-7abc-b123-abcdef012345)
+// @Param        request  body      swagger.UserAdminUpdateRequest  true  "Payload Update"
 // @Success      200  {object}  utils.Response[dto.UserResponse,any]
 // @Failure      400  {object}  swagger.ErrUpdateUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
@@ -393,7 +393,7 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        request  body      swagger.UserAdminCreateRequest  true  "Payload Registrasi Admin"
+// @Param        request  body      swagger.UserAdminCreateRequest  true  "Payload Registrasi"
 // @Success      201  {object}  utils.Response[any,any]
 // @Failure      400  {object}  swagger.ErrRegisterUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
@@ -538,7 +538,7 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 	roleId, err := c.roleService.GetRoleIdByRoleName(ctx.Request.Context(), reqUri.RoleName)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
-			res := utils.BuildResponseFailed(err.Error(), err.Error(), nil, path)
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_USER, err.Error(), nil, path)
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
 			return
 		}

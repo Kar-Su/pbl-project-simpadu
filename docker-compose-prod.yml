@@ -164,13 +164,11 @@ services:
     #   - "8080:80"
     # ports:
     #   - "80"
-    links:
-      - db
     environment:
       PMA_HOST: db
       # PMA_PORT sebaiknya dihapus jika tidak ingin akses langsung dari luar container
       # PMA_PORT: 3306
-      PMA_ARBITRARY: 1
+      PMA_ARBITRARY: 0
       PMA_ABSOLUTE_URI: https://pma.${DOMAIN:-localhost}/
     networks:
       - web_hosting

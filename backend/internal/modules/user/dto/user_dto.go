@@ -64,8 +64,8 @@ type (
 		DetailId string `uri:"detail_id" binding:"required"`
 	}
 
-	UserEmailUri struct {
-		Email string `uri:"email" binding:"required,email,non_admin_email"`
+	UserEmailQuery struct {
+		Email string `form:"email" binding:"required,email,non_admin_email"`
 	}
 
 	UserAdminCreateRequest struct {
@@ -91,7 +91,7 @@ type (
 		Email    string                `json:"email" form:"email" binding:"omitempty,email" example:"rezi@example.com // optional, must be a valid email address"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8" example:"inipasswordrezi // optional, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty" example:"raja-nyawit // optional"`
-		DetailId *uuid.UUID            `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
+		DetailId *string               `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 
@@ -100,7 +100,7 @@ type (
 		Email    string                `json:"email" form:"email" binding:"omitempty,email" example:"rezi@example.com // optional, must be a valid email address"`
 		Password string                `json:"password" form:"password" binding:"omitempty,min=8" example:"inipasswordrezi // optional, min 8 characters"`
 		RoleName string                `json:"role_name" form:"role_name" binding:"omitempty,is_non_admin" example:"raja-nyawit // optional"`
-		DetailId *uuid.UUID            `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
+		DetailId *string               `json:"detail_id" form:"detail_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
 		Image    *multipart.FileHeader `json:"image" form:"image" binding:"omitempty,custom_ext" example:"path/to/image.jpg"`
 	}
 

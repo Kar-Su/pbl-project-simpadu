@@ -2498,7 +2498,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/email/{email}": {
+        "/api/user/": {
             "get": {
                 "security": [
                     {
@@ -2519,10 +2519,8 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "rezi@example.com",
-                        "description": "Payload Email User",
                         "name": "email",
-                        "in": "path",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -2596,6 +2594,65 @@ const docTemplate = `{
                         "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/user/super/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil data lengkap seorang user berdasarkan UUID-nya.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User dengan ID tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user (super)"
+                ],
+                "summary": "Get User By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     },
                     "500": {
@@ -2799,65 +2856,6 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Mengambil data lengkap seorang user berdasarkan UUID-nya.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User dengan ID tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user (super)"
-                ],
-                "summary": "Get User By ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "019748ae-beef-7abc-b123-abcdef012345",
-                        "description": "UUID User",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
                         }
                     }
                 }
