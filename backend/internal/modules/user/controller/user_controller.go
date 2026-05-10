@@ -672,7 +672,7 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 // @Summary      Count All Users
 // @Description  Menghitung jumlah total user.
 // @Description
-// @Description  **Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.
+// @Description  **Akses:** Logged user
 // @Description
 // @Description  **Error yang mungkin terjadi:**
 // @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
