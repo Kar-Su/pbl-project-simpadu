@@ -22,7 +22,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 		kelasRoute.PUT("/:kelas_id", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), kelasController.UpdateKelas)
 		kelasRoute.DELETE("/:kelas_id", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), kelasController.DeleteKelas)
 		kelasRoute.GET("/:kelas_id", kelasController.GetKelasByID)
-		kelasRoute.GET("/:kelas_id/prodi/:prodi_name", kelasController.GetKelasByProdiName)
+		kelasRoute.GET("/prodi/:prodi_name", kelasController.GetKelasByProdiName)
 
 		kelasRoute.POST("/mahasiswa", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), pivotController.AssignMahasiswaToKelas)
 		kelasRoute.DELETE("/:kelas_id/mahasiswa/:mahasiswa_id", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), pivotController.RemoveMahasiswaFromKelas)

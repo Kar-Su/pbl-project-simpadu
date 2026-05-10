@@ -6,6 +6,7 @@ import (
 	"web-hosting/internal/modules/kelas/dto"
 	"web-hosting/internal/modules/kelas/service"
 	"web-hosting/internal/package/constants"
+	_ "web-hosting/internal/package/swagger"
 	"web-hosting/internal/package/utils"
 
 	"github.com/gin-gonic/gin"
@@ -28,6 +29,13 @@ type (
 	}
 )
 
+func NewKelasController(injector do.Injector, db *gorm.DB, kelasService service.KelasService) KelasController {
+	return &kelasController{
+		db:           db,
+		kelasService: kelasService,
+	}
+}
+
 // CreateKelas godoc
 // @Summary Create Kelas Baru
 // @Description Menambahkan kelas baru ke sistem
@@ -36,30 +44,23 @@ type (
 // @Description
 // @Description  **Error yang mungkin terjadi:**
 // @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'KelasName' Error:..."`
-// @Description  - `400` kelas dengan nama tersebut sudah ada -> `message: "failed to create kelas", error: "kelas already exists"`
+// @Description  - `400` kelas dengan id tersebut sudah ada -> `message: "failed to create kelas", error: "kelas already exists"`
 // @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
 // @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
 // @Description  - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
 // @Description  - `500` Kesalahan internal server -> `message: "failed to create kelas", error: "Internal Error"`
-// @Tags kurikulum
+// @Tags kelas
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param request body dto.KurikulumCreateRequest true "Kurikulum Request"
+// @Param request body dto.KelasCreateRequest true "Kelas Request"
 // @Success      201      {object}  utils.Response[any,any]
-// @Failure      400      {object}  swagger.ErrCreateKurikulumFailed
+// @Failure      400      {object}  swagger.ErrCreateKelasFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
-// @Failure      500      {object}  swagger.ErrCreateKurikulumInternalServer
-// @Router /api/kurikulum [post]
-func NewKelasController(injector do.Injector, db *gorm.DB, kelasService service.KelasService) KelasController {
-	return &kelasController{
-		db:           db,
-		kelasService: kelasService,
-	}
-}
-
+// @Failure      500      {object}  swagger.ErrCreateKelasInternalServer
+// @Router /api/kelas [post]
 func (c *kelasController) CreateKelas(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
@@ -85,6 +86,33 @@ func (c *kelasController) CreateKelas(ctx *gin.Context) {
 	ctx.JSON(http.StatusCreated, res)
 }
 
+// UpdateKelas godoc
+// @Summary Update kelas
+// @Description Mengupdate kelas yang sudah ada
+// @Description
+// @Description  **Akses:** Admin Akademik
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'Kelas' Error:..."`
+// @Description  - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to update kelas", error: "kelas not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` role user tidak memiliki akses -> `message: "role anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
+// @Tags kelas
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param kelas_id path string true "kelas ID"
+// @Param request body dto.KelasUpdateRequest true "kelas Request"
+// @Success      200      {object}  utils.Response[dto.KelasResponse,any]
+// @Failure      400      {object}  swagger.ErrUpdateKelasFailed
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Failure      500      {object}  swagger.ErrUpdateKelasInternalServer
+// @Router /api/kelas/{kelas_id} [put]
 func (c *kelasController) UpdateKelas(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
@@ -117,6 +145,31 @@ func (c *kelasController) UpdateKelas(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// DeleteKelas godoc
+// @Summary Delete kelas
+// @Description delete kelas yang sudah ada
+// @Description
+// @Description  **Akses:** Admin Akademik
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+// @Description  - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to Delete kelas", error: "kelas not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` kelas user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to Delete kelas", error: "Internal Error"`
+// @Tags kelas
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param kelas_id path string true "kelas ID"
+// @Success      200      {object}  utils.Response[any,any]
+// @Failure      400      {object}  swagger.ErrDeleteKelasFailed
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Failure      500      {object}  swagger.ErrDeleteKelasInternalServer
+// @Router /api/kelas/{kelas_id} [delete]
 func (c *kelasController) DeleteKelas(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
@@ -142,6 +195,31 @@ func (c *kelasController) DeleteKelas(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetKelasByID godoc
+// @Summary get Kelas
+// @Description melihat kelas yang sudah ada
+// @Description
+// @Description  **Akses:** Logged User
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+// @Description  - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to Get kelas", error: "kelas not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` kelas user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to Get kelas", error: "Internal Error"`
+// @Tags kelas
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param kelas_id path string true "kelas ID"
+// @Success      200      {object}  utils.Response[dto.KelasResponse,any]
+// @Failure      400      {object}  swagger.ErrGetKelasFailed
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Failure      500      {object}  swagger.ErrGetKelasInternalServer
+// @Router /api/kelas/{kelas_id} [get]
 func (c *kelasController) GetKelasByID(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
@@ -167,6 +245,31 @@ func (c *kelasController) GetKelasByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetKelasByProdiName godoc
+// @Summary get Kelas by prodi name
+// @Description melihat kelas yang sudah ada
+// @Description
+// @Description  **Akses:** Logged User
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+// @Description  - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to Get kelas", error: "kelas not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` kelas user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to Get kelas", error: "Internal Error"`
+// @Tags kelas
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param prodi_name path string true "prodi name"
+// @Success      200      {object}  utils.Response[dto.KelasResponse,any]
+// @Failure      400      {object}  swagger.ErrGetKelasFailed
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Failure      500      {object}  swagger.ErrGetKelasInternalServer
+// @Router /api/kelas/prodi/{prodi_name} [get]
 func (c *kelasController) GetKelasByProdiName(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 

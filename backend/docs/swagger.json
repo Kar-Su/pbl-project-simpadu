@@ -530,6 +530,571 @@
                 }
             }
         },
+        "/api/kelas": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan kelas baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"`\n- `400` kelas dengan id tersebut sudah ada -\u003e `message: \"failed to create kelas\", error: \"kelas already exists\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to create kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Create Kelas Baru",
+                "parameters": [
+                    {
+                        "description": "Kelas Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/mahasiswa": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Assign mahasiswa ke kelas\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"`\n- `400` kelas dengan id tersebut sudah ada -\u003e `message: \"failed to create kelas\", error: \"kelas already exists\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to create kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Assign Mahasiswa to Kelas",
+                "parameters": [
+                    {
+                        "description": "Kelas Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/mahasiswa/{mahasiswa_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat mahasiswa terdaftar di kelas mana saja\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to Get kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kelas user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Get kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "get Kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "mahasiswa ID",
+                        "name": "mahasiswa_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kelas_dto_KelasMahasiswaResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/prodi/{prodi_name}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat kelas yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to Get kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kelas user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Get kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "get Kelas by prodi name",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "prodi name",
+                        "name": "prodi_name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kelas_dto_KelasResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/{kelas_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat kelas yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to Get kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kelas user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Get kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "get Kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kelas ID",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kelas_dto_KelasResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate kelas yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'Kelas' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to update kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` role user tidak memiliki akses -\u003e `message: \"role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to update role\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Update kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kelas ID",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "kelas Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kelas_dto_KelasResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "delete kelas yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to Delete kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kelas user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Delete kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Delete kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kelas ID",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/{kelas_id}/mahasiswa": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "melihat mahasiswa yang terdaftar dalam kelas\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to Get kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kelas user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Get kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "get Kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kelas ID",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kelas_dto_KelasMahasiswaResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/{kelas_id}/mahasiswa/{mahasiswa_id}": {
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "delete kelas yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to Delete kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` kelas user tidak memiliki akses -\u003e `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to Delete kelas\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Remove mahasiswa dari kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "kelas ID",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "mahasiswa ID",
+                        "name": "mahasiswa_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
         "/api/kurikulum": {
             "post": {
                 "security": [
@@ -2552,7 +3117,7 @@
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menghitung jumlah total user.\n\n**Akses:** Super Admin, Admin Pegawai, Admin Mahasiswa.\n\n**Error yang mungkin terjadi:**\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` Role user tidak memiliki akses -\u003e `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to count all users\", error: \"Internal Error\"`",
+                "description": "Menghitung jumlah total user.\n\n**Akses:** Logged user\n\n**Error yang mungkin terjadi:**\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` Role user tidak memiliki akses -\u003e `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to count all users\", error: \"Internal Error\"`",
                 "produces": [
                     "application/json"
                 ],
@@ -3036,6 +3601,236 @@
                 "new_name": {
                     "type": "string",
                     "example": "teknik-mesin"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.JurusanResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KelasCreateRequest": {
+            "type": "object",
+            "required": [
+                "kurikulum_kode",
+                "name",
+                "prodi_name",
+                "tahun_akademik_id"
+            ],
+            "properties": {
+                "kurikulum_kode": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "prodi_name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "semester": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "tahun_akademik_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest": {
+            "type": "object",
+            "required": [
+                "kelas_id",
+                "mahasiswa_id"
+            ],
+            "properties": {
+                "kelas_id": {
+                    "type": "string"
+                },
+                "mahasiswa_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KelasMahasiswaResponse": {
+            "type": "object",
+            "properties": {
+                "kelas": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasResponseLess"
+                },
+                "mahasiswa": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.MahasiswaResponse"
+                    }
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KelasResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "kurikulum": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KurikulumResponse"
+                },
+                "kurikulum_mk": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KurikulumMKResponse"
+                    }
+                },
+                "mahasiswa": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.MahasiswaResponse"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "prodi": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.ProdiResponse"
+                },
+                "semester": {
+                    "type": "integer"
+                },
+                "tahun_akademik": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.TahunAkademikResponse"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KelasResponseLess": {
+            "type": "object",
+            "properties": {
+                "kelas_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KelasUpdateRequest": {
+            "type": "object",
+            "properties": {
+                "kurikulum_kode": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "prodi_name": {
+                    "type": "string",
+                    "maxLength": 255
+                },
+                "semester": {
+                    "type": "integer",
+                    "minimum": 0
+                },
+                "tahun_akademik_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KurikulumMKResponse": {
+            "type": "object",
+            "properties": {
+                "mata_kuliah": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.MataKuliahResponse"
+                },
+                "semester": {
+                    "type": "integer"
+                },
+                "wajib": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.KurikulumResponse": {
+            "type": "object",
+            "properties": {
+                "kode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.MahasiswaResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "mahasiswa_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.MataKuliahResponse": {
+            "type": "object",
+            "properties": {
+                "kode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sks": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.ProdiResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "jenjang": {
+                    "type": "string"
+                },
+                "jurusan": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.JurusanResponse"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.TahunAkademikResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "tahun_akhir": {
+                    "type": "string"
+                },
+                "tahun_awal": {
+                    "type": "string"
+                },
+                "tipe_semester": {
+                    "type": "string"
                 }
             }
         },
@@ -3564,6 +4359,48 @@
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrCreateKelasFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kelas already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrCreateKelasInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to create kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrCreateKurikulumFailed": {
             "type": "object",
             "properties": {
@@ -3851,6 +4688,48 @@
                 "path": {
                     "type": "string",
                     "example": "/api/jurusan"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteKelasFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kelas already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas/{kelas_id}"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrDeleteKelasInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to delete kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas/{kelas_id}"
                 },
                 "success": {
                     "type": "boolean",
@@ -4250,6 +5129,48 @@
                 "path": {
                     "type": "string",
                     "example": "/api/jurusan"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetKelasFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kelas not found"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas/{kelas_id}"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrGetKelasInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to get kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas/{kelas_id}"
                 },
                 "success": {
                     "type": "boolean",
@@ -4782,6 +5703,48 @@
                 }
             }
         },
+        "web-hosting_internal_package_swagger.ErrUpdateKelasFailed": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "kelas already exists"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas/{kelas_id}"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.ErrUpdateKelasInternalServer": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal Error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to update kelas"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/kelas/{kelas_id}"
+                },
+                "success": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.ErrUpdateKurikulumFailed": {
             "type": "object",
             "properties": {
@@ -5265,6 +6228,29 @@
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kelas_dto_KelasMahasiswaResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasMahasiswaResponse"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any": {
             "type": "object",
             "properties": {
@@ -5465,6 +6451,26 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_modules_jurusan_dto.JurusanResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kelas_dto_KelasResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasResponse"
                 },
                 "error": {},
                 "message": {

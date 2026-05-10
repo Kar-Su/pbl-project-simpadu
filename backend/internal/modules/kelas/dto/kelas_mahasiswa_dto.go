@@ -44,11 +44,11 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 		}
 	}
 
-	for _, mhs := range entity.Mahasiswa {
+	if entity.Mahasiswa.ID != uuid.Nil {
 		res.Mahasiswa = append(res.Mahasiswa, MahasiswaResponse{
-			MahasiswaID: mhs.DetailID,
-			Name:        mhs.Name,
-			Email:       mhs.Email,
+			MahasiswaID: entity.Mahasiswa.DetailID,
+			Name:        entity.Mahasiswa.Name,
+			Email:       entity.Mahasiswa.Email,
 		})
 	}
 
