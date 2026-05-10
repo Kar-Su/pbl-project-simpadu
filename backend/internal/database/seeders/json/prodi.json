@@ -5,8 +5,23 @@
     "jurusan_id": 1
   },
   {
-    "name": "teknik-elektronika",
+    "name": "teknik-informatika",
     "jenjang": "D3",
+    "jurusan_id": 1
+  },
+  {
+    "name": "elektronika",
+    "jenjang": "D3",
+    "jurusan_id": 1
+  },
+  {
+    "name": "sistem-informasi-kota-cerdas",
+    "jenjang": "D4",
+    "jurusan_id": 1
+  },
+  {
+    "name": "teknologi-rekayasa-otomasi",
+    "jenjang": "D4",
     "jurusan_id": 1
   },
   {
@@ -15,13 +30,23 @@
     "jurusan_id": 1
   },
   {
-    "name": "teknik-otomotif",
+    "name": "teknologi-rekayasa-otomatif",
+    "jenjang": "D4",
+    "jurusan_id": 2
+  },
+  {
+    "name": "teknik-mesin",
     "jenjang": "D3",
     "jurusan_id": 2
   },
   {
-    "name": "teknologi-rekayasa-konstruksi-pesawat-udara",
-    "jenjang": "D4",
+    "name": "teknik-alat-berat",
+    "jenjang": "D3",
+    "jurusan_id": 2
+  },
+  {
+    "name": "tata-operasi-dan-pemeliharaan-prediktif-alat-berat",
+    "jenjang": "D2",
     "jurusan_id": 2
   },
   {
@@ -30,7 +55,22 @@
     "jurusan_id": 3
   },
   {
+    "name": "teknik-pertambangan",
+    "jenjang": "D3",
+    "jurusan_id": 3
+  },
+  {
+    "name": "teknik-pembangunan-rawa",
+    "jenjang": "D4",
+    "jurusan_id": 3
+  },
+  {
     "name": "teknologi-rekayasa-konstruksi-jalan-dan-jembatan",
+    "jenjang": "D4",
+    "jurusan_id": 3
+  },
+  {
+    "name": "teknologi-rekayasa-geomatika-dan-survei",
     "jenjang": "D4",
     "jurusan_id": 3
   },
@@ -40,12 +80,7 @@
     "jurusan_id": 4
   },
   {
-    "name": "manajemen-pemasaran",
-    "jenjang": "D3",
-    "jurusan_id": 4
-  },
-  {
-    "name": "akuntansi",
+    "name": "sistem-informasi",
     "jenjang": "D3",
     "jurusan_id": 4
   },
@@ -53,5 +88,20 @@
     "name": "bisnis-digital",
     "jenjang": "D4",
     "jurusan_id": 4
+  },
+  {
+    "name": "akutansi",
+    "jenjang": "D3",
+    "jurusan_id": 5
+  },
+  {
+    "name": "sistem-informasi-akutansi",
+    "jenjang": "D3",
+    "jurusan_id": 5
+  },
+  {
+    "name": "akutansi-lembaga-keuangan-syariah",
+    "jenjang": "D4",
+    "jurusan_id": 5
   }
 ]
