@@ -66,7 +66,7 @@ type (
 	KelasIdURI struct {
 		KelasID uuid.UUID `uri:"kelas_id" binding:"required"`
 	}
-	KelasMahasiswURI struct {
+	KelasMahasiswaURI struct {
 		MahasiswaIdURI
 		KelasIdURI
 	}

@@ -28,6 +28,31 @@ type (
 	}
 )
 
+// CreateKelas godoc
+// @Summary Create Kelas Baru
+// @Description Menambahkan kelas baru ke sistem
+// @Description
+// @Description  **Akses:** Admin Akademik
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'KelasName' Error:..."`
+// @Description  - `400` kelas dengan nama tersebut sudah ada -> `message: "failed to create kelas", error: "kelas already exists"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to create kelas", error: "Internal Error"`
+// @Tags kurikulum
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param request body dto.KurikulumCreateRequest true "Kurikulum Request"
+// @Success      201      {object}  utils.Response[any,any]
+// @Failure      400      {object}  swagger.ErrCreateKurikulumFailed
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Failure      500      {object}  swagger.ErrCreateKurikulumInternalServer
+// @Router /api/kurikulum [post]
 func NewKelasController(injector do.Injector, db *gorm.DB, kelasService service.KelasService) KelasController {
 	return &kelasController{
 		db:           db,
