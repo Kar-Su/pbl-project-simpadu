@@ -15,6 +15,7 @@ type (
 		GetByID(ctx context.Context, tx *gorm.DB, id uint) (entities.TahunAkademik, error)
 		GetAll(ctx context.Context, tx *gorm.DB) ([]entities.TahunAkademik, error)
 		GetByStatus(ctx context.Context, tx *gorm.DB, status string) ([]entities.TahunAkademik, error)
+		CheckByID(ctx context.Context, tx *gorm.DB, id uint) (bool, error)
 	}
 	tahunAkademikRepository struct {
 		db *gorm.DB
@@ -102,4 +103,20 @@ func (r *tahunAkademikRepository) GetByStatus(ctx context.Context, tx *gorm.DB, 
 	}
 
 	return entities, nil
+}
+
+func (r *tahunAkademikRepository) CheckByID(ctx context.Context, tx *gorm.DB, id uint) (bool, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var entity entities.TahunAkademik
+	if err := tx.WithContext(ctx).Where("id = ?", id).First(&entity).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+
+	return true, nil
 }

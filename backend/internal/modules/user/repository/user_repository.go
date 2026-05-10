@@ -22,6 +22,7 @@ type UserRepository interface {
 	CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, bool, error)
 	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, bool, error)
 	CountAllUsers(ctx context.Context, tx *gorm.DB) (int64, error)
+	CheckByMahasiswaRoleAndDetailID(ctx context.Context, tx *gorm.DB, detailId uuid.UUID) (bool, error)
 }
 
 type userRepository struct {
@@ -163,4 +164,15 @@ func (r *userRepository) CountAllUsers(ctx context.Context, tx *gorm.DB) (int64,
 		return 0, err
 	}
 	return count, nil
+}
+
+func (r *userRepository) CheckByMahasiswaRoleAndDetailID(ctx context.Context, tx *gorm.DB, detailId uuid.UUID) (bool, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var count int64
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("role_id = ? AND detail_id = ?", "mahasiswa", detailId).Count(&count).Error; err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }

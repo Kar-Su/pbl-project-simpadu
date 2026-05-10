@@ -57,6 +57,7 @@ func RegisterProviders(injector do.Injector) {
 
 	db := do.MustInvokeNamed[*gorm.DB](injector, "db_test")
 	db.SetupJoinTable(&entities.Kurikulum{}, "MataKuliah", &entities.KurikulumMK{})
+	db.SetupJoinTable(&entities.Kelas{}, "Mahasiswa", &entities.KelasMahasiswa{})
 
 	jwtService := do.MustInvokeNamed[authService.JwtService](injector, constants.JWTService)
 
