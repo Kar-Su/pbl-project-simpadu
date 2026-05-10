@@ -73,7 +73,12 @@ func NewUserController(injector do.Injector, userServ service.UserService, roleS
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
 // @Router       /api/me [get]
 func (c *userController) Me(ctx *gin.Context) {
-	userId := ctx.MustGet("user_id").(uuid.UUID)
+	userId, err := uuid.Parse(ctx.MustGet("user_id").(string))
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, ctx.Request.URL.Path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 	path := ctx.Request.URL.Path
 
 	result, err := c.userService.GetUserByID(ctx.Request.Context(), userId)
