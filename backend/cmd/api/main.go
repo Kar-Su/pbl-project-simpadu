@@ -37,7 +37,6 @@ func run(server *gin.Engine) {
 		serve = "0.0.0.0:" + port
 		docs.SwaggerInfo.Host = "localhost"
 		SWAGGER_PATH = "/api/swagger/*any"
-		server.Use(cors.Default())
 	} else {
 		serve = ":" + port
 		docs.SwaggerInfo.Host = app
@@ -82,6 +81,7 @@ func main() {
 	injector := do.New()
 
 	server := gin.Default()
+	server.Use(cors.Default())
 
 	providers.RegisterProviders(injector)
 

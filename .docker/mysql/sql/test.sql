@@ -102,12 +102,13 @@ CREATE TABLE IF NOT EXISTS tahun_akademik(
 CREATE TABLE IF NOT EXISTS kelas(
     id char(36) PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    semester int NOT NULL DEFAULT 1,
     tahun_akademik_id int NOT NULL,
-    kurikulum_id char(36) NOT NULL,
+    kurikulum_kode char(12) NOT NULL,
     prodi_id int NOT NULL,
 
     CONSTRAINT fk_kelas_tahun_akademik FOREIGN KEY (tahun_akademik_id) REFERENCES tahun_akademik(id) ON DELETE CASCADE,
-    CONSTRAINT fk_kelas_kurikulum FOREIGN KEY (kurikulum_id) REFERENCES kurikulum(id) ON DELETE CASCADE,
+    CONSTRAINT fk_kelas_kurikulum FOREIGN KEY (kurikulum_kode) REFERENCES kurikulum(kode) ON DELETE CASCADE,
     CONSTRAINT fk_kelas_prodi FOREIGN KEY (prodi_id) REFERENCES prodi(id) ON DELETE CASCADE
 ) engine=InnoDB;
 
