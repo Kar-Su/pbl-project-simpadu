@@ -33,7 +33,11 @@ import DashboardAdmin from '@/views/dashboard_admin_akademik/Dashboard_admin_aka
 
 // // kelas
 // import Kelas from "../views/dashboard_admin_akademik/mahasiswa/kelas/kelas.vue"
+// import detail_kelas from "../views/dashboard_admin_akademik/mahasiswa/kelas/detail_kelas.vue"
 
+// // peserta kelas
+// import Peserta_kelas from "../views/dashboard_admin_akademik/mahasiswa/peserta_kelas/Peserta_kelas.vue"
+// import Tambah_peserta_kelas from "../views/dashboard_admin_akademik/mahasiswa/peserta_kelas/Tambah_peserta_kelas.vue"
 // // pegwai
 // import Pegawai from "../views/dashboard_admin_akademik/pegawai/Pegawai.vue"
 
