@@ -1,0 +1,15 @@
+.dashboard-wrapper {
+  @apply min-h-screen flex items-center justify-center bg-gray-200;
+}
+
+.dashboard-card {
+  @apply bg-white rounded-xl shadow-lg overflow-hidden w-[520px];
+}
+
+.dashboard-header {
+  @apply bg-[#1a3269] px-5 py-3 flex items-center justify-between;
+}
+
+.role-btn {
+  @apply border border-gray-200 rounded-lg py-3 px-2 text-center hover:bg-blue-50 hover:border-blue-500 transition;
+}
