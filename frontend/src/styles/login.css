@@ -1,0 +1,15 @@
+.login-wrapper {
+  @apply min-h-screen flex items-center justify-center bg-gray-200;
+}
+
+.login-card {
+  @apply bg-white rounded-xl shadow-lg overflow-hidden flex w-[480px];
+}
+
+.login-title {
+  @apply text-base font-bold text-gray-800;
+}
+
+.login-btn {
+  @apply w-full bg-[#1a5fd4] hover:bg-[#1550b8] text-white text-xs font-semibold py-2.5 rounded;
+}
