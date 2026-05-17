@@ -17,6 +17,7 @@ import (
 type (
 	KelasMahasiswaService interface {
 		Create(ctx context.Context, req dto.KelasMahasiswaCreateRequest) error
+		CreateByEmail(ctx context.Context, req dto.KelasMahasiswaCreateByEmailRequest) error
 		Delete(ctx context.Context, mahasiswaId uuid.UUID, kelasId uuid.UUID) error
 		GetAllKelasMahasiswa(ctx context.Context, mahasiswaId uuid.UUID) ([]dto.KelasMahasiswaResponse, error)
 		GetMahasiswaByKelasId(ctx context.Context, kelasId uuid.UUID) ([]dto.KelasMahasiswaResponse, error)
@@ -70,6 +71,32 @@ func (s *kelasMahasiswaService) Create(ctx context.Context, req dto.KelasMahasis
 	assignEntity := entities.KelasMahasiswa{
 		KelasID:     req.KelasID,
 		MahasiswaID: req.MahasiswaID,
+	}
+
+	if err := s.kelasMahasiswaRepo.Create(ctx, s.db, assignEntity); err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return dto.ErrMahasiswaAlreadyAssigned
+		}
+		log.Printf("Internal Error: %v", err)
+		return constants.ErrInternalErr
+	}
+
+	return nil
+}
+
+func (s *kelasMahasiswaService) CreateByEmail(ctx context.Context, req dto.KelasMahasiswaCreateByEmailRequest) error {
+	mahasiswa, err := s.userRepo.GetUserByEmail(ctx, s.db, req.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return dto.ErrMahasiswaNotFound
+		}
+		log.Printf("Internal Error: %v", err)
+		return constants.ErrInternalErr
+	}
+
+	assignEntity := entities.KelasMahasiswa{
+		KelasID:     req.KelasID,
+		MahasiswaID: *mahasiswa.DetailID,
 	}
 
 	if err := s.kelasMahasiswaRepo.Create(ctx, s.db, assignEntity); err != nil {

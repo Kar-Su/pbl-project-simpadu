@@ -60,6 +60,12 @@ type (
 		KelasID     uuid.UUID `json:"kelas_id" binding:"required"`
 		MahasiswaID uuid.UUID `json:"mahasiswa_id" binding:"required"`
 	}
+
+	KelasMahasiswaCreateByEmailRequest struct {
+		Email   string    `json:"email" binding:"required"`
+		KelasID uuid.UUID `json:"kelas_id" binding:"required"`
+	}
+
 	MahasiswaIdURI struct {
 		MahasiswaID uuid.UUID `uri:"mahasiswa_id" binding:"required"`
 	}
