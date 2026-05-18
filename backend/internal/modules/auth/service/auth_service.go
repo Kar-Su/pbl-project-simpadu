@@ -8,6 +8,7 @@ import (
 	"web-hosting/internal/database/entities"
 	authDto "web-hosting/internal/modules/auth/dto"
 	"web-hosting/internal/modules/auth/repository"
+	kelasRepo "web-hosting/internal/modules/kelas/repository"
 	userDto "web-hosting/internal/modules/user/dto"
 	userRepo "web-hosting/internal/modules/user/repository"
 	"web-hosting/internal/package/constants"
@@ -27,14 +28,16 @@ type AuthService interface {
 
 type authService struct {
 	useRepo          userRepo.UserRepository
+	kelasPivotRepo   kelasRepo.KelasMahasiswaRepository
 	refreshTokenRepo repository.RefreshTokenRepository
 	jwtService       JwtService
 	db               *gorm.DB
 }
 
-func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, jwtService JwtService, db *gorm.DB) AuthService {
+func NewAuthService(useRepo userRepo.UserRepository, refreshTokenRepo repository.RefreshTokenRepository, kelasPivotRepo kelasRepo.KelasMahasiswaRepository, jwtService JwtService, db *gorm.DB) AuthService {
 	return &authService{
 		useRepo:          useRepo,
+		kelasPivotRepo:   kelasPivotRepo,
 		refreshTokenRepo: refreshTokenRepo,
 		jwtService:       jwtService,
 		db:               db,
@@ -71,7 +74,13 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 		return authDto.TokenResponse{}, err
 	}
 
-	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name, user.Email, user.DetailID)
+	kelasId, err := s.kelasPivotRepo.GetKelasIdByMahasiswa(ctx, s.db, user.DetailID)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return authDto.TokenResponse{}, constants.ErrInternalErr
+	}
+
+	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name, user.Email, user.DetailID, kelasId)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
@@ -123,7 +132,13 @@ func (s *authService) RefreshToken(ctx context.Context, req authDto.RefreshToken
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 
-	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String(), refreshTokenEntity.User.Role.Name, refreshTokenEntity.User.Email, refreshTokenEntity.User.DetailID)
+	kelasId, err := s.kelasPivotRepo.GetKelasIdByMahasiswa(ctx, s.db, refreshTokenEntity.User.DetailID)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return authDto.TokenResponse{}, constants.ErrInternalErr
+	}
+
+	accessToken, err := s.jwtService.GenerateAccessToken(refreshTokenEntity.UserID.String(), refreshTokenEntity.User.Role.Name, refreshTokenEntity.User.Email, refreshTokenEntity.User.DetailID, kelasId)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr

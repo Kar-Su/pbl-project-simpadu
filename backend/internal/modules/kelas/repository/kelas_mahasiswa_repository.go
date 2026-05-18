@@ -16,6 +16,7 @@ type (
 		GetAllKelasMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) ([]entities.KelasMahasiswa, error)
 		GetMahasiswaByKelasId(ctx context.Context, tx *gorm.DB, kelasId uuid.UUID) ([]entities.KelasMahasiswa, error)
 		CheckMahasiswaAlreadyAssigned(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) (bool, error)
+		GetKelasIdByMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId *uuid.UUID) (uuid.UUID, error)
 	}
 
 	kelasMahasiswaRepository struct {
@@ -102,4 +103,22 @@ func (k *kelasMahasiswaRepository) CheckMahasiswaAlreadyAssigned(ctx context.Con
 	}
 
 	return count > 0, nil
+}
+
+func (k *kelasMahasiswaRepository) GetKelasIdByMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId *uuid.UUID) (uuid.UUID, error) {
+	if mahasiswaId == nil {
+		return uuid.Nil, nil
+	}
+	if tx == nil {
+		tx = k.db
+	}
+
+	var result entities.KelasMahasiswa
+	if err := tx.WithContext(ctx).
+		Where("mahasiswa_id = ?", *mahasiswaId).
+		First(&result).Error; err != nil {
+		return uuid.Nil, err
+	}
+
+	return result.KelasID, nil
 }

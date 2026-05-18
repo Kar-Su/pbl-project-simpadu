@@ -87,7 +87,7 @@ func RegisterProviders(injector do.Injector) {
 	kelasPivotService := kelasService.NewKelasMahasiswaService(db, userRepo, kelasRepo, kelasPivotRepo)
 
 	do.Provide(injector, func(i do.Injector) (authService.AuthService, error) {
-		return authService.NewAuthService(userRepo, refreshTokenRepo, jwtService, db), nil
+		return authService.NewAuthService(userRepo, refreshTokenRepo, kelasPivotRepo, jwtService, db), nil
 	})
 
 	do.Provide(injector, func(i do.Injector) (workers.Schedule, error) {
