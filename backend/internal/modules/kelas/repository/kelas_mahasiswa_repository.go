@@ -64,7 +64,7 @@ func (k *kelasMahasiswaRepository) GetMahasiswaByKelasId(ctx context.Context, tx
 
 	var result []entities.KelasMahasiswa
 	if err := tx.WithContext(ctx).
-		Preload("Mahasiswa", helpers.SelectFields("detail_id, email, name")).
+		Preload("Mahasiswa", helpers.SelectFields("id, detail_id, email, name")).
 		Where("kelas_id = ?", kelasId).Find(&result).Error; err != nil {
 		return nil, err
 	}
@@ -79,7 +79,7 @@ func (k *kelasMahasiswaRepository) GetAllKelasMahasiswa(ctx context.Context, tx 
 
 	var result []entities.KelasMahasiswa
 	if err := tx.WithContext(ctx).
-		Preload("Mahasiswa", helpers.SelectFields("detail_id, email, name")).
+		Preload("Mahasiswa", helpers.SelectFields("id, detail_id, email, name")).
 		Preload("Kelas", helpers.SelectFields("id, name, semester")).
 		Where("mahasiswa_id = ?", mahasiswaId).Find(&result).Error; err != nil {
 		return nil, err

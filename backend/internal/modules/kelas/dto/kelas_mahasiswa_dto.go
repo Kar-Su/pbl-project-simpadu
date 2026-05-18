@@ -44,7 +44,7 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 		}
 	}
 
-	if entity.Mahasiswa.ID != uuid.Nil {
+	if entity.Mahasiswa.DetailID != nil {
 		res.Mahasiswa = append(res.Mahasiswa, MahasiswaResponse{
 			MahasiswaID: entity.Mahasiswa.DetailID,
 			Name:        entity.Mahasiswa.Name,
@@ -60,7 +60,6 @@ type (
 		KelasID     uuid.UUID `json:"kelas_id"`
 		MahasiswaID uuid.UUID `json:"mahasiswa_id" binding:"required"`
 	}
-
 
 	KelasMahasiswaCreateByEmailRequest struct {
 		Email   string    `json:"email" binding:"required"`
