@@ -43,6 +43,10 @@ type (
 		JurusanName string `form:"name" binding:"required" example:"teknik-elektro"`
 	}
 
+	JurusanNameURI struct {
+		JurusanName string `uri:"name" binding:"required" example:"teknik-elektro"`
+	}
+
 	JurusanQuery struct {
 		JurusanName string `form:"name" example:"teknik-elektro (Pilih salah satu)"`
 		JurusanID   uint   `form:"id" example:"1"`

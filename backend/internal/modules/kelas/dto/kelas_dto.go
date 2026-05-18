@@ -36,7 +36,6 @@ type (
 		TahunAkademik *TahunAkademikResponse `json:"tahun_akademik,omitempty"`
 		Prodi         *ProdiResponse         `json:"prodi,omitempty"`
 		Kurikulum     *KurikulumResponse     `json:"kurikulum,omitempty"`
-		KurikulumMK   []KurikulumMKResponse  `json:"kurikulum_mk,omitempty"`
 		Mahasiswa     []MahasiswaResponse    `json:"mahasiswa,omitempty"`
 	}
 
@@ -61,8 +60,9 @@ type (
 	}
 
 	KurikulumResponse struct {
-		Kode string `json:"kode"`
-		Name string `json:"name"`
+		Kode        string               `json:"kode"`
+		Name        string               `json:"name"`
+		KurikulumMK []KurikulumMKResponse `json:"kurikulum_mk,omitempty"`
 	}
 
 	KurikulumMKResponse struct {
@@ -116,22 +116,22 @@ func ToKelasResponse(entity entities.Kelas) KelasResponse {
 	}
 
 	if entity.Kurikulum.Kode != "" {
-		res.Kurikulum = &KurikulumResponse{
+		kurikulumRes := &KurikulumResponse{
 			Kode: entity.Kurikulum.Kode,
 			Name: entity.Kurikulum.Name,
 		}
-	}
-
-	for _, mk := range entity.Kurikulum.KurikulumMK {
-		res.KurikulumMK = append(res.KurikulumMK, KurikulumMKResponse{
-			Semester: mk.Semester,
-			Wajib:    mk.Wajib,
-			MataKuliah: MataKuliahResponse{
-				Kode: mk.MataKuliah.Kode,
-				Name: mk.MataKuliah.Name,
-				SKS:  mk.MataKuliah.Sks,
-			},
-		})
+		for _, mk := range entity.Kurikulum.KurikulumMK {
+			kurikulumRes.KurikulumMK = append(kurikulumRes.KurikulumMK, KurikulumMKResponse{
+				Semester: mk.Semester,
+				Wajib:    mk.Wajib,
+				MataKuliah: MataKuliahResponse{
+					Kode: mk.MataKuliah.Kode,
+					Name: mk.MataKuliah.Name,
+					SKS:  mk.MataKuliah.Sks,
+				},
+			})
+		}
+		res.Kurikulum = kurikulumRes
 	}
 
 	for _, mhs := range entity.Mahasiswa {
@@ -167,6 +167,6 @@ type (
 	}
 
 	KelasIDURI struct {
-		ID uuid.UUID `uri:"id" binding:"required"`
+		KelasID string `uri:"kelas_id" binding:"required"`
 	}
 )

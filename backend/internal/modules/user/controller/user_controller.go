@@ -31,6 +31,7 @@ type UserController interface {
 	DeleteAdmin(ctx *gin.Context)
 	DeleteNonAdmin(ctx *gin.Context)
 	CountAllUsers(ctx *gin.Context)
+	GetAllUsers(ctx *gin.Context)
 }
 
 type userController struct {
@@ -120,7 +121,7 @@ func (c *userController) Me(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/super/{id} [get]
+// @Router       /api/users/{id} [get]
 func (c *userController) GetUser(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	userId, err := uuid.Parse(ctx.Param("id"))
@@ -170,7 +171,7 @@ func (c *userController) GetUser(ctx *gin.Context) {
 // @Failure      400  {object}  swagger.ErrGetUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/sync/{role_name}/{detail_id} [get]
+// @Router       /api/users/sync/{role_name}/{detail_id} [get]
 func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var req dto.UserSyncURI
@@ -235,7 +236,7 @@ func (c *userController) GetUserNonAdmin(ctx *gin.Context) {
 // @Failure      400  {object}  swagger.ErrGetUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      500  {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/ [get]
+// @Router       /api/users/search [get]
 func (c *userController) GetUserByEmail(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var req dto.UserEmailQuery
@@ -263,15 +264,15 @@ func (c *userController) GetUserByEmail(ctx *gin.Context) {
 }
 
 // GetUserByRole godoc
-// @Summary      Get Users By Role Name
-// @Description  Mengambil daftar semua user yang memiliki role tertentu.
+// @Summary      Get Users By Role Name (Paginated)
+// @Description  Mengambil daftar semua user yang memiliki role tertentu, dengan pagination (10 per halaman).
+// @Description  Hanya berlaku untuk non-admin role (mahasiswa, pegawai, dll).
 // @Description
 // @Description  **Akses:** Semua user yang sudah login (Authenticated User).
 // @Description
 // @Description  **Error yang mungkin terjadi:**
 // @Description  - `400` Parameter URI tidak valid -> `message: "bad request", error: "Key: 'RoleName' Error:..."`
 // @Description  - `400` Role tidak ditemukan -> `message: "failed to get user", error: "role not found"`
-// @Description  - `400` Gagal mengambil daftar user -> `message: "failed to get user", error: "..."`
 // @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
 // @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
@@ -279,12 +280,13 @@ func (c *userController) GetUserByEmail(ctx *gin.Context) {
 // @Tags         user
 // @Produce      json
 // @Security     ApiKeyAuth
-// @Param        role_name  path      string  true  "Nama Role"  example(mahasiswa)
-// @Success      200        {object}  utils.Response[[]dto.UserResponse,any]
+// @Param        role_name  path   string  true   "Nama Role (non-admin)"  example(mahasiswa)
+// @Param        page       query  int     false  "Halaman (default 1, 10 per halaman)"  example(1)
+// @Success      200        {object}  utils.Response[utils.PaginatedData[[]dto.UserResponse],any]
 // @Failure      400        {object}  swagger.ErrGetListUserFailed
 // @Failure      401        {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      500        {object}  swagger.ErrGetUserInternalServer
-// @Router       /api/user/role/{role_name} [get]
+// @Router       /api/users/roles/{role_name} [get]
 func (c *userController) GetUserByRole(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var req dto.UserRoleURI
@@ -305,7 +307,12 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 		return
 	}
 
-	result, err := c.userService.GetUserByRole(ctx.Request.Context(), roleId)
+	var pageQuery utils.PaginationQuery
+	if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
+	result, total, err := c.userService.GetUserByRolePaginated(ctx.Request.Context(), roleId, pageQuery.Page)
 	if err != nil {
 		if errors.Is(err, constants.ErrInternalErr) {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
@@ -315,9 +322,43 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
-
 	}
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_LIST_USER, result, path)
+	paginated := utils.BuildPaginatedResponse(result, pageQuery.Page, total)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_LIST_USER, paginated, path)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// GetAllUsers godoc
+// @Summary      Get All Users (Paginated)
+// @Description  Mendapatkan daftar semua user termasuk admin, dengan pagination (10 per page)
+// @Description
+// @Description  **Akses:** Admin
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        page  query     int  false  "Halaman (default 1)"
+// @Success      200   {object}  utils.Response[utils.PaginatedData[[]dto.UserResponse],any]
+// @Failure      401   {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      500   {object}  swagger.ErrGetUserInternalServer
+// @Router       /api/users [get]
+func (c *userController) GetAllUsers(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+
+	var pageQuery utils.PaginationQuery
+	if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
+	result, total, err := c.userService.GetAllUsersPaginated(ctx.Request.Context(), pageQuery.Page)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_USER, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, res)
+		return
+	}
+
+	paginated := utils.BuildPaginatedResponse(result, pageQuery.Page, total)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_LIST_USER, paginated, path)
 	ctx.JSON(http.StatusOK, res)
 }
 
@@ -348,7 +389,7 @@ func (c *userController) GetUserByRole(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrUpdateUserInternalServer
-// @Router       /api/super/user/{id} [put]
+// @Router       /api/users/{id} [put]
 func (c *userController) UpdateAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var reqBody dto.UserAdminUpdateRequest
@@ -405,7 +446,7 @@ func (c *userController) UpdateAdmin(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrRegisterUserInternalServer
-// @Router       /api/super/user [post]
+// @Router       /api/users/admins [post]
 func (c *userController) RegisterAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var reqBody dto.UserAdminCreateRequest
@@ -455,7 +496,7 @@ func (c *userController) RegisterAdmin(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrRegisterUserInternalServer
-// @Router       /api/user [post]
+// @Router       /api/users [post]
 func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var reqBody dto.UserNonAdminCreateRequest
@@ -507,7 +548,7 @@ func (c *userController) RegisterNonAdmin(ctx *gin.Context) {
 // @Failure      400  {object}  swagger.ErrUpdateUserFailed
 // @Failure      401  {object}  swagger.ErrUnauthorizedUpdateNonAdmin
 // @Failure      500  {object}  swagger.ErrUpdateUserInternalServer
-// @Router       /api/user/sync/{role_name}/{detail_id} [put]
+// @Router       /api/users/sync/{role_name}/{detail_id} [put]
 func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var reqUri dto.UserSyncURI
@@ -586,7 +627,7 @@ func (c *userController) UpdateNonAdmin(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrDeleteUserInternalServer
-// @Router       /api/super/user/{id} [delete]
+// @Router       /api/users/{id} [delete]
 func (c *userController) DeleteAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	userId, err := uuid.Parse(ctx.Param("id"))
@@ -635,7 +676,7 @@ func (c *userController) DeleteAdmin(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrDeleteUserInternalServer
-// @Router       /api/user/sync/{role_name}/{detail_id} [delete]
+// @Router       /api/users/sync/{role_name}/{detail_id} [delete]
 func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var reqUri dto.UserSyncURI
@@ -692,7 +733,7 @@ func (c *userController) DeleteNonAdmin(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrCountAllUsersInternalServer
-// @Router       /api/user/count [get]
+// @Router       /api/users/count [get]
 func (c *userController) CountAllUsers(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	count, err := c.userService.CountAllUsers(ctx.Request.Context())

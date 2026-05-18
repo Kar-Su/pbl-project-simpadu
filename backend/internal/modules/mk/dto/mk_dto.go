@@ -47,6 +47,10 @@ type (
 		ID   string `form:"id" example:"12345678-1234-1234-1234-123456789012"`
 		Kode string `form:"kode" binding:"max=12" example:"MK001 (Pilih salah satu)"`
 	}
+
+	MkKodeURI struct {
+		Kode string `uri:"kode" binding:"required,max=12" example:"MK001"`
+	}
 )
 
 func ToMkResponse(entity entities.MataKuliah) MkResponse {

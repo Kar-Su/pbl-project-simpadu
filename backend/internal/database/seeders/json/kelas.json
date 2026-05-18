@@ -1,0 +1,14 @@
+[
+  {
+    "name": "inidummyaja1",
+    "tahun_akademik_id": 20251,
+    "kurikulum_kode": "mbg-01",
+    "prodi_id": 1
+  },
+  {
+    "name": "inidummyaja2",
+    "tahun_akademik_id": 20251,
+    "kurikulum_kode": "mbg-01",
+    "prodi_id": 2
+  }
+]

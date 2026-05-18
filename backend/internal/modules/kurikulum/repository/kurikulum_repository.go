@@ -19,6 +19,7 @@ type (
 		GetByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Kurikulum, error)
 		GetByKode(ctx context.Context, tx *gorm.DB, kode string) (entities.Kurikulum, error)
 		GetAll(ctx context.Context, tx *gorm.DB) ([]entities.Kurikulum, error)
+		GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Kurikulum, int64, error)
 		CheckKurikulumExistsByKode(ctx context.Context, tx *gorm.DB, kode string) (bool, error)
 	}
 
@@ -144,4 +145,19 @@ func (r *kurikulumRepo) CheckKurikulumExistsByKode(ctx context.Context, tx *gorm
 		return false, err
 	}
 	return true, nil
+}
+
+func (r *kurikulumRepo) GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Kurikulum, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var kurikulums []entities.Kurikulum
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Kurikulum{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := tx.WithContext(ctx).Preload("KurikulumMK.MataKuliah").Preload("Prodi.Jurusan").Offset(offset).Limit(limit).Find(&kurikulums).Error; err != nil {
+		return nil, 0, err
+	}
+	return kurikulums, total, nil
 }

@@ -17,11 +17,11 @@ func RegisterRoutes(routes *gin.Engine, injector do.Injector) {
 	routeAkademik := routes.Group("/api/tahun-akademik")
 	{
 		routeAkademik.Use(middlewares.AuthMiddleware(jwtService))
-		routeAkademik.POST("/", middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), akademikController.CreateTahunAkademik)
+		routeAkademik.POST("", middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), akademikController.CreateTahunAkademik)
 		routeAkademik.PUT("/:id", middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), akademikController.UpdateTahunAkademik)
 		routeAkademik.DELETE("/:id", middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), akademikController.DeleteTahunAkademik)
 		routeAkademik.GET("/:id", akademikController.GetTahunAkademik)
-		routeAkademik.GET("/", akademikController.GetAllTahunAkademik)
+		routeAkademik.GET("", akademikController.GetAllTahunAkademik)
 		routeAkademik.GET("/status/:status", akademikController.GetTahunAkademikByStatus)
 	}
 }

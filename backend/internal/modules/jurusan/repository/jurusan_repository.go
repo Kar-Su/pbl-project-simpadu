@@ -13,6 +13,7 @@ type JurusanRepository interface {
 	Delete(ctx context.Context, tx *gorm.DB, jurusanName string) error
 	GetByName(ctx context.Context, tx *gorm.DB, jurusanName string) (entities.Jurusan, error)
 	GetAll(ctx context.Context, tx *gorm.DB) ([]entities.Jurusan, error)
+	GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Jurusan, int64, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uint) (entities.Jurusan, error)
 }
 
@@ -44,7 +45,8 @@ func (r *jurusanRepository) Update(ctx context.Context, tx *gorm.DB, jurusanName
 		return entities.Jurusan{}, err
 	}
 
-	updatedJurusan, err := r.GetByName(ctx, tx, jurusanName)
+	// Gunakan nama BARU (jurusan.Name) untuk fetch hasil update
+	updatedJurusan, err := r.GetByName(ctx, tx, jurusan.Name)
 	if err != nil {
 		return entities.Jurusan{}, err
 	}
@@ -87,6 +89,21 @@ func (r *jurusanRepository) GetAll(ctx context.Context, tx *gorm.DB) ([]entities
 		return nil, err
 	}
 	return jurusan, nil
+}
+
+func (r *jurusanRepository) GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Jurusan, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var jurusan []entities.Jurusan
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Jurusan{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := tx.WithContext(ctx).Offset(offset).Limit(limit).Find(&jurusan).Error; err != nil {
+		return nil, 0, err
+	}
+	return jurusan, total, nil
 }
 
 func (r *jurusanRepository) GetById(ctx context.Context, tx *gorm.DB, id uint) (entities.Jurusan, error) {

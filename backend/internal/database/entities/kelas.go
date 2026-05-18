@@ -12,7 +12,8 @@ type Kelas struct {
 	TahunAkademikID uint          `gorm:"type:int" json:"tahun_akademik_id"`
 	KurikulumKode   string        `gorm:"type:char(12)" json:"kurikulum_kode"`
 	ProdiID         uint          `gorm:"type:int" json:"prodi_id"`
-	Kurikulum       Kurikulum     `gorm:"foreignKey:KurikulumKode" json:"kurikulum"`
+	Kurikulum       Kurikulum     `gorm:"foreignKey:KurikulumKode;references:Kode" json:"kurikulum"`
+
 	TahunAkademik   TahunAkademik `gorm:"foreignKey:TahunAkademikID" json:"tahun_akademik"`
 	Prodi           Prodi         `gorm:"foreignKey:ProdiID" json:"prodi"`
 	Mahasiswa       []User        `gorm:"many2many:kelas_mahasiswa;foreignKey:ID;joinForeignKey:KelasID;References:DetailID;joinReferences:MahasiswaID" json:"mahasiswa"`

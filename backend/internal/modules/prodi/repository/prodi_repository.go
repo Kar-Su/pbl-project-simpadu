@@ -15,6 +15,7 @@ type (
 		GetByName(ctx context.Context, tx *gorm.DB, prodiName string) (entities.Prodi, error)
 		GetByID(ctx context.Context, tx *gorm.DB, prodiId uint) (entities.Prodi, error)
 		GetAll(ctx context.Context, tx *gorm.DB) ([]entities.Prodi, error)
+		GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Prodi, int64, error)
 		GetByJurusanID(ctx context.Context, tx *gorm.DB, jurusanID uint) ([]entities.Prodi, error)
 	}
 
@@ -48,7 +49,12 @@ func (r *prodiRepository) Update(ctx context.Context, tx *gorm.DB, prodiName str
 		return entities.Prodi{}, err
 	}
 
-	updatedProdi, err := r.GetByName(ctx, tx, prodiName)
+	// Gunakan nama BARU jika ada perubahan nama, fallback ke nama lama
+	fetchName := prodiName
+	if prodi.Name != "" {
+		fetchName = prodi.Name
+	}
+	updatedProdi, err := r.GetByName(ctx, tx, fetchName)
 	if err != nil {
 		return entities.Prodi{}, err
 	}
@@ -118,4 +124,19 @@ func (r *prodiRepository) GetByJurusanID(ctx context.Context, tx *gorm.DB, jurus
 	}
 
 	return prodis, nil
+}
+
+func (r *prodiRepository) GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Prodi, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var prodis []entities.Prodi
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Prodi{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := tx.WithContext(ctx).Preload("Jurusan").Offset(offset).Limit(limit).Find(&prodis).Error; err != nil {
+		return nil, 0, err
+	}
+	return prodis, total, nil
 }

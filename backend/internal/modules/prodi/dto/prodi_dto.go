@@ -55,6 +55,10 @@ type (
 	JurusanURI struct {
 		JurusanName string `uri:"jurusan_name" binding:"required" example:"teknik-elektro"`
 	}
+
+	ProdiNameURI struct {
+		Name string `uri:"name" binding:"required" example:"teknik-elektro"`
+	}
 )
 
 func ToProdiResponse(prodi entities.Prodi) ProdiResponse {

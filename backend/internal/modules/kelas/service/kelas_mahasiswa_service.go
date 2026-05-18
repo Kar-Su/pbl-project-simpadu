@@ -16,10 +16,11 @@ import (
 
 type (
 	KelasMahasiswaService interface {
-		Create(ctx context.Context, tx *gorm.DB, req dto.KelasMahasiswaCreateRequest) error
-		Delete(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID, kelasId uuid.UUID) error
-		GetAllKelasMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) ([]dto.KelasMahasiswaResponse, error)
-		GetMahasiswaByKelasId(ctx context.Context, tx *gorm.DB, kelasId uuid.UUID) ([]dto.KelasMahasiswaResponse, error)
+		Create(ctx context.Context, req dto.KelasMahasiswaCreateRequest) error
+		CreateByEmail(ctx context.Context, req dto.KelasMahasiswaCreateByEmailRequest) error
+		Delete(ctx context.Context, mahasiswaId uuid.UUID, kelasId uuid.UUID) error
+		GetAllKelasMahasiswa(ctx context.Context, mahasiswaId uuid.UUID) ([]dto.KelasMahasiswaResponse, error)
+		GetMahasiswaByKelasId(ctx context.Context, kelasId uuid.UUID) ([]dto.KelasMahasiswaResponse, error)
 	}
 	kelasMahasiswaService struct {
 		db                 *gorm.DB
@@ -38,8 +39,8 @@ func NewKelasMahasiswaService(db *gorm.DB, userRepo userRepository.UserRepositor
 	}
 }
 
-func (s *kelasMahasiswaService) Create(ctx context.Context, tx *gorm.DB, req dto.KelasMahasiswaCreateRequest) error {
-	isExist, err := s.kelasRepo.CheckKelasById(ctx, tx, req.KelasID)
+func (s *kelasMahasiswaService) Create(ctx context.Context, req dto.KelasMahasiswaCreateRequest) error {
+	isExist, err := s.kelasRepo.CheckKelasById(ctx, s.db, req.KelasID)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
@@ -48,7 +49,7 @@ func (s *kelasMahasiswaService) Create(ctx context.Context, tx *gorm.DB, req dto
 		return dto.ErrKelasNotFound
 	}
 
-	isExist, err = s.userRepo.CheckByMahasiswaRoleAndDetailID(ctx, tx, req.MahasiswaID)
+	isExist, err = s.userRepo.CheckByMahasiswaRoleAndDetailID(ctx, s.db, req.MahasiswaID)
 	if err != nil {
 		log.Printf("Internal Error: %v", err)
 		return constants.ErrInternalErr
@@ -72,7 +73,7 @@ func (s *kelasMahasiswaService) Create(ctx context.Context, tx *gorm.DB, req dto
 		MahasiswaID: req.MahasiswaID,
 	}
 
-	if err := s.kelasMahasiswaRepo.Create(ctx, tx, assignEntity); err != nil {
+	if err := s.kelasMahasiswaRepo.Create(ctx, s.db, assignEntity); err != nil {
 		if errors.Is(err, gorm.ErrDuplicatedKey) {
 			return dto.ErrMahasiswaAlreadyAssigned
 		}
@@ -83,8 +84,34 @@ func (s *kelasMahasiswaService) Create(ctx context.Context, tx *gorm.DB, req dto
 	return nil
 }
 
-func (s *kelasMahasiswaService) Delete(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID, kelasId uuid.UUID) error {
-	if err := s.kelasMahasiswaRepo.Delete(ctx, tx, mahasiswaId, kelasId); err != nil {
+func (s *kelasMahasiswaService) CreateByEmail(ctx context.Context, req dto.KelasMahasiswaCreateByEmailRequest) error {
+	mahasiswa, err := s.userRepo.GetUserByEmail(ctx, s.db, req.Email)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return dto.ErrMahasiswaNotFound
+		}
+		log.Printf("Internal Error: %v", err)
+		return constants.ErrInternalErr
+	}
+
+	assignEntity := entities.KelasMahasiswa{
+		KelasID:     req.KelasID,
+		MahasiswaID: *mahasiswa.DetailID,
+	}
+
+	if err := s.kelasMahasiswaRepo.Create(ctx, s.db, assignEntity); err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return dto.ErrMahasiswaAlreadyAssigned
+		}
+		log.Printf("Internal Error: %v", err)
+		return constants.ErrInternalErr
+	}
+
+	return nil
+}
+
+func (s *kelasMahasiswaService) Delete(ctx context.Context, mahasiswaId uuid.UUID, kelasId uuid.UUID) error {
+	if err := s.kelasMahasiswaRepo.Delete(ctx, s.db, mahasiswaId, kelasId); err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return dto.ErrMahasiswaNotFound
 		}
@@ -95,8 +122,8 @@ func (s *kelasMahasiswaService) Delete(ctx context.Context, tx *gorm.DB, mahasis
 	return nil
 }
 
-func (s *kelasMahasiswaService) GetAllKelasMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) ([]dto.KelasMahasiswaResponse, error) {
-	entities, err := s.kelasMahasiswaRepo.GetAllKelasMahasiswa(ctx, tx, mahasiswaId)
+func (s *kelasMahasiswaService) GetAllKelasMahasiswa(ctx context.Context, mahasiswaId uuid.UUID) ([]dto.KelasMahasiswaResponse, error) {
+	entities, err := s.kelasMahasiswaRepo.GetAllKelasMahasiswa(ctx, s.db, mahasiswaId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, dto.ErrMahasiswaNotFound
@@ -113,8 +140,8 @@ func (s *kelasMahasiswaService) GetAllKelasMahasiswa(ctx context.Context, tx *go
 	return responses, nil
 }
 
-func (s *kelasMahasiswaService) GetMahasiswaByKelasId(ctx context.Context, tx *gorm.DB, kelasId uuid.UUID) ([]dto.KelasMahasiswaResponse, error) {
-	entities, err := s.kelasMahasiswaRepo.GetMahasiswaByKelasId(ctx, tx, kelasId)
+func (s *kelasMahasiswaService) GetMahasiswaByKelasId(ctx context.Context, kelasId uuid.UUID) ([]dto.KelasMahasiswaResponse, error) {
+	entities, err := s.kelasMahasiswaRepo.GetMahasiswaByKelasId(ctx, s.db, kelasId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, dto.ErrKelasNotFound

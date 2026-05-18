@@ -46,15 +46,6 @@ func NewProdiController(injector do.Injector, prodiService service.ProdiService,
 // @Description Menambahkan prodi baru ke sistem
 // @Description
 // @Description  **Akses:** Admin Akademik
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'ProdiName' Error:..."`
-// @Description  - `400` prodi dengan nama tersebut sudah ada -> `message: "failed to create prodi", error: "prodi already exists"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to create prodi", error: "Internal Error"`
 // @Tags prodi
 // @Accept json
 // @Produce json
@@ -92,42 +83,32 @@ func (c *prodiController) CreateProdi(ctx *gin.Context) {
 
 // UpdateProdi godoc
 // @Summary Update Prodi
-// @Description Mengupdate prodi yang sudah ada
+// @Description Mengupdate prodi berdasarkan nama di path parameter
 // @Description
 // @Description  **Akses:** Admin Akademik
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate prodi Query", error: "Key: 'ProdiName' Error:..."`
-// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'ProdiName' Error:..."`
-// @Description  - `400` prodi dengan nama tersebut tidak ditemukan -> `message: "failed to update prodi", error: "prodi not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to update prodi", error: "Internal Error"`
 // @Tags prodi
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.ProdiNameQuery true "Prodi Name"
+// @Param name path string true "Nama Prodi yang akan diupdate" example(teknik-elektro)
 // @Param request body dto.ProdiUpdateRequest true "Prodi Request"
 // @Success      200      {object}  utils.Response[dto.ProdiResponse,any]
 // @Failure      400      {object}  swagger.ErrUpdateProdiFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrUpdateProdiInternalServer
-// @Router /api/prodi/ [put]
+// @Router /api/prodi/{name} [put]
 func (c *prodiController) UpdateProdi(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
-	var prodiNameQuery dto.ProdiNameQuery
-	if err := ctx.ShouldBindQuery(&prodiNameQuery); err != nil {
+	var uriParam dto.ProdiNameURI
+	if err := ctx.ShouldBindUri(&uriParam); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_PRODI, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	prodiNameQuery.Name = helpers.NormalizeString(prodiNameQuery.Name)
+	prodiName := helpers.NormalizeString(uriParam.Name)
 
 	var req dto.ProdiUpdateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -136,7 +117,7 @@ func (c *prodiController) UpdateProdi(ctx *gin.Context) {
 		return
 	}
 
-	updatedResponse, err := c.prodiService.UpdateProdi(ctx.Request.Context(), prodiNameQuery.Name, req)
+	updatedResponse, err := c.prodiService.UpdateProdi(ctx.Request.Context(), prodiName, req)
 	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -153,42 +134,33 @@ func (c *prodiController) UpdateProdi(ctx *gin.Context) {
 
 // DeleteProdi godoc
 // @Summary Delete Prodi
-// @Description delete prodi yang sudah ada
+// @Description Menghapus prodi berdasarkan nama di path parameter
 // @Description
 // @Description  **Akses:** Admin Akademik
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate prodi Query", error: "Key: 'ProdiName' Error:..."`
-// @Description  - `400` prodi dengan nama tersebut tidak ditemukan -> `message: "failed to Delete prodi", error: "prodi not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to Delete prodi", error: "Internal Error"`
 // @Tags prodi
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.ProdiNameQuery true "Prodi Name"
+// @Param name path string true "Nama Prodi yang akan dihapus" example(teknik-elektro)
 // @Success      200      {object}  utils.Response[any,any]
 // @Failure      400      {object}  swagger.ErrDeleteProdiFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrDeleteProdiInternalServer
-// @Router /api/prodi/ [delete]
+// @Router /api/prodi/{name} [delete]
 func (c *prodiController) DeleteProdi(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
-	var prodiNameQuery dto.ProdiNameQuery
-	if err := ctx.ShouldBindQuery(&prodiNameQuery); err != nil {
+	var uriParam dto.ProdiNameURI
+	if err := ctx.ShouldBindUri(&uriParam); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_PRODI, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	prodiNameQuery.Name = helpers.NormalizeString(prodiNameQuery.Name)
+	prodiName := helpers.NormalizeString(uriParam.Name)
 
-	if err := c.prodiService.DeleteProdi(ctx.Request.Context(), prodiNameQuery.Name); err != nil {
+	if err := c.prodiService.DeleteProdi(ctx.Request.Context(), prodiName); err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
@@ -203,31 +175,21 @@ func (c *prodiController) DeleteProdi(ctx *gin.Context) {
 }
 
 // GetProdi godoc
-// @Summary get data prodi
-// @Description melihat data prodi yang sudah ada
+// @Summary Get Prodi
+// @Description Mendapatkan data prodi. Jika query id/name diberikan, return 1 data spesifik; tanpa query, return semua data
 // @Description
 // @Description  **Akses:** Logged User
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate prodi Query", error: "Key: 'ProdiName' Error:..."`
-// @Description  - `400` prodi dengan nama tersebut tidak ditemukan -> `message: "failed to update prodi", error: "prodi not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to update prodi", error: "Internal Error"`
 // @Tags prodi
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.ProdiQuery false "Prodi Name Or ID (Pilih salah satu)"
-// @Success      200      {object}  utils.Response[dto.ProdiResponse,any]
+// @Param name query string false "Nama Prodi" example(teknik-elektro)
+// @Param id query int false "ID Prodi" example(1)
 // @Success      200      {object}  utils.Response[[]dto.ProdiResponse,any]
 // @Failure      400      {object}  swagger.ErrGetProdiFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
-// @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrUpdateProdiInternalServer
-// @Router /api/prodi/ [get]
+// @Router /api/prodi [get]
 func (c *prodiController) GetProdi(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
@@ -238,68 +200,74 @@ func (c *prodiController) GetProdi(ctx *gin.Context) {
 		return
 	}
 
-	var (
-		prodi   any
-		err     error
-		message string
-	)
-
 	if prodiQuery.ID != 0 && prodiQuery.Name != "" {
-		err = dto.ErrQueryParams
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_PRODI, err.Error(), nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_PRODI, dto.ErrQueryParams.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
 	if prodiQuery.Name != "" {
 		prodiQuery.Name = helpers.NormalizeString(prodiQuery.Name)
-		prodi, err = c.prodiService.GetProdiByName(ctx.Request.Context(), prodiQuery.Name)
-		message = dto.MESSAGE_SUCCESS_GET_PRODI
-	} else if prodiQuery.ID != 0 {
-		prodi, err = c.prodiService.GetProdiById(ctx.Request.Context(), prodiQuery.ID)
-		message = dto.MESSAGE_SUCCESS_GET_PRODI
-	} else {
-		prodi, err = c.prodiService.GetAllProdi(ctx.Request.Context())
-		message = dto.MESSAGE_SUCCESS_GET_PRODI
+		prodi, err := c.prodiService.GetProdiByName(ctx.Request.Context(), prodiQuery.Name)
+		if err != nil {
+			status := http.StatusBadRequest
+			if errors.Is(err, constants.ErrInternalErr) {
+				status = http.StatusInternalServerError
+			}
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_PRODI, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(status, res)
+			return
+		}
+		res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_PRODI, prodi, path)
+		ctx.JSON(http.StatusOK, res)
+		return
 	}
+
+	if prodiQuery.ID != 0 {
+		prodi, err := c.prodiService.GetProdiById(ctx.Request.Context(), prodiQuery.ID)
+		if err != nil {
+			status := http.StatusBadRequest
+			if errors.Is(err, constants.ErrInternalErr) {
+				status = http.StatusInternalServerError
+			}
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_PRODI, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(status, res)
+			return
+		}
+		res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_PRODI, prodi, path)
+		ctx.JSON(http.StatusOK, res)
+		return
+	}
+
+	prodis, err := c.prodiService.GetAllProdi(ctx.Request.Context())
 	if err != nil {
 		status := http.StatusBadRequest
-		message = dto.MESSAGE_FAILED_GET_PRODI
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(message, err.Error(), nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_PRODI, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(message, prodi, path)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_PRODI, prodis, path)
 	ctx.JSON(http.StatusOK, res)
 }
 
 // GetProdiByJurusan godoc
-// @Summary get data prodi berdasarkan nama jurusan
-// @Description melihat data prodi yang sudah ada
+// @Summary Get Prodi by Jurusan
+// @Description Mendapatkan daftar prodi berdasarkan nama jurusan
 // @Description
 // @Description  **Akses:** Logged User
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Uri tidak valid -> `message: "failed to validate prodi Uri", error: "Key: 'JurusanName' Error:..."`
-// @Description  - `400` jurusan dengan nama tersebut tidak ditemukan -> `message: "failed to get jurusan", error: "jurusan not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` prodi user tidak memiliki akses -> `message: "prodi anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to get prodi", error: "Internal Error"`
 // @Tags prodi
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param jurusan_name path string true "Jurusan Name" example(teknik-elektro)
+// @Param jurusan_name path string true "Nama Jurusan" example(teknik-elektro)
+// @Param page query int false "Halaman (default: 1, per halaman: 10)" example(1)
 // @Success      200      {object}  utils.Response[[]dto.ProdiResponse,any]
 // @Failure      400      {object}  swagger.ErrGetProdiFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
-// @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrGetProdiInternalServer
 // @Router /api/prodi/jurusan/{jurusan_name} [get]
 func (c *prodiController) GetProdiByJurusan(ctx *gin.Context) {

@@ -16,9 +16,9 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 
 	mkRoutes := router.Group("/api/mata-kuliah")
 	{
-		mkRoutes.POST("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), mkController.CreateMk)
-		mkRoutes.PUT("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), mkController.UpdateMk)
-		mkRoutes.DELETE("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), mkController.DeleteMk)
-		mkRoutes.GET("/", middlewares.AuthMiddleware(jwtService), mkController.GetMk)
+		mkRoutes.POST("", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), mkController.CreateMk)
+		mkRoutes.PUT("/:kode", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), mkController.UpdateMk)
+		mkRoutes.DELETE("/:kode", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), mkController.DeleteMk)
+		mkRoutes.GET("", middlewares.AuthMiddleware(jwtService), mkController.GetMk)
 	}
 }

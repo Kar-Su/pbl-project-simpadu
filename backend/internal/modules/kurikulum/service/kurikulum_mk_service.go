@@ -90,11 +90,11 @@ func (s *kurikulumMKService) UpdateKurikulumMK(ctx context.Context, kurikulumKod
 		return dto.PivotResponse{}, constants.ErrInternalErr
 	}
 
-	if req.Semester != 0 {
-		entity.Semester = req.Semester
+	if req.Semester != nil {
+		entity.Semester = *req.Semester
 	}
-	if req.Wajib {
-		entity.Wajib = req.Wajib
+	if req.Wajib != nil {
+		entity.Wajib = *req.Wajib
 	}
 
 	if err := s.pivotRepo.Update(ctx, s.db, kurikulumKode, mkKode, entity); err != nil {

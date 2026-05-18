@@ -738,3 +738,103 @@ type ErrDeleteKurikulumPivotInternalServer struct {
 	Error   string `json:"error" example:"Internal Error"`
 	Path    string `json:"path,omitempty" example:"/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}/"`
 }
+
+// KLEAS
+type ErrCreateKelasFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create kelas"`
+	Error   string `json:"error" example:"kelas already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kelas"`
+}
+
+type ErrCreateKelasInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to create kelas"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kelas"`
+}
+
+type ErrUpdateKelasFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update kelas"`
+	Error   string `json:"error" example:"kelas already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}"`
+}
+
+type ErrUpdateKelasInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to update kelas"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}"`
+}
+
+type ErrDeleteKelasFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete kelas"`
+	Error   string `json:"error" example:"kelas already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}"`
+}
+
+type ErrDeleteKelasInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete kelas"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}"`
+}
+
+type ErrGetKelasFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get kelas"`
+	Error   string `json:"error" example:"kelas not found"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}"`
+}
+
+type ErrGetKelasInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get kelas"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}"`
+}
+
+// KELAS MAHASISWA (PIVOT)
+type ErrCreateKelasMahasiswaFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to assign mahasiswa to kelas"`
+	Error   string `json:"error" example:"mahasiswa already assign"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/mahasiswa"`
+}
+
+type ErrCreateKelasMahasiswaInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to assign mahasiswa to kelas"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/mahasiswa"`
+}
+
+type ErrDeleteKelasMahasiswaFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete mahasiswa from kelas"`
+	Error   string `json:"error" example:"mahasiswa already exists"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}/mahasiswa/{mahasiswa_id}"`
+}
+
+type ErrDeleteKelasMahasiswaInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to delete mahasiswa from kelas"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}/mahasiswa/{mahasiswa_id}"`
+}
+
+type ErrGetKelasMahasiswaFailed struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get mahasiswa"`
+	Error   string `json:"error" example:"mahasiswa not found"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}/mahasiswa/{mahasiswa_id}"`
+}
+
+type ErrGetKelasMahasiswaInternalServer struct {
+	Success bool   `json:"success" example:"false"`
+	Message string `json:"message" example:"failed to get mahasiswa"`
+	Error   string `json:"error" example:"Internal Error"`
+	Path    string `json:"path,omitempty" example:"/api/kelas/{kelas_id}/mahasiswa/{mahasiswa_id}"`
+}

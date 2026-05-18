@@ -25,6 +25,7 @@ type (
 		GetKurikulumByKode(ctx context.Context, kode string) (dto.KurikulumResponse, error)
 		GetKurikulumById(ctx context.Context, id uuid.UUID) (dto.KurikulumResponse, error)
 		GetAllKurikulum(ctx context.Context) ([]dto.KurikulumResponse, error)
+		GetAllKurikulumPaginated(ctx context.Context, page int) ([]dto.KurikulumResponse, int64, error)
 	}
 
 	kurikulumService struct {
@@ -201,4 +202,18 @@ func (s *kurikulumService) GetAllKurikulum(ctx context.Context) ([]dto.Kurikulum
 	}
 
 	return responses, nil
+}
+
+func (s *kurikulumService) GetAllKurikulumPaginated(ctx context.Context, page int) ([]dto.KurikulumResponse, int64, error) {
+	offset := (page - 1) * 10
+	kurikulums, total, err := s.kurikulumRepository.GetAllPaginated(ctx, s.db, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+	responses := make([]dto.KurikulumResponse, 0, len(kurikulums))
+	for _, entity := range kurikulums {
+		responses = append(responses, dto.ToKurikulumResponse(entity))
+	}
+	return responses, total, nil
 }

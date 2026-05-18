@@ -61,7 +61,7 @@ func NewRoleController(injector do.Injector, roleService service.RoleService, db
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrCreateRoleInternalServer
-// @Router       /api/super/role [post]
+// @Router       /api/roles [post]
 func (c *roleController) Create(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var req dto.RoleCreateRequest
@@ -112,7 +112,7 @@ func (c *roleController) Create(ctx *gin.Context) {
 // @Failure      401        {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403        {object}  swagger.ErrForbiddenAccess
 // @Failure      500        {object}  swagger.ErrUpdateRoleInternalServer
-// @Router       /api/super/role/{role_name} [put]
+// @Router       /api/roles/{role_name} [put]
 func (c *roleController) Update(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var RoleNameURI dto.RoleNameURI
@@ -181,7 +181,7 @@ func (c *roleController) Update(ctx *gin.Context) {
 // @Failure      401        {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403        {object}  swagger.ErrForbiddenAccess
 // @Failure      500        {object}  swagger.ErrDeleteRoleInternalServer
-// @Router       /api/super/role/{role_name} [delete]
+// @Router       /api/roles/{role_name} [delete]
 func (c *roleController) Delete(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 	var RoleNameURI dto.RoleNameURI
@@ -238,7 +238,7 @@ func (c *roleController) Delete(ctx *gin.Context) {
 // @Failure      401  {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403  {object}  swagger.ErrForbiddenAccess
 // @Failure      500  {object}  swagger.ErrGetRoleFailed
-// @Router       /api/role [get]
+// @Router       /api/roles [get]
 func (c *roleController) GetAllRole(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 

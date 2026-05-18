@@ -44,11 +44,11 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 		}
 	}
 
-	for _, mhs := range entity.Mahasiswa {
+	if entity.Mahasiswa.DetailID != nil {
 		res.Mahasiswa = append(res.Mahasiswa, MahasiswaResponse{
-			MahasiswaID: mhs.DetailID,
-			Name:        mhs.Name,
-			Email:       mhs.Email,
+			MahasiswaID: entity.Mahasiswa.DetailID,
+			Name:        entity.Mahasiswa.Name,
+			Email:       entity.Mahasiswa.Email,
 		})
 	}
 
@@ -57,16 +57,22 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 
 type (
 	KelasMahasiswaCreateRequest struct {
-		KelasID     uuid.UUID `json:"kelas_id" binding:"required"`
+		KelasID     uuid.UUID `json:"kelas_id"`
 		MahasiswaID uuid.UUID `json:"mahasiswa_id" binding:"required"`
 	}
+
+	KelasMahasiswaCreateByEmailRequest struct {
+		Email   string    `json:"email" binding:"required"`
+		KelasID uuid.UUID `json:"kelas_id" binding:"required"`
+	}
+
 	MahasiswaIdURI struct {
-		MahasiswaID uuid.UUID `uri:"mahasiswa_id" binding:"required"`
+		MahasiswaID string `uri:"mahasiswa_id" binding:"required"`
 	}
 	KelasIdURI struct {
-		KelasID uuid.UUID `uri:"kelas_id" binding:"required"`
+		KelasID string `uri:"kelas_id" binding:"required"`
 	}
-	KelasMahasiswURI struct {
+	KelasMahasiswaURI struct {
 		MahasiswaIdURI
 		KelasIdURI
 	}

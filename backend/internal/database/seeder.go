@@ -3,14 +3,15 @@ package database
 import (
 	"context"
 	"web-hosting/internal/database/seeders/seeds"
-	"web-hosting/internal/modules/role/repository"
+	pivotKelasRepos "web-hosting/internal/modules/kelas/repository"
+	roleRepos "web-hosting/internal/modules/role/repository"
 
 	"gorm.io/gorm"
 )
 
 func Seeder(db *gorm.DB) error {
 	ctx := context.Background()
-	roleRepo := repository.NewRoleRepository(db)
+	roleRepo := roleRepos.NewRoleRepository(db)
 	if err := seeds.ListRolesSeed(ctx, db); err != nil {
 		return err
 	}
@@ -31,7 +32,8 @@ func Seeder(db *gorm.DB) error {
 
 func SeedDummy(db *gorm.DB) error {
 	ctx := context.Background()
-	roleRepo := repository.NewRoleRepository(db)
+	roleRepo := roleRepos.NewRoleRepository(db)
+	kelasRepo := pivotKelasRepos.NewKelasRepository(db)
 	if err := seeds.ListRolesSeed(ctx, db); err != nil {
 		return err
 	}
@@ -61,6 +63,14 @@ func SeedDummy(db *gorm.DB) error {
 	}
 
 	if err := seeds.ListKurikulumPivotSeed(ctx, db); err != nil {
+		return err
+	}
+
+	if err := seeds.ListKelasSeed(ctx, db); err != nil {
+		return err
+	}
+
+	if err := seeds.ListKelasMahasiswaSeed(ctx, db, kelasRepo); err != nil {
 		return err
 	}
 

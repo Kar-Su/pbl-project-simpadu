@@ -16,10 +16,10 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 
 	prodiRoute := router.Group("/api/prodi")
 	{
-		prodiRoute.POST("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), prodiController.CreateProdi)
-		prodiRoute.PUT("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), prodiController.UpdateProdi)
-		prodiRoute.DELETE("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), prodiController.DeleteProdi)
-		prodiRoute.GET("/", middlewares.AuthMiddleware(jwtService), prodiController.GetProdi)
+		prodiRoute.POST("", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), prodiController.CreateProdi)
+		prodiRoute.PUT("/:name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), prodiController.UpdateProdi)
+		prodiRoute.DELETE("/:name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), prodiController.DeleteProdi)
+		prodiRoute.GET("", middlewares.AuthMiddleware(jwtService), prodiController.GetProdi)
 		prodiRoute.GET("/jurusan/:jurusan_name", middlewares.AuthMiddleware(jwtService), prodiController.GetProdiByJurusan)
 	}
 }

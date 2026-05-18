@@ -16,9 +16,9 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 
 	jurusanRoute := router.Group("/api/jurusan")
 	{
-		jurusanRoute.POST("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), jurusanController.CreateJurusan)
-		jurusanRoute.PUT("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), jurusanController.UpdateJurusan)
-		jurusanRoute.DELETE("/", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), jurusanController.DeleteJurusan)
-		jurusanRoute.GET("/", middlewares.AuthMiddleware(jwtService), jurusanController.GetJurusan)
+		jurusanRoute.POST("", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), jurusanController.CreateJurusan)
+		jurusanRoute.PUT("/:name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), jurusanController.UpdateJurusan)
+		jurusanRoute.DELETE("/:name", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_SUPER_ADMIN), jurusanController.DeleteJurusan)
+		jurusanRoute.GET("", middlewares.AuthMiddleware(jwtService), jurusanController.GetJurusan)
 	}
 }
