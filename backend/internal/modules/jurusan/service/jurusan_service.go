@@ -18,6 +18,7 @@ type JurusanService interface {
 	DeleteJurusan(ctx context.Context, jurusanName string) error
 	GetJurusanByName(ctx context.Context, jurusanName string) (dto.JurusanResponse, error)
 	GetAllJurusan(ctx context.Context) ([]dto.JurusanResponse, error)
+	GetAllJurusanPaginated(ctx context.Context, page int) ([]dto.JurusanResponse, int64, error)
 	GetJurusanById(ctx context.Context, jurusanId uint) (dto.JurusanResponse, error)
 }
 
@@ -129,4 +130,18 @@ func (s *jurusanService) GetJurusanById(ctx context.Context, jurusanId uint) (dt
 	}
 
 	return dto.ToJurusanResponse(jurusan), nil
+}
+
+func (s *jurusanService) GetAllJurusanPaginated(ctx context.Context, page int) ([]dto.JurusanResponse, int64, error) {
+	offset := (page - 1) * 10
+	jurusans, total, err := s.jurusanRepo.GetAllPaginated(ctx, s.db, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+	responses := make([]dto.JurusanResponse, len(jurusans))
+	for i, j := range jurusans {
+		responses[i] = dto.ToJurusanResponse(j)
+	}
+	return responses, total, nil
 }

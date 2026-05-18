@@ -19,6 +19,7 @@ type (
 		GetByKode(ctx context.Context, tx *gorm.DB, kodeMk string) (entities.MataKuliah, error)
 		GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.MataKuliah, error)
 		GetAll(ctx context.Context, tx *gorm.DB) ([]entities.MataKuliah, error)
+		GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.MataKuliah, int64, error)
 		CheckMkExists(ctx context.Context, tx *gorm.DB, kodeMk string) (bool, error)
 	}
 
@@ -150,6 +151,21 @@ func (r *mkRepository) GetAll(ctx context.Context, tx *gorm.DB) ([]entities.Mata
 	}
 
 	return mks, nil
+}
+
+func (r *mkRepository) GetAllPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.MataKuliah, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var mks []entities.MataKuliah
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.MataKuliah{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	if err := tx.WithContext(ctx).Offset(offset).Limit(limit).Find(&mks).Error; err != nil {
+		return nil, 0, err
+	}
+	return mks, total, nil
 }
 
 func (r *mkRepository) CheckMkExists(ctx context.Context, tx *gorm.DB, kodeMk string) (bool, error) {

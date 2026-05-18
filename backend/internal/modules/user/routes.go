@@ -13,22 +13,31 @@ import (
 func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	userController := do.MustInvoke[controller.UserController](injector)
 	jwtService := do.MustInvokeNamed[service.JwtService](injector, constants.JWTService)
+
 	apiRoutes := router.Group("/api")
 	{
+		// Current user
 		apiRoutes.GET("/me", middlewares.AuthMiddleware(jwtService), userController.Me)
 
-		apiRoutes.GET("/user/super/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.GetUser)
-		apiRoutes.POST("/super/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.RegisterAdmin)
-		apiRoutes.PUT("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.UpdateAdmin)
-		apiRoutes.DELETE("/super/user/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.DeleteAdmin)
+		// Admin user CRUD - resource: /api/users
+		apiRoutes.GET("/users", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK, constants.ROLE_ADMIN_PEGAWAI, constants.ROLE_ADMIN_MAHASISWA, constants.ROLE_ADMIN_KEUANGAN), userController.GetAllUsers)
+		apiRoutes.GET("/users/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.GetUser)
+		apiRoutes.POST("/users/admins", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.RegisterAdmin)
+		apiRoutes.PUT("/users/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.UpdateAdmin)
+		apiRoutes.DELETE("/users/:id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN), userController.DeleteAdmin)
 
-		apiRoutes.GET("/user/role/:role_name", middlewares.AuthMiddleware(jwtService), userController.GetUserByRole)
-		apiRoutes.GET("/user/", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
-		apiRoutes.POST("/user", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_MAHASISWA, constants.ROLE_ADMIN_PEGAWAI), userController.RegisterNonAdmin)
-		apiRoutes.GET("/user/count", middlewares.AuthMiddleware(jwtService), userController.CountAllUsers)
+		// Non-admin user CRUD
+		apiRoutes.GET("/users/search", middlewares.AuthMiddleware(jwtService), userController.GetUserByEmail)
+		apiRoutes.POST("/users", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_MAHASISWA, constants.ROLE_ADMIN_PEGAWAI), userController.RegisterNonAdmin)
+		apiRoutes.GET("/users/count", middlewares.AuthMiddleware(jwtService), userController.CountAllUsers)
 
-		apiRoutes.GET("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.GetUserNonAdmin)
-		apiRoutes.PUT("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.UpdateNonAdmin)
-		apiRoutes.DELETE("/user/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_PEGAWAI, constants.ROLE_ADMIN_MAHASISWA), userController.DeleteNonAdmin)
+		// Filter by role: GET /api/users/roles/:role_name?page=N
+		apiRoutes.GET("/users/roles/:role_name", middlewares.AuthMiddleware(jwtService), userController.GetUserByRole)
+
+		// Sync endpoints: untuk sinkronisasi data user dengan service lain
+		apiRoutes.GET("/users/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.GetUserNonAdmin)
+		apiRoutes.PUT("/users/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), userController.UpdateNonAdmin)
+		apiRoutes.DELETE("/users/sync/:role_name/:detail_id", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_PEGAWAI, constants.ROLE_ADMIN_MAHASISWA), userController.DeleteNonAdmin)
 	}
+
 }

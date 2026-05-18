@@ -24,6 +24,7 @@ type (
 		GetMkById(ctx context.Context, id uuid.UUID) (dto.MkResponse, error)
 		GetMkByKode(ctx context.Context, kode string) (dto.MkResponse, error)
 		GetAllMk(ctx context.Context) ([]dto.MkResponse, error)
+		GetAllMkPaginated(ctx context.Context, page int) ([]dto.MkResponse, int64, error)
 	}
 
 	mkService struct {
@@ -181,4 +182,18 @@ func (s *mkService) GetAllMk(ctx context.Context) ([]dto.MkResponse, error) {
 	}
 
 	return responses, nil
+}
+
+func (s *mkService) GetAllMkPaginated(ctx context.Context, page int) ([]dto.MkResponse, int64, error) {
+	offset := (page - 1) * 10
+	mks, total, err := s.MkRepository.GetAllPaginated(ctx, s.db, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+	responses := make([]dto.MkResponse, len(mks))
+	for i, r := range mks {
+		responses[i] = dto.ToMkResponse(r)
+	}
+	return responses, total, nil
 }

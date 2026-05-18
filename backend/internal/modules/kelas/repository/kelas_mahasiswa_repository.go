@@ -29,7 +29,7 @@ func NewKelasMahasiswaRepository(db *gorm.DB) KelasMahasiswaRepository {
 
 func (k *kelasMahasiswaRepository) Create(ctx context.Context, tx *gorm.DB, entity entities.KelasMahasiswa) error {
 	if tx == nil {
-		return nil
+		tx = k.db
 	}
 
 	if err := tx.WithContext(ctx).Create(&entity).Error; err != nil {
@@ -40,10 +40,12 @@ func (k *kelasMahasiswaRepository) Create(ctx context.Context, tx *gorm.DB, enti
 
 func (k *kelasMahasiswaRepository) Delete(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID, kelasId uuid.UUID) error {
 	if tx == nil {
-		return nil
+		tx = k.db
 	}
 
-	result := tx.WithContext(ctx).Delete(&entities.KelasMahasiswa{}, mahasiswaId)
+	result := tx.WithContext(ctx).
+		Where("mahasiswa_id = ? AND kelas_id = ?", mahasiswaId, kelasId).
+		Delete(&entities.KelasMahasiswa{})
 	if result.Error != nil {
 		return result.Error
 	}
@@ -57,44 +59,44 @@ func (k *kelasMahasiswaRepository) Delete(ctx context.Context, tx *gorm.DB, maha
 
 func (k *kelasMahasiswaRepository) GetMahasiswaByKelasId(ctx context.Context, tx *gorm.DB, kelasId uuid.UUID) ([]entities.KelasMahasiswa, error) {
 	if tx == nil {
-		return nil, nil
+		tx = k.db
 	}
 
-	var entities []entities.KelasMahasiswa
+	var result []entities.KelasMahasiswa
 	if err := tx.WithContext(ctx).
 		Preload("Mahasiswa", helpers.SelectFields("detail_id, email, name")).
-		Where("kelas_id = ?", kelasId).Find(&entities).Error; err != nil {
+		Where("kelas_id = ?", kelasId).Find(&result).Error; err != nil {
 		return nil, err
 	}
 
-	return entities, nil
+	return result, nil
 }
 
 func (k *kelasMahasiswaRepository) GetAllKelasMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) ([]entities.KelasMahasiswa, error) {
 	if tx == nil {
-		return nil, nil
+		tx = k.db
 	}
 
-	var entities []entities.KelasMahasiswa
+	var result []entities.KelasMahasiswa
 	if err := tx.WithContext(ctx).
 		Preload("Mahasiswa", helpers.SelectFields("detail_id, email, name")).
-		Preload("Kelas", helpers.SelectFields("kelas_id, name")).
-		Where("mahasiswa_id = ?", mahasiswaId).Find(&entities).Error; err != nil {
+		Preload("Kelas", helpers.SelectFields("id, name, semester")).
+		Where("mahasiswa_id = ?", mahasiswaId).Find(&result).Error; err != nil {
 		return nil, err
 	}
 
-	return entities, nil
+	return result, nil
 }
 
 func (k *kelasMahasiswaRepository) CheckMahasiswaAlreadyAssigned(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) (bool, error) {
 	if tx == nil {
-		return false, nil
+		tx = k.db
 	}
 
 	var count int64
 	if err := tx.WithContext(ctx).
 		Model(&entities.KelasMahasiswa{}).
-		Where("mahasiswa_id = ? ", mahasiswaId).
+		Where("mahasiswa_id = ?", mahasiswaId).
 		Count(&count).Error; err != nil {
 		return false, err
 	}

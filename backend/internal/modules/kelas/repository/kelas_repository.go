@@ -16,6 +16,7 @@ type (
 		Delete(ctx context.Context, tx *gorm.DB, id uuid.UUID) error
 		GetByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Kelas, error)
 		GetByProdiID(ctx context.Context, tx *gorm.DB, prodiID uint) ([]entities.Kelas, error)
+		GetByProdiIDPaginated(ctx context.Context, tx *gorm.DB, prodiID uint, offset, limit int) ([]entities.Kelas, int64, error)
 		GetNonPreload(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Kelas, error)
 		CheckKelasById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (bool, error)
 	}
@@ -72,12 +73,21 @@ func (r *kelasRepository) GetByID(ctx context.Context, tx *gorm.DB, id uuid.UUID
 		tx = r.db
 	}
 
+	// Ambil data kelas dulu (tanpa preload) untuk mengetahui semester-nya
 	var kelas entities.Kelas
+	if err := tx.WithContext(ctx).Where("id = ?", id).First(&kelas).Error; err != nil {
+		return entities.Kelas{}, err
+	}
+
+	semester := kelas.Semester
+
+	// Preload semua relasi dengan filter semester yang sudah diketahui
 	if err := tx.WithContext(ctx).
 		Preload("Prodi.Jurusan").
-		Preload("Kurikulum", helpers.SelectFields("kode, name")).
-		Preload("KurikulumMK", "semester = (SELECT semester FROM kelas WHERE id = ?)", id).
-		Preload("KurikulumMK.MataKuliah", helpers.SelectFields("kode", "name", "sks")).
+		Preload("Kurikulum.Prodi.Jurusan").
+		Preload("Kurikulum.KurikulumMK", func(db *gorm.DB) *gorm.DB {
+			return db.Where("semester = ?", semester).Preload("MataKuliah")
+		}).
 		Preload("TahunAkademik").
 		Preload("Mahasiswa", helpers.SelectFields("detail_id, name, email")).
 		Where("id = ?", id).
@@ -95,11 +105,15 @@ func (r *kelasRepository) GetByProdiID(ctx context.Context, tx *gorm.DB, prodiID
 
 	var kelas []entities.Kelas
 	if err := tx.WithContext(ctx).
-		Preload("Kurikulum", helpers.SelectFields("kode", "name")).
-		Preload("KurikulumMK", func(db *gorm.DB) *gorm.DB {
-			return db.Joins("JOIN kelas ON kelas.kurikulum_kode = kurikulum_mk.kurikulum_kode AND kelas.semester = kurikulum_mk.semester")
+		Preload("Prodi.Jurusan").
+		Preload("Kurikulum.Prodi.Jurusan").
+		// KurikulumMK difilter per semester kelas masing-masing via JOIN
+		Preload("Kurikulum.KurikulumMK", func(db *gorm.DB) *gorm.DB {
+			return db.Joins(
+				"INNER JOIN kelas k ON k.kurikulum_kode = kurikulum_mk.kurikulum_kode AND k.semester = kurikulum_mk.semester AND k.prodi_id = ?",
+				prodiID,
+			).Preload("MataKuliah")
 		}).
-		Preload("KurikulumMK.MataKuliah", helpers.SelectFields("kode", "name", "sks")).
 		Preload("TahunAkademik").
 		Preload("Mahasiswa", helpers.SelectFields("detail_id", "name", "email")).
 		Where("prodi_id = ?", prodiID).
@@ -110,7 +124,39 @@ func (r *kelasRepository) GetByProdiID(ctx context.Context, tx *gorm.DB, prodiID
 	return kelas, nil
 }
 
+func (r *kelasRepository) GetByProdiIDPaginated(ctx context.Context, tx *gorm.DB, prodiID uint, offset, limit int) ([]entities.Kelas, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Kelas{}).Where("prodi_id = ?", prodiID).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	var kelas []entities.Kelas
+	if err := tx.WithContext(ctx).
+		Preload("Prodi.Jurusan").
+		Preload("Kurikulum.Prodi.Jurusan").
+		Preload("Kurikulum.KurikulumMK", func(db *gorm.DB) *gorm.DB {
+			return db.Joins(
+				"INNER JOIN kelas k ON k.kurikulum_kode = kurikulum_mk.kurikulum_kode AND k.semester = kurikulum_mk.semester AND k.prodi_id = ?",
+				prodiID,
+			).Preload("MataKuliah")
+		}).
+		Preload("TahunAkademik").
+		Preload("Mahasiswa", helpers.SelectFields("detail_id", "name", "email")).
+		Where("prodi_id = ?", prodiID).
+		Offset(offset).Limit(limit).
+		Find(&kelas).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return kelas, total, nil
+}
+
 func (r *kelasRepository) GetNonPreload(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Kelas, error) {
+
 	if tx == nil {
 		tx = r.db
 	}
@@ -132,6 +178,7 @@ func (r *kelasRepository) CheckKelasById(ctx context.Context, tx *gorm.DB, id uu
 
 	var count int64
 	if err := tx.WithContext(ctx).
+		Model(&entities.Kelas{}).
 		Where("id = ?", id).
 		Count(&count).Error; err != nil {
 		return false, err

@@ -282,6 +282,66 @@ const docTemplate = `{
             }
         },
         "/api/jurusan": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan data jurusan. Jika query id/name diberikan, return 1 data spesifik; tanpa query, return semua data\n\n**Akses:** Logged User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "jurusan"
+                ],
+                "summary": "Get Jurusan",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "description": "Nama Jurusan",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "ID Jurusan",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_jurusan_dto_JurusanResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetJurusanFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetJurusanInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -344,78 +404,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/jurusan/": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "melihat jurusan yang sudah ada\nPilih salah satu query id/name\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Get jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Get jurusan\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "jurusan"
-                ],
-                "summary": "get Jurusan",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "example": 1,
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "teknik-elektro (Pilih salah satu)",
-                        "name": "name",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_jurusan_dto_JurusanResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetJurusanFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetJurusanInternalServer"
-                        }
-                    }
-                }
-            },
+        "/api/jurusan/{name}": {
             "put": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengupdate jurusan yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update jurusan\", error: \"Internal Error\"` + "`" + `",
+                "description": "Mengupdate jurusan yang sudah ada berdasarkan nama di path\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -430,8 +426,9 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "teknik-elektro",
+                        "description": "Nama Jurusan yang akan diupdate",
                         "name": "name",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     },
                     {
@@ -483,7 +480,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "delete jurusan yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate jurusan Query\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` jurusan user tidak memiliki akses -\u003e ` + "`" + `message: \"jurusan anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete jurusan\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menghapus jurusan berdasarkan nama di path\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -498,8 +495,9 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "teknik-elektro",
+                        "description": "Nama Jurusan yang akan dihapus",
                         "name": "name",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -600,130 +598,6 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/kelas/mahasiswa": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Assign mahasiswa ke kelas\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kelas dengan id tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create kelas\", error: \"kelas already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create kelas\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "kelas"
-                ],
-                "summary": "Assign Mahasiswa to Kelas",
-                "parameters": [
-                    {
-                        "description": "Kelas Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/kelas/mahasiswa/{mahasiswa_id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "melihat mahasiswa terdaftar di kelas mana saja\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter tidak valid -\u003e ` + "`" + `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kelas dengan id tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"kelas not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` kelas user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "kelas"
-                ],
-                "summary": "get Kelas",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "mahasiswa ID",
-                        "name": "mahasiswa_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kelas_dto_KelasMahasiswaResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
-                        }
-                    }
-                }
-            }
-        },
         "/api/kelas/prodi/{prodi_name}": {
             "get": {
                 "security": [
@@ -731,7 +605,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "melihat kelas yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter tidak valid -\u003e ` + "`" + `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kelas dengan id tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"kelas not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` kelas user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"Internal Error\"` + "`" + `",
+                "description": "Mendapatkan daftar kelas berdasarkan nama prodi, dengan pagination (10 per halaman).\nSetiap kelas sudah termasuk deep join: kurikulum → kurikulum_mk (difilter by semester kelas) → mata_kuliah, prodi → jurusan, tahun_akademik, dan daftar mahasiswa.\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"Key: 'param' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Prodi tidak ditemukan -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"Internal Error\"` + "`" + `",
                 "consumes": [
                     "application/json"
                 ],
@@ -741,21 +615,29 @@ const docTemplate = `{
                 "tags": [
                     "kelas"
                 ],
-                "summary": "get Kelas by prodi name",
+                "summary": "Get Kelas by Prodi (Paginated)",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "prodi name",
+                        "example": "teknik-listrik",
+                        "description": "Nama Prodi",
                         "name": "prodi_name",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1, 10 per halaman)",
+                        "name": "page",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kelas_dto_KelasResponse-any"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse-any"
                         }
                     },
                     "400": {
@@ -980,7 +862,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "melihat mahasiswa yang terdaftar dalam kelas\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter tidak valid -\u003e ` + "`" + `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kelas dengan id tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"kelas not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` kelas user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Get kelas\", error: \"Internal Error\"` + "`" + `",
+                "description": "Mendapatkan daftar mahasiswa yang terdaftar dalam kelas\n\n**Akses:** Logged User",
                 "consumes": [
                     "application/json"
                 ],
@@ -990,11 +872,11 @@ const docTemplate = `{
                 "tags": [
                     "kelas"
                 ],
-                "summary": "get Kelas",
+                "summary": "Get mahasiswa dalam kelas",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "kelas ID",
+                        "description": "Kelas ID (UUID)",
                         "name": "kelas_id",
                         "in": "path",
                         "required": true
@@ -1019,6 +901,68 @@ const docTemplate = `{
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Assign mahasiswa ke kelas berdasarkan kelas_id di path\n\n**Akses:** Admin Akademik",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Assign Mahasiswa to Kelas",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Kelas ID (UUID)",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Kelas Mahasiswa Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
                     "403": {
                         "description": "Forbidden",
                         "schema": {
@@ -1028,7 +972,7 @@ const docTemplate = `{
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKelasInternalServer"
                         }
                     }
                 }
@@ -1041,7 +985,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "delete kelas yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter tidak valid -\u003e ` + "`" + `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kelas dengan id tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete kelas\", error: \"kelas not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` kelas user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete kelas\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menghapus mahasiswa dari kelas berdasarkan kelas_id dan mahasiswa_id\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -1055,14 +999,14 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "kelas ID",
+                        "description": "Kelas ID (UUID)",
                         "name": "kelas_id",
                         "in": "path",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "mahasiswa ID",
+                        "description": "Mahasiswa ID (UUID)",
                         "name": "mahasiswa_id",
                         "in": "path",
                         "required": true
@@ -1103,13 +1047,66 @@ const docTemplate = `{
             }
         },
         "/api/kurikulum": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan data kurikulum. Jika path kode diberikan, return 1 data; tanpa kode, return semua dengan pagination\n\n**Akses:** Logged User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Get Kurikulum",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default: 1, per halaman: 10)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menambahkan kurikulum baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KurikulumName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kurikulum dengan nama tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create kurikulum\", error: \"kurikulum already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create kurikulum\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menambahkan kurikulum baru ke sistem\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -1160,215 +1157,6 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/kurikulum/": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "melihat kurikulum yang sudah ada\nPilih salah satu query id/name\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate kurikulum Query\", error: \"Key: 'KurikulumName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kurikulum dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Get kurikulum\", error: \"kurikulum not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` kurikulum user tidak memiliki akses -\u003e ` + "`" + `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Get kurikulum\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "kurikulum"
-                ],
-                "summary": "get Kurikulum",
-                "parameters": [
-                    {
-                        "maxLength": 36,
-                        "type": "string",
-                        "example": "000-000-000-000",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 12,
-                        "type": "string",
-                        "example": "myhutao-2024",
-                        "name": "kode",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumInternalServer"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Mengupdate kurikulum yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate kurikulum Query\", error: \"Key: 'KurikulumName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KurikulumName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kurikulum dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update kurikulum\", error: \"kurikulum not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` role user tidak memiliki akses -\u003e ` + "`" + `message: \"role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update role\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "kurikulum"
-                ],
-                "summary": "Update Kurikulum",
-                "parameters": [
-                    {
-                        "maxLength": 36,
-                        "type": "string",
-                        "example": "000-000-000-000",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 12,
-                        "type": "string",
-                        "example": "myhutao-2024",
-                        "name": "kode",
-                        "in": "query"
-                    },
-                    {
-                        "description": "Kurikulum Request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumUpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumInternalServer"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "delete kurikulum yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate kurikulum Query\", error: \"Key: 'KurikulumName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kurikulum dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete kurikulum\", error: \"kurikulum not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` kurikulum user tidak memiliki akses -\u003e ` + "`" + `message: \"kurikulum anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete kurikulum\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "kurikulum"
-                ],
-                "summary": "Delete Kurikulum",
-                "parameters": [
-                    {
-                        "maxLength": 36,
-                        "type": "string",
-                        "example": "000-000-000-000",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 12,
-                        "type": "string",
-                        "example": "myhutao-2024",
-                        "name": "kode",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumInternalServer"
                         }
                     }
                 }
@@ -1437,7 +1225,198 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode}": {
+        "/api/kurikulum/{kode}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan data kurikulum. Jika path kode diberikan, return 1 data; tanpa kode, return semua dengan pagination\n\n**Akses:** Logged User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Get Kurikulum",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "myhutao-2024",
+                        "description": "Kode Kurikulum (opsional)",
+                        "name": "kode",
+                        "in": "path"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default: 1, per halaman: 10)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKurikulumInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate kurikulum berdasarkan kode di path parameter\n\n**Akses:** Admin Akademik",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Update Kurikulum berdasarkan kode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "myhutao-2024",
+                        "description": "Kode Kurikulum",
+                        "name": "kode",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Kurikulum Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKurikulumInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menghapus kurikulum berdasarkan kode di path parameter\n\n**Akses:** Admin Akademik",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kurikulum"
+                ],
+                "summary": "Delete Kurikulum berdasarkan kode",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "myhutao-2024",
+                        "description": "Kode Kurikulum",
+                        "name": "kode",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKurikulumInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kurikulum/{kode}/mata-kuliah/{mk_kode}": {
             "put": {
                 "security": [
                     {
@@ -1459,7 +1438,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Kurikulum kode",
-                        "name": "kurikulum_kode",
+                        "name": "kode",
                         "in": "path",
                         "required": true
                     },
@@ -1534,7 +1513,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Kurikulum kode",
-                        "name": "kurikulum_kode",
+                        "name": "kode",
                         "in": "path",
                         "required": true
                     },
@@ -1580,14 +1559,136 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/mahasiswa/{mahasiswa_id}/kelas": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan semua kelas yang diikuti oleh mahasiswa berdasarkan mahasiswa_id\n\n**Akses:** Logged User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Get semua kelas untuk mahasiswa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Mahasiswa ID (UUID)",
+                        "name": "mahasiswa_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kelas_dto_KelasMahasiswaResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
         "/api/mata-kuliah": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan data mata kuliah. Jika query id/kode diberikan, return 1 data; tanpa query, return semua dengan pagination\n\n**Akses:** Logged User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "mata-kuliah"
+                ],
+                "summary": "Get Mata Kuliah",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "12345678-1234-1234-1234-123456789012",
+                        "description": "ID Mata Kuliah (UUID)",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "MK001",
+                        "description": "Kode Mata Kuliah",
+                        "name": "kode",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default: 1, per halaman: 10)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_mk_dto_MkResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateMkFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateMkInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menambahkan mata kuliah baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'MataKuliahName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` mata kuliah dengan nama tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create mata-kuliah\", error: \"mata-kuliah already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"mata-kuliah anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create mata-kuliah\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menambahkan mata kuliah baru ke sistem\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -1643,79 +1744,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/mata-kuliah/": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "melihat mata kuliah yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate mata kuliah Query\", error: \"Key: 'mkName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` mata kuliah dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update mata kuliah\", error: \"mata kuliah not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` mata kuliah user tidak memiliki akses -\u003e ` + "`" + `message: \"mata kuliah anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update mata kuliah\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "mata-kuliah"
-                ],
-                "summary": "get mata kuliah",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "12345678-1234-1234-1234-123456789012",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 12,
-                        "type": "string",
-                        "example": "MK001 (Pilih salah satu)",
-                        "name": "kode",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_mk_dto_MkResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateMkFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateMkInternalServer"
-                        }
-                    }
-                }
-            },
+        "/api/mata-kuliah/{kode}": {
             "put": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengupdate mata kuliah yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate mata-kuliah Query\", error: \"Key: 'MataKuliahName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'MataKuliahName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` mata kuliah dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update mata-kuliah\", error: \"mata-kuliah not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` mata kuliah user tidak memiliki akses -\u003e ` + "`" + `message: \"mata-kuliah anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update mata-kuliah\", error: \"Internal Error\"` + "`" + `",
+                "description": "Mengupdate mata kuliah berdasarkan kode di path parameter\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -1725,20 +1761,15 @@ const docTemplate = `{
                 "tags": [
                     "mata-kuliah"
                 ],
-                "summary": "Update Mata Kuliah",
+                "summary": "Update Mata Kuliah berdasarkan kode",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "12345678-1234-1234-1234-123456789012",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 12,
-                        "type": "string",
-                        "example": "MK001 (Pilih salah satu)",
+                        "example": "MK001",
+                        "description": "Kode Mata Kuliah",
                         "name": "kode",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "description": "Mata Kuliah Request",
@@ -1789,7 +1820,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "delete mata kuliah yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate mata-kuliah Query\", error: \"Key: 'MataKuliahName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` mata kuliah dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete mata-kuliah\", error: \"mata-kuliah not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` mata kuliah user tidak memiliki akses -\u003e ` + "`" + `message: \"mata-kuliah anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete mata-kuliah\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menghapus mata kuliah berdasarkan kode di path parameter\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -1799,20 +1830,15 @@ const docTemplate = `{
                 "tags": [
                     "mata-kuliah"
                 ],
-                "summary": "Delete Mata Kuliah",
+                "summary": "Delete Mata Kuliah berdasarkan kode",
                 "parameters": [
                     {
                         "type": "string",
-                        "example": "12345678-1234-1234-1234-123456789012",
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "maxLength": 12,
-                        "type": "string",
-                        "example": "MK001 (Pilih salah satu)",
+                        "example": "MK001",
+                        "description": "Kode Mata Kuliah",
                         "name": "kode",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -1893,13 +1919,73 @@ const docTemplate = `{
             }
         },
         "/api/prodi": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan data prodi. Jika query id/name diberikan, return 1 data spesifik; tanpa query, return semua data\n\n**Akses:** Logged User",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "prodi"
+                ],
+                "summary": "Get Prodi",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "description": "Nama Prodi",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "ID Prodi",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Menambahkan prodi baru ke sistem\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create prodi\", error: \"prodi already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to create prodi\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menambahkan prodi baru ke sistem\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -1955,14 +2041,14 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/prodi/": {
+        "/api/prodi/jurusan/{jurusan_name}": {
             "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "melihat data prodi yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Query\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"Internal Error\"` + "`" + `",
+                "description": "Mendapatkan daftar prodi berdasarkan nama jurusan\n\n**Akses:** Logged User",
                 "consumes": [
                     "application/json"
                 ],
@@ -1972,18 +2058,21 @@ const docTemplate = `{
                 "tags": [
                     "prodi"
                 ],
-                "summary": "get data prodi",
+                "summary": "Get Prodi by Jurusan",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "example": "teknik-elektro",
+                        "description": "Nama Jurusan",
+                        "name": "jurusan_name",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "type": "integer",
                         "example": 1,
-                        "name": "id",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "example": "teknik-elektro (Pilih salah satu)",
-                        "name": "name",
+                        "description": "Halaman (default: 1, per halaman: 10)",
+                        "name": "page",
                         "in": "query"
                     }
                 ],
@@ -2006,27 +2095,23 @@ const docTemplate = `{
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
                         }
                     },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateProdiInternalServer"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiInternalServer"
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/prodi/{name}": {
             "put": {
                 "security": [
                     {
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Mengupdate prodi yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Query\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update prodi\", error: \"Internal Error\"` + "`" + `",
+                "description": "Mengupdate prodi berdasarkan nama di path parameter\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -2041,8 +2126,9 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "teknik-elektro",
+                        "description": "Nama Prodi yang akan diupdate",
                         "name": "name",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     },
                     {
@@ -2094,7 +2180,7 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "delete prodi yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Query tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Query\", error: \"Key: 'ProdiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` prodi dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to Delete prodi\", error: \"prodi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to Delete prodi\", error: \"Internal Error\"` + "`" + `",
+                "description": "Menghapus prodi berdasarkan nama di path parameter\n\n**Akses:** Admin Akademik",
                 "consumes": [
                     "application/json"
                 ],
@@ -2109,8 +2195,9 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "example": "teknik-elektro",
+                        "description": "Nama Prodi yang akan dihapus",
                         "name": "name",
-                        "in": "query",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -2148,69 +2235,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/prodi/jurusan/{jurusan_name}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "melihat data prodi yang sudah ada\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter Uri tidak valid -\u003e ` + "`" + `message: \"failed to validate prodi Uri\", error: \"Key: 'JurusanName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` jurusan dengan nama tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get jurusan\", error: \"jurusan not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` prodi user tidak memiliki akses -\u003e ` + "`" + `message: \"prodi anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get prodi\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "prodi"
-                ],
-                "summary": "get data prodi berdasarkan nama jurusan",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "teknik-elektro",
-                        "description": "Jurusan Name",
-                        "name": "jurusan_name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetProdiInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/role": {
+        "/api/roles": {
             "get": {
                 "security": [
                     {
@@ -2251,9 +2276,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/api/super/role": {
+            },
             "post": {
                 "security": [
                     {
@@ -2316,7 +2339,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/super/role/{role_name}": {
+        "/api/roles/{role_name}": {
             "put": {
                 "security": [
                     {
@@ -2442,197 +2465,6 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/super/user": {
-            "post": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Membuat akun user admin baru (Admin Akademik, Admin Keuangan, Admin Mahasiswa, Admin Pegawai, dsb).\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah terdaftar -\u003e ` + "`" + `message: \"failed to register user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak valid -\u003e ` + "`" + `message: \"failed to register user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to register user\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user (super)"
-                ],
-                "summary": "Register Admin User",
-                "parameters": [
-                    {
-                        "description": "Payload Registrasi",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserAdminCreateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Created",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/super/user/{id}": {
-            "put": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Mengupdate data user admin (nama, email, password, role, image) berdasarkan UUID.\nSemua field bersifat opsional — hanya field yang diisi yang akan diupdate.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Name' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to update user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah digunakan user lain -\u003e ` + "`" + `message: \"failed to update user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update user\", error: \"Internal Error\"` + "`" + `",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user (super)"
-                ],
-                "summary": "Update Admin User",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "019748ae-beef-7abc-b123-abcdef012345",
-                        "description": "UUID User",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Payload Update",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserAdminUpdateRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserInternalServer"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Menghapus akun admin secara permanen dari sistem berdasarkan UUID.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to delete user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to delete user\", error: \"Internal Error\"` + "`" + `",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user (super)"
-                ],
-                "summary": "Delete Admin User",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "019748ae-beef-7abc-b123-abcdef012345",
-                        "description": "UUID User Admin",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer"
                         }
                     }
                 }
@@ -3000,7 +2832,53 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user": {
+        "/api/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan daftar semua user termasuk admin, dengan pagination (10 per page)\n\n**Akses:** Admin",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get All Users (Paginated)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Halaman (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_user_dto_UserResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -3063,7 +2941,173 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/": {
+        "/api/users/admins": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Membuat akun user admin baru (Admin Akademik, Admin Keuangan, Admin Mahasiswa, Admin Pegawai, dsb).\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Email' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah terdaftar -\u003e ` + "`" + `message: \"failed to register user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak valid -\u003e ` + "`" + `message: \"failed to register user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to register user\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user (super)"
+                ],
+                "summary": "Register Admin User",
+                "parameters": [
+                    {
+                        "description": "Payload Registrasi",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserAdminCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrRegisterUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menghitung jumlah total user.\n\n**Akses:** Logged user\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to count all users\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Count All Users",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-int64-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/roles/{role_name}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil daftar semua user yang memiliki role tertentu, dengan pagination (10 per halaman).\nHanya berlaku untuk non-admin role (mahasiswa, pegawai, dll).\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Get Users By Role Name (Paginated)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "mahasiswa",
+                        "description": "Nama Role (non-admin)",
+                        "name": "role_name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1, 10 per halaman)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_user_dto_UserResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetListUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/search": {
             "get": {
                 "security": [
                     {
@@ -3117,162 +3161,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/user/count": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Menghitung jumlah total user.\n\n**Akses:** Logged user\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to count all users\", error: \"Internal Error\"` + "`" + `",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Count All Users",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-int64-any"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/role/{role_name}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Mengambil daftar semua user yang memiliki role tertentu.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'RoleName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Role tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"role not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Gagal mengambil daftar user -\u003e ` + "`" + `message: \"failed to get user\", error: \"...\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Get Users By Role Name",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "mahasiswa",
-                        "description": "Nama Role",
-                        "name": "role_name",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetListUserFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/super/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "Mengambil data lengkap seorang user berdasarkan UUID-nya.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User dengan ID tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user (super)"
-                ],
-                "summary": "Get User By ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "example": "019748ae-beef-7abc-b123-abcdef012345",
-                        "description": "UUID User",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/user/sync/{role_name}/{detail_id}": {
+        "/api/users/sync/{role_name}/{detail_id}": {
             "get": {
                 "security": [
                     {
@@ -3431,6 +3320,191 @@ const docTemplate = `{
                         "example": "01965a1d-7777-7777-7777-777777777777",
                         "description": "UUID Detail",
                         "name": "detail_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil data lengkap seorang user berdasarkan UUID-nya.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User dengan ID tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to get user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to get user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user (super)"
+                ],
+                "summary": "Get User By ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate data user admin (nama, email, password, role, image) berdasarkan UUID.\nSemua field bersifat opsional — hanya field yang diisi yang akan diupdate.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid -\u003e ` + "`" + `message: \"failed to get data from body\", error: \"Key: 'Name' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to update user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Email sudah digunakan user lain -\u003e ` + "`" + `message: \"failed to update user\", error: \"email already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update user\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user (super)"
+                ],
+                "summary": "Update Admin User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Payload Update",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UserAdminUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_user_dto_UserResponse-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateUserInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menghapus akun admin secara permanen dari sistem berdasarkan UUID.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` User tidak ditemukan -\u003e ` + "`" + `message: \"failed to delete user\", error: \"user not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` Role user tidak memiliki akses -\u003e ` + "`" + `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to delete user\", error: \"Internal Error\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user (super)"
+                ],
+                "summary": "Delete Admin User",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "019748ae-beef-7abc-b123-abcdef012345",
+                        "description": "UUID User Admin",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -3655,7 +3729,6 @@ const docTemplate = `{
         "web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest": {
             "type": "object",
             "required": [
-                "kelas_id",
                 "mahasiswa_id"
             ],
             "properties": {
@@ -3689,12 +3762,6 @@ const docTemplate = `{
                 },
                 "kurikulum": {
                     "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KurikulumResponse"
-                },
-                "kurikulum_mk": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KurikulumMKResponse"
-                    }
                 },
                 "mahasiswa": {
                     "type": "array",
@@ -3770,6 +3837,12 @@ const docTemplate = `{
             "properties": {
                 "kode": {
                     "type": "string"
+                },
+                "kurikulum_mk": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KurikulumMKResponse"
+                    }
                 },
                 "name": {
                     "type": "string"
@@ -3967,8 +4040,7 @@ const docTemplate = `{
             "required": [
                 "kurikulum_kode",
                 "mk_kode",
-                "semester",
-                "wajib"
+                "semester"
             ],
             "properties": {
                 "kurikulum_kode": {
@@ -3981,7 +4053,7 @@ const docTemplate = `{
                 },
                 "semester": {
                     "type": "integer",
-                    "minimum": 0
+                    "minimum": 1
                 },
                 "wajib": {
                     "type": "boolean"
@@ -6171,6 +6243,83 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginationMeta"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginationMeta"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_mk_dto_MkResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_mk_dto.MkResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginationMeta"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_user_dto_UserResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginationMeta"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.PaginationMeta": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "per_page": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "total_items": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "total_pages": {
+                    "type": "integer",
+                    "example": 10
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-any-any": {
             "type": "object",
             "properties": {
@@ -6258,52 +6407,6 @@ const docTemplate = `{
                 }
             }
         },
-        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/web-hosting_internal_modules_kurikulum_dto.KurikulumResponse"
-                    }
-                },
-                "error": {},
-                "message": {
-                    "type": "string",
-                    "example": "Operation successful"
-                },
-                "path": {
-                    "type": "string",
-                    "example": "/api/resource"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_mk_dto_MkResponse-any": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/web-hosting_internal_modules_mk_dto.MkResponse"
-                    }
-                },
-                "error": {},
-                "message": {
-                    "type": "string",
-                    "example": "Operation successful"
-                },
-                "path": {
-                    "type": "string",
-                    "example": "/api/resource"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
         "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
             "type": "object",
             "properties": {
@@ -6311,29 +6414,6 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/web-hosting_internal_modules_prodi_dto.ProdiResponse"
-                    }
-                },
-                "error": {},
-                "message": {
-                    "type": "string",
-                    "example": "Operation successful"
-                },
-                "path": {
-                    "type": "string",
-                    "example": "/api/resource"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_user_dto_UserResponse-any": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/web-hosting_internal_modules_user_dto.UserResponse"
                     }
                 },
                 "error": {},
@@ -6598,6 +6678,86 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_package_swagger.AkademikResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_mk_dto_MkResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_mk_dto_MkResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_user_dto_UserResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_user_dto_UserResponse"
                 },
                 "error": {},
                 "message": {

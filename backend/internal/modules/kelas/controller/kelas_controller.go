@@ -10,6 +10,7 @@ import (
 	"web-hosting/internal/package/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/samber/do/v2"
 	"gorm.io/gorm"
 )
@@ -123,6 +124,13 @@ func (c *kelasController) UpdateKelas(ctx *gin.Context) {
 		return
 	}
 
+	kelasID, err := uuid.Parse(URI.KelasID)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KELAS, "invalid kelas id", nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
 	var req dto.KelasUpdateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KELAS, err.Error(), nil, path)
@@ -130,7 +138,7 @@ func (c *kelasController) UpdateKelas(ctx *gin.Context) {
 		return
 	}
 
-	data, err := c.kelasService.UpdateKelas(ctx.Request.Context(), URI.KelasID, req)
+	data, err := c.kelasService.UpdateKelas(ctx.Request.Context(), kelasID, req)
 	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -180,8 +188,14 @@ func (c *kelasController) DeleteKelas(ctx *gin.Context) {
 		return
 	}
 
-	err := c.kelasService.DeleteKelas(ctx.Request.Context(), URI.KelasID)
+	kelasID, err := uuid.Parse(URI.KelasID)
 	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_KELAS, "invalid kelas id", nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	if err := c.kelasService.DeleteKelas(ctx.Request.Context(), kelasID); err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
@@ -230,7 +244,14 @@ func (c *kelasController) GetKelasByID(ctx *gin.Context) {
 		return
 	}
 
-	data, err := c.kelasService.GetKelasByID(ctx.Request.Context(), URI.KelasID)
+	kelasID, err := uuid.Parse(URI.KelasID)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_KELAS, "invalid kelas id", nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	data, err := c.kelasService.GetKelasByID(ctx.Request.Context(), kelasID)
 	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -246,25 +267,26 @@ func (c *kelasController) GetKelasByID(ctx *gin.Context) {
 }
 
 // GetKelasByProdiName godoc
-// @Summary get Kelas by prodi name
-// @Description melihat kelas yang sudah ada
+// @Summary Get Kelas by Prodi (Paginated)
+// @Description Mendapatkan daftar kelas berdasarkan nama prodi, dengan pagination (10 per halaman).
+// @Description Setiap kelas sudah termasuk deep join: kurikulum → kurikulum_mk (difilter by semester kelas) → mata_kuliah, prodi → jurusan, tahun_akademik, dan daftar mahasiswa.
 // @Description
 // @Description  **Akses:** Logged User
 // @Description
 // @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
-// @Description  - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to Get kelas", error: "kelas not found"`
+// @Description  - `400` Parameter URI tidak valid -> `message: "failed to Get kelas", error: "Key: 'param' Error:..."`
+// @Description  - `400` Prodi tidak ditemukan -> `message: "failed to Get kelas", error: "prodi not found"`
 // @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
 // @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
 // @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` kelas user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
 // @Description  - `500` Kesalahan internal server -> `message: "failed to Get kelas", error: "Internal Error"`
 // @Tags kelas
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param prodi_name path string true "prodi name"
-// @Success      200      {object}  utils.Response[dto.KelasResponse,any]
+// @Param prodi_name path string true "Nama Prodi" example(teknik-listrik)
+// @Param page query int false "Halaman (default 1, 10 per halaman)" example(1)
+// @Success      200      {object}  utils.Response[utils.PaginatedData[[]dto.KelasResponse],any]
 // @Failure      400      {object}  swagger.ErrGetKelasFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
@@ -280,7 +302,12 @@ func (c *kelasController) GetKelasByProdiName(ctx *gin.Context) {
 		return
 	}
 
-	data, err := c.kelasService.GetKelasByProdiName(ctx.Request.Context(), URI.Name)
+	var pageQuery utils.PaginationQuery
+	if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
+	data, total, err := c.kelasService.GetKelasByProdiNamePaginated(ctx.Request.Context(), URI.Name, pageQuery.Page)
 	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -291,6 +318,8 @@ func (c *kelasController) GetKelasByProdiName(ctx *gin.Context) {
 		return
 	}
 
-	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_KELAS, data, path)
+	paginated := utils.BuildPaginatedResponse(data, pageQuery.Page, total)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_KELAS, paginated, path)
 	ctx.JSON(http.StatusOK, res)
 }
+

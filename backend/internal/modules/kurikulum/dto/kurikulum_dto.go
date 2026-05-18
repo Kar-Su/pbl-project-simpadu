@@ -75,6 +75,10 @@ type (
 		Kode string `form:"kode" binding:"omitempty,max=12" example:"myhutao-2024"`
 		// ProdiName string `form:"prodi_name" binding:"omitempty,max=255" example:"teknik-informatika"`
 	}
+
+	KurikulumKodeURI struct {
+		Kode string `uri:"kode" binding:"required,max=12" example:"myhutao-2024"`
+	}
 )
 
 func ToKurikulumResponse(k entities.Kurikulum) KurikulumResponse {

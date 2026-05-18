@@ -65,7 +65,7 @@ func (c *pivotController) CreatePivot(ctx *gin.Context) {
 
 	var req dto.PivotCreateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -75,7 +75,7 @@ func (c *pivotController) CreatePivot(ctx *gin.Context) {
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}
@@ -103,7 +103,7 @@ func (c *pivotController) CreatePivot(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param kurikulum_kode path string true "Kurikulum kode"
+// @Param kode path string true "Kurikulum kode"
 // @Param mk_kode path string true "mata kuliah kode"
 // @Param request body dto.KurikulumUpdateRequest true "Kurikulum Request"
 // @Success      200      {object}  utils.Response[dto.PivotResponse,any]
@@ -111,20 +111,20 @@ func (c *pivotController) CreatePivot(ctx *gin.Context) {
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrUpdateKurikulumPivotInternalServer
-// @Router /api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode} [put]
+// @Router /api/kurikulum/{kode}/mata-kuliah/{mk_kode} [put]
 func (c *pivotController) UpdatePivot(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
 	var URI dto.PivotURI
 	if err := ctx.ShouldBindUri(&URI); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
 	var req dto.PivotUpdateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -135,7 +135,7 @@ func (c *pivotController) UpdatePivot(ctx *gin.Context) {
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}
@@ -162,20 +162,20 @@ func (c *pivotController) UpdatePivot(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param kurikulum_kode path string true "Kurikulum kode"
+// @Param kode path string true "Kurikulum kode"
 // @Param mk_kode path string true "mata kuliah kode"
 // @Success      200      {object}  utils.Response[any,any]
 // @Failure      400      {object}  swagger.ErrDeleteKurikulumPivotFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrDeleteKurikulumPivotInternalServer
-// @Router /api/kurikulum/{kurikulum_kode}/mata-kuliah/{mk_kode} [delete]
+// @Router /api/kurikulum/{kode}/mata-kuliah/{mk_kode} [delete]
 func (c *pivotController) DeletePivot(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
 	var URI dto.PivotURI
 	if err := ctx.ShouldBindUri(&URI); err != nil {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -186,7 +186,7 @@ func (c *pivotController) DeletePivot(ctx *gin.Context) {
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_KURIKULUM, err, nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_KURIKULUM, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}

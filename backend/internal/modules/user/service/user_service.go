@@ -26,6 +26,8 @@ type UserService interface {
 	GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uuid.UUID) (dto.UserResponse, error)
 	GetUserByEmail(ctx context.Context, email string) (dto.UserResponse, error)
 	GetUserByRole(ctx context.Context, roleId uint) ([]dto.UserResponse, error)
+	GetUserByRolePaginated(ctx context.Context, roleId uint, page int) ([]dto.UserResponse, int64, error)
+	GetAllUsersPaginated(ctx context.Context, page int) ([]dto.UserResponse, int64, error)
 	CountAllUsers(ctx context.Context) (int64, error)
 }
 
@@ -291,6 +293,36 @@ func (s *userService) GetUserByRole(ctx context.Context, roleId uint) ([]dto.Use
 	}
 
 	return responses, nil
+}
+
+func (s *userService) GetUserByRolePaginated(ctx context.Context, roleId uint, page int) ([]dto.UserResponse, int64, error) {
+	offset := (page - 1) * 10
+	users, total, err := s.userRepository.GetUserByRolePaginated(ctx, s.db, roleId, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+
+	responses := make([]dto.UserResponse, 0, len(users))
+	for _, u := range users {
+		responses = append(responses, dto.ToUserResponse(u))
+	}
+	return responses, total, nil
+}
+
+func (s *userService) GetAllUsersPaginated(ctx context.Context, page int) ([]dto.UserResponse, int64, error) {
+	offset := (page - 1) * 10
+	users, total, err := s.userRepository.GetAllUsersPaginated(ctx, s.db, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+
+	responses := make([]dto.UserResponse, 0, len(users))
+	for _, u := range users {
+		responses = append(responses, dto.ToUserResponse(u))
+	}
+	return responses, total, nil
 }
 
 func (s *userService) GetUserByRoleAndDetailID(ctx context.Context, roleId uint, detailId uuid.UUID) (dto.UserResponse, error) {

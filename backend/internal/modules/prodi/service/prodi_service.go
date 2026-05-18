@@ -24,6 +24,7 @@ type (
 		GetProdiByName(ctx context.Context, prodiName string) (dto.ProdiResponse, error)
 		GetProdiById(ctx context.Context, prodiId uint) (dto.ProdiResponse, error)
 		GetAllProdi(ctx context.Context) ([]dto.ProdiResponse, error)
+		GetAllProdiPaginated(ctx context.Context, page int) ([]dto.ProdiResponse, int64, error)
 		GetProdiByJurusanName(ctx context.Context, jurusanName string) ([]dto.ProdiResponse, error)
 	}
 
@@ -172,4 +173,18 @@ func (s *prodiService) GetProdiByJurusanName(ctx context.Context, jurusanName st
 	}
 
 	return responses, nil
+}
+
+func (s *prodiService) GetAllProdiPaginated(ctx context.Context, page int) ([]dto.ProdiResponse, int64, error) {
+	offset := (page - 1) * 10
+	prodis, total, err := s.prodiRepo.GetAllPaginated(ctx, s.db, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+	responses := make([]dto.ProdiResponse, len(prodis))
+	for i, prodi := range prodis {
+		responses[i] = dto.ToProdiResponse(prodi)
+	}
+	return responses, total, nil
 }

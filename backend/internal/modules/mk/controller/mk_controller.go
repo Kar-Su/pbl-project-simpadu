@@ -42,15 +42,6 @@ func NewMkController(injector do.Injector, mkService service.MkService, db *gorm
 // @Description Menambahkan mata kuliah baru ke sistem
 // @Description
 // @Description  **Akses:** Admin Akademik
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'MataKuliahName' Error:..."`
-// @Description  - `400` mata kuliah dengan nama tersebut sudah ada -> `message: "failed to create mata-kuliah", error: "mata-kuliah already exists"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` user tidak memiliki akses -> `message: "mata-kuliah anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to create mata-kuliah", error: "Internal Error"`
 // @Tags mata-kuliah
 // @Accept json
 // @Produce json
@@ -69,6 +60,7 @@ func (c *mkController) CreateMk(ctx *gin.Context) {
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
 	}
 
 	if err := c.mkService.CreateMk(ctx, req); err != nil {
@@ -78,6 +70,7 @@ func (c *mkController) CreateMk(ctx *gin.Context) {
 		}
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_CREATE_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
+		return
 	}
 
 	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_CREATE_MK, any(nil), path)
@@ -85,249 +78,189 @@ func (c *mkController) CreateMk(ctx *gin.Context) {
 }
 
 // UpdateMataKuliah godoc
-// @Summary Update Mata Kuliah
-// @Description Mengupdate mata kuliah yang sudah ada
+// @Summary Update Mata Kuliah berdasarkan kode
+// @Description Mengupdate mata kuliah berdasarkan kode di path parameter
 // @Description
 // @Description  **Akses:** Admin Akademik
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate mata-kuliah Query", error: "Key: 'MataKuliahName' Error:..."`
-// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'MataKuliahName' Error:..."`
-// @Description  - `400` mata kuliah dengan nama tersebut tidak ditemukan -> `message: "failed to update mata-kuliah", error: "mata-kuliah not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` mata kuliah user tidak memiliki akses -> `message: "mata-kuliah anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to update mata-kuliah", error: "Internal Error"`
 // @Tags mata-kuliah
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.MkQuery true "Mata Kuliah Name"
+// @Param kode path string true "Kode Mata Kuliah" example(MK001)
 // @Param request body dto.MkUpdateRequest true "Mata Kuliah Request"
 // @Success      200      {object}  utils.Response[dto.MkResponse,any]
 // @Failure      400      {object}  swagger.ErrUpdateMkFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrUpdateMkInternalServer
-// @Router /api/mata-kuliah/ [put]
+// @Router /api/mata-kuliah/{kode} [put]
 func (c *mkController) UpdateMk(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
-	var QueryParams dto.MkQuery
-	if err := ctx.ShouldBindQuery(&QueryParams); err != nil {
+	var uriParam dto.MkKodeURI
+	if err := ctx.ShouldBindUri(&uriParam); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, err.Error(), nil, path)
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
-	}
-
-	if QueryParams.ID == "" && QueryParams.Kode == "" {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, dto.ErrQueryParams, nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
+
+	kode := helpers.NormalizeString(uriParam.Kode)
 
 	var req dto.MkUpdateRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
 	}
 
-	var (
-		mkResponse dto.MkResponse
-		err        error
-		status     int
-		message    string
-	)
-
-	if QueryParams.ID != "" {
-		mkId, err := uuid.Parse(QueryParams.ID)
-		if err != nil {
-			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, err.Error(), nil, path)
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
-			return
-		}
-		mkResponse, err = c.mkService.UpdateMkById(ctx, mkId, req)
-	} else if QueryParams.Kode != "" {
-		QueryParams.Kode = helpers.NormalizeString(QueryParams.Kode)
-		mkResponse, err = c.mkService.UpdateMkByKode(ctx, QueryParams.Kode, req)
-	} else {
-		err = dto.ErrQueryParams
-	}
-
+	mkResponse, err := c.mkService.UpdateMkByKode(ctx, kode, req)
 	if err != nil {
-		status = http.StatusBadRequest
-		message = dto.MESSAGE_FAILED_GET_MK
+		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(message, err.Error(), nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}
 
-	status = http.StatusOK
-	message = dto.MESSAGE_SUCCESS_UPDATE_MK
-	res := utils.BuildResponseSuccess(message, mkResponse, path)
-	ctx.JSON(status, res)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_MK, mkResponse, path)
+	ctx.JSON(http.StatusOK, res)
 }
 
 // DeleteMataKuliah godoc
-// @Summary Delete Mata Kuliah
-// @Description delete mata kuliah yang sudah ada
+// @Summary Delete Mata Kuliah berdasarkan kode
+// @Description Menghapus mata kuliah berdasarkan kode di path parameter
 // @Description
 // @Description  **Akses:** Admin Akademik
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate mata-kuliah Query", error: "Key: 'MataKuliahName' Error:..."`
-// @Description  - `400` mata kuliah dengan nama tersebut tidak ditemukan -> `message: "failed to Delete mata-kuliah", error: "mata-kuliah not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` mata kuliah user tidak memiliki akses -> `message: "mata-kuliah anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to Delete mata-kuliah", error: "Internal Error"`
 // @Tags mata-kuliah
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param name query dto.MkQuery true "Mata Kuliah Name"
+// @Param kode path string true "Kode Mata Kuliah" example(MK001)
 // @Success      200      {object}  utils.Response[any,any]
 // @Failure      400      {object}  swagger.ErrDeleteMkFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrDeleteMkInternalServer
-// @Router /api/mata-kuliah/ [delete]
+// @Router /api/mata-kuliah/{kode} [delete]
 func (c *mkController) DeleteMk(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
-	var QueryParams dto.MkQuery
-	if err := ctx.ShouldBindQuery(&QueryParams); err != nil {
+	var uriParam dto.MkKodeURI
+	if err := ctx.ShouldBindUri(&uriParam); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	if QueryParams.ID == "" && QueryParams.Kode == "" {
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_MK, dto.ErrQueryParams, nil, path)
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
-		return
-	}
+	kode := helpers.NormalizeString(uriParam.Kode)
 
-	var (
-		err     error
-		status  int
-		message string
-	)
-
-	if QueryParams.ID != "" {
-		mkId, err := uuid.Parse(QueryParams.ID)
-		if err != nil {
-			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_MK, err.Error(), nil, path)
-			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
-			return
-		}
-		err = c.mkService.DeleteMkById(ctx, mkId)
-	} else if QueryParams.Kode != "" {
-		QueryParams.Kode = helpers.NormalizeString(QueryParams.Kode)
-		err = c.mkService.DeleteMkByKode(ctx, QueryParams.Kode)
-	} else {
-		err = dto.ErrQueryParams
-	}
-
-	if err != nil {
-		status = http.StatusBadRequest
-		message = dto.MESSAGE_FAILED_DELETE_MK
+	if err := c.mkService.DeleteMkByKode(ctx, kode); err != nil {
+		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(message, err.Error(), nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_DELETE_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}
 
-	status = http.StatusOK
-	message = dto.MESSAGE_SUCCESS_DELETE_MK
-	res := utils.BuildResponseSuccess(message, any(nil), path)
-	ctx.JSON(status, res)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_DELETE_MK, any(nil), path)
+	ctx.JSON(http.StatusOK, res)
 }
 
 // GetMataKuliah godoc
-// @Summary get mata kuliah
-// @Description melihat mata kuliah yang sudah ada
+// @Summary Get Mata Kuliah
+// @Description Mendapatkan data mata kuliah. Jika query id/kode diberikan, return 1 data; tanpa query, return semua dengan pagination
 // @Description
 // @Description  **Akses:** Logged User
-// @Description
-// @Description  **Error yang mungkin terjadi:**
-// @Description  - `400` Parameter Query tidak valid -> `message: "failed to validate mata kuliah Query", error: "Key: 'mkName' Error:..."`
-// @Description  - `400` mata kuliah dengan nama tersebut tidak ditemukan -> `message: "failed to update mata kuliah", error: "mata kuliah not found"`
-// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
-// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
-// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
-// @Description  - `403` mata kuliah user tidak memiliki akses -> `message: "mata kuliah anda tidak diizinkan", error: "Forbidden"`
-// @Description  - `500` Kesalahan internal server -> `message: "failed to update mata kuliah", error: "Internal Error"`
 // @Tags mata-kuliah
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Param query query dto.MkQuery false "Mata Kuliah Name Or ID (Pilih salah satu)"
+// @Param id query string false "ID Mata Kuliah (UUID)" example(12345678-1234-1234-1234-123456789012)
+// @Param kode query string false "Kode Mata Kuliah" example(MK001)
+// @Param page query int false "Halaman (default: 1, per halaman: 10)" example(1)
 // @Success      200      {object}  utils.Response[dto.MkResponse,any]
-// @Success      200      {object}  utils.Response[[]dto.MkResponse,any]
+// @Success      200      {object}  utils.Response[utils.PaginatedData[[]dto.MkResponse],any]
 // @Failure      400      {object}  swagger.ErrUpdateMkFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
-// @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrUpdateMkInternalServer
-// @Router /api/mata-kuliah/ [get]
+// @Router /api/mata-kuliah [get]
 func (c *mkController) GetMk(ctx *gin.Context) {
 	path := ctx.Request.URL.Path
 
-	var QueryParams dto.MkQuery
-	if err := ctx.ShouldBindQuery(&QueryParams); err != nil {
+	var queryParams dto.MkQuery
+	if err := ctx.ShouldBindQuery(&queryParams); err != nil {
 		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	var (
-		err     error
-		status  int
-		message string
-		result  any
-	)
-
-	if QueryParams.ID != "" && QueryParams.Kode != "" {
-		err = dto.ErrQueryParams
-		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
+	if queryParams.ID != "" && queryParams.Kode != "" {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, dto.ErrQueryParams.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	if QueryParams.ID != "" {
-		mkId, err := uuid.Parse(QueryParams.ID)
+	if queryParams.ID != "" {
+		mkId, err := uuid.Parse(queryParams.ID)
 		if err != nil {
 			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 			return
 		}
-		result, err = c.mkService.GetMkById(ctx, mkId)
-	} else if QueryParams.Kode != "" {
-		QueryParams.Kode = helpers.NormalizeString(QueryParams.Kode)
-		result, err = c.mkService.GetMkByKode(ctx, QueryParams.Kode)
-	} else {
-		result, err = c.mkService.GetAllMk(ctx)
+		result, err := c.mkService.GetMkById(ctx, mkId)
+		if err != nil {
+			status := http.StatusBadRequest
+			if errors.Is(err, constants.ErrInternalErr) {
+				status = http.StatusInternalServerError
+			}
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(status, res)
+			return
+		}
+		res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_MK, result, path)
+		ctx.JSON(http.StatusOK, res)
+		return
 	}
 
+	if queryParams.Kode != "" {
+		queryParams.Kode = helpers.NormalizeString(queryParams.Kode)
+		result, err := c.mkService.GetMkByKode(ctx, queryParams.Kode)
+		if err != nil {
+			status := http.StatusBadRequest
+			if errors.Is(err, constants.ErrInternalErr) {
+				status = http.StatusInternalServerError
+			}
+			res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(status, res)
+			return
+		}
+		res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_MK, result, path)
+		ctx.JSON(http.StatusOK, res)
+		return
+	}
+
+	// Pagination untuk get all
+	var pageQuery utils.PaginationQuery
+	if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
+	mks, total, err := c.mkService.GetAllMkPaginated(ctx, pageQuery.Page)
 	if err != nil {
-		status = http.StatusBadRequest
-		message = dto.MESSAGE_FAILED_GET_MK
+		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
 		}
-		res := utils.BuildResponseFailed(message, err.Error(), nil, path)
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_MK, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(status, res)
 		return
 	}
 
-	status = http.StatusOK
-	message = dto.MESSAGE_SUCCESS_GET_MK
-	res := utils.BuildResponseSuccess(message, result, path)
-	ctx.JSON(status, res)
+	paginated := utils.BuildPaginatedResponse(mks, pageQuery.Page, total)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_MK, paginated, path)
+	ctx.JSON(http.StatusOK, res)
 }

@@ -18,6 +18,8 @@ type UserRepository interface {
 	GetUserByID(ctx context.Context, tx *gorm.DB, userId uuid.UUID) (entities.User, error)
 	GetUserByEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, error)
 	GetUserByRole(ctx context.Context, tx *gorm.DB, roleId uint) ([]entities.User, error)
+	GetUserByRolePaginated(ctx context.Context, tx *gorm.DB, roleId uint, offset, limit int) ([]entities.User, int64, error)
+	GetAllUsersPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.User, int64, error)
 	GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, error)
 	CheckEmail(ctx context.Context, tx *gorm.DB, email string) (entities.User, bool, error)
 	CheckRoleWithDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, bool, error)
@@ -115,6 +117,36 @@ func (r *userRepository) GetUserByRole(ctx context.Context, tx *gorm.DB, roleId 
 	return users, nil
 }
 
+func (r *userRepository) GetUserByRolePaginated(ctx context.Context, tx *gorm.DB, roleId uint, offset, limit int) ([]entities.User, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("role_id = ?", roleId).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	var users []entities.User
+	if err := tx.WithContext(ctx).Preload("Role").Where("role_id = ?", roleId).Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		return nil, 0, err
+	}
+	return users, total, nil
+}
+
+func (r *userRepository) GetAllUsersPaginated(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.User, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.User{}).Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+	var users []entities.User
+	if err := tx.WithContext(ctx).Preload("Role").Offset(offset).Limit(limit).Find(&users).Error; err != nil {
+		return nil, 0, err
+	}
+	return users, total, nil
+}
+
 func (r *userRepository) GetUserByRoleAndDetailID(ctx context.Context, tx *gorm.DB, roleId uint, detailId uuid.UUID) (entities.User, error) {
 	if tx == nil {
 		tx = r.db
@@ -171,7 +203,9 @@ func (r *userRepository) CheckByMahasiswaRoleAndDetailID(ctx context.Context, tx
 		tx = r.db
 	}
 	var count int64
-	if err := tx.WithContext(ctx).Model(&entities.User{}).Where("role_id = ? AND detail_id = ?", "mahasiswa", detailId).Count(&count).Error; err != nil {
+	if err := tx.WithContext(ctx).Model(&entities.User{}).
+		Where("role_id = (SELECT id FROM roles WHERE name = ?) AND detail_id = ?", "mahasiswa", detailId).
+		Count(&count).Error; err != nil {
 		return false, err
 	}
 	return count > 0, nil
