@@ -43,6 +43,7 @@ func run(server *gin.Engine) {
 		serve = ":" + port
 		docs.SwaggerInfo.Host = app
 		SWAGGER_PATH = "/swagger/*any"
+		gin.SetMode(gin.ReleaseMode)
 	}
 	log.Printf("API docs url: %v", SWAGGER_PATH)
 	server.GET(SWAGGER_PATH, ginSwagger.WrapHandler(swaggerFiles.Handler))
