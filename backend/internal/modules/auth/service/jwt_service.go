@@ -15,7 +15,7 @@ import (
 )
 
 type JwtService interface {
-	GenerateAccessToken(userId string, roleName string, userEmail string, detailId *uuid.UUID) (string, error)
+	GenerateAccessToken(userId string, roleName string, userEmail string, detailId *uuid.UUID, kelasId uuid.UUID) (string, error)
 	GenerateRefreshToken() (string, time.Time)
 	ValidateToken(token string) (*jwt.Token, error)
 	GetUserIDByToken(token string) (string, error)
@@ -29,6 +29,7 @@ type jwtCustomClaim struct {
 	DetailID  uuid.UUID `json:"detail_id"`
 	RoleName  string    `json:"role_name"`
 	UserEmail string    `json:"user_email"`
+	KelasID   uuid.UUID `json:"kelas_id"`
 	jwt.RegisteredClaims
 }
 
@@ -56,14 +57,16 @@ func NewJwtService() JwtService {
 	}
 }
 
-func (j *jwtService) GenerateAccessToken(userId string, roleName string, userEmail string, detailId *uuid.UUID) (string, error) {
+func (j *jwtService) GenerateAccessToken(userId string, roleName string, userEmail string, detailId *uuid.UUID, kelasId uuid.UUID) (string, error) {
 	var claimDetailID uuid.UUID
 	if detailId != nil {
 		claimDetailID = *detailId
 	}
+
 	claims := jwtCustomClaim{
 		UserID:    userId,
 		DetailID:  claimDetailID,
+		KelasID:   kelasId,
 		RoleName:  roleName,
 		UserEmail: userEmail,
 		RegisteredClaims: jwt.RegisteredClaims{

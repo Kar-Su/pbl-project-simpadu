@@ -933,7 +933,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest"
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.KelasMahasiswaCreateRequest"
                         }
                     }
                 ],
@@ -1906,6 +1906,244 @@
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetUserInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/pengampu": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan pengampu baru ke dalam sistem.\n\n**Akses:** Super Admin, Admin Pegawai.\n\n**Error yang mungkin terjadi:**\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'Pengampu...' Error:...\"`\n- `400` pengampu dengan nama tersebut sudah ada -\u003e `message: \"failed to create pengampu\", error: \"pengampu already exists\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` Role user tidak memiliki akses -\u003e `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to create role\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pengampu"
+                ],
+                "summary": "Buat Pengampu Baru",
+                "parameters": [
+                    {
+                        "description": "Payload Create Pengampu",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.CreatePengampuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/pengampu/kelas/{kelas_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan pengampu dari sistem berdasarkan id.\n\n**Akses:** Logged User.\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"failed to validate role uri\", error: \"Key: 'RoleName' Error:...\"`\n- `400` Pengampu dengan id tersebut tidak ditemukan -\u003e `message: \"failed to delete pengampu\", error: \"pengampu not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to delete pengampu\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pengampu"
+                ],
+                "summary": "Get Pengampu by kelas id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "da322-f33",
+                        "description": "UUID kelas",
+                        "name": "kelas_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_pengampu_dto_PengampuResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/pengampu/{pengampu_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan pengampu dari sistem berdasarkan id.\n\n**Akses:** Logged User.\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"failed to validate role uri\", error: \"Key: 'RoleName' Error:...\"`\n- `400` Pengampu dengan id tersebut tidak ditemukan -\u003e `message: \"failed to delete pengampu\", error: \"pengampu not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to delete pengampu\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pengampu"
+                ],
+                "summary": "Get Pengampu by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "32kg-k3943-",
+                        "description": "ID Pengampu",
+                        "name": "pengampu_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_pengampu_dto_PengampuResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengubah data pengampu berdasarkan ID.\n\n**Akses:** Super Admin, Admin Pegawai.\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"failed to validate pengampu uri\", error: \"Key: 'pengampuID..' Error:...\"`\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'Pengampu..' Error:...\"`\n- `400` Pengampu dengan ID tersebut tidak ditemukan -\u003e `message: \"failed to update pengampu\", error: \"pengampu not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` Role user tidak memiliki akses -\u003e `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to update role\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pengampu"
+                ],
+                "summary": "Update Pengampu",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "rrh55dfb-h4o796gntyt",
+                        "description": "ID Pengampu yang Akan Diubah",
+                        "name": "pengampu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Payload Update Pengampu",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.UpdatePengampuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_pengampu_dto_PengampuResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menghapus pengampu dari sistem secara permanen berdasarkan id.\n\n**Akses:** Khusus Super Admin.\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"failed to validate role uri\", error: \"Key: 'RoleName' Error:...\"`\n- `400` Pengampu dengan id tersebut tidak ditemukan -\u003e `message: \"failed to delete pengampu\", error: \"pengampu not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` Role user tidak memiliki akses -\u003e `message: \"Role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to delete pengampu\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pengampu"
+                ],
+                "summary": "Hapus Pengampu by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "g202gdvs-h4rtrh-56tjt",
+                        "description": "ID Pengampu yang Akan Dihapus",
+                        "name": "pengampu_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer"
                         }
                     }
                 }
@@ -3700,36 +3938,27 @@
             "properties": {
                 "kurikulum_kode": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "mk-hutao"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "TI-5A"
                 },
                 "prodi_name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "Teknik Informatika"
                 },
                 "semester": {
                     "type": "integer",
-                    "minimum": 0
+                    "minimum": 0,
+                    "example": 5
                 },
                 "tahun_akademik_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest": {
-            "type": "object",
-            "required": [
-                "mahasiswa_id"
-            ],
-            "properties": {
-                "kelas_id": {
-                    "type": "string"
-                },
-                "mahasiswa_id": {
-                    "type": "string"
+                    "type": "integer",
+                    "example": 20241
                 }
             }
         },
@@ -3792,22 +4021,27 @@
             "properties": {
                 "kurikulum_kode": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "mk-hutao"
                 },
                 "name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "TI-5A"
                 },
                 "prodi_name": {
                     "type": "string",
-                    "maxLength": 255
+                    "maxLength": 255,
+                    "example": "Teknik Informatika"
                 },
                 "semester": {
                     "type": "integer",
-                    "minimum": 0
+                    "minimum": 0,
+                    "example": 5
                 },
                 "tahun_akademik_id": {
-                    "type": "integer"
+                    "type": "integer",
+                    "example": 20241
                 }
             }
         },
@@ -4155,6 +4389,51 @@
                 }
             }
         },
+        "web-hosting_internal_modules_pengampu_dto.DosenResponse": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_pengampu_dto.MataKuliahResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string"
+                },
+                "kode": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "sks": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web-hosting_internal_modules_pengampu_dto.PengampuResponse": {
+            "type": "object",
+            "properties": {
+                "dosen": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_pengampu_dto.DosenResponse"
+                },
+                "mata_kuliah": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_pengampu_dto.MataKuliahResponse"
+                },
+                "pengampu_id": {
+                    "type": "string"
+                }
+            }
+        },
         "web-hosting_internal_modules_prodi_dto.ProdiCreateRequest": {
             "type": "object",
             "required": [
@@ -4365,6 +4644,29 @@
                 "tipe_semester": {
                     "type": "string",
                     "example": "genap"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.CreatePengampuRequest": {
+            "type": "object",
+            "required": [
+                "dosen_id",
+                "kelas_id",
+                "mkkode"
+            ],
+            "properties": {
+                "dosen_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                },
+                "kelas_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                },
+                "mkkode": {
+                    "type": "string",
+                    "maxLength": 12,
+                    "example": "MK001"
                 }
             }
         },
@@ -6111,6 +6413,40 @@
                 }
             }
         },
+        "web-hosting_internal_package_swagger.KelasMahasiswaCreateRequest": {
+            "type": "object",
+            "required": [
+                "mahasiswa_id"
+            ],
+            "properties": {
+                "kelas_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                },
+                "mahasiswa_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.UpdatePengampuRequest": {
+            "type": "object",
+            "properties": {
+                "dosen_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                },
+                "kelas_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                },
+                "mkkode": {
+                    "type": "string",
+                    "maxLength": 12,
+                    "example": "MK001"
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.UserAdminCreateRequest": {
             "type": "object",
             "required": [
@@ -6400,6 +6736,29 @@
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_pengampu_dto_PengampuResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_pengampu_dto.PengampuResponse"
+                    }
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
             "type": "object",
             "properties": {
@@ -6626,6 +6985,26 @@
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_pengampu_dto_PengampuResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_pengampu_dto.PengampuResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
             "type": "object",
             "properties": {
@@ -6769,7 +7148,7 @@
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
-            "description": "Format: Bearer \u003caccess token\u003e",
+            "description": "Format: Bearer :access token:",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

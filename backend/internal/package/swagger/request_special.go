@@ -49,4 +49,23 @@ type (
 		TahunAkhir   string `json:"tahun_akhir" binding:"omitempty" example:"2025-01-01"`
 		Status       string `json:"status" binding:"omitempty,enumStatus" example:"aktif"`
 	}
+
+	// KELAS MAHASISWA
+	KelasMahasiswaCreateRequest struct {
+		KelasID     string `json:"kelas_id" example:"01965a1d-7777-7777-7777-777777777777"`
+		MahasiswaID string `json:"mahasiswa_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+	}
+
+	// PENGAMPU
+	CreatePengampuRequest struct {
+		KelasID string `json:"kelas_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+		MKKode  string `json:"mkkode" binding:"required,max=12" example:"MK001"`
+		DosenID string `json:"dosen_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+	}
+
+	UpdatePengampuRequest struct {
+		KelasID string `json:"kelas_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
+		MKKode  string `json:"mkkode" binding:"omitempty,max=12" example:"MK001"`
+		DosenID string `json:"dosen_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
+	}
 )

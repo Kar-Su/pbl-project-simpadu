@@ -60,8 +60,8 @@ type (
 	}
 
 	KurikulumResponse struct {
-		Kode        string               `json:"kode"`
-		Name        string               `json:"name"`
+		Kode        string                `json:"kode"`
+		Name        string                `json:"name"`
 		KurikulumMK []KurikulumMKResponse `json:"kurikulum_mk,omitempty"`
 	}
 
@@ -147,19 +147,19 @@ func ToKelasResponse(entity entities.Kelas) KelasResponse {
 
 type (
 	KelasCreateRequest struct {
-		Name            string `json:"name" binding:"required,max=255"`
-		Semester        uint   `json:"semester" binding:"omitempty,gte=0"`
-		ProdiName       string `json:"prodi_name" binding:"required,max=255"`
-		TahunAkademikID uint   `json:"tahun_akademik_id" binding:"required"`
-		KurikulumKode   string `json:"kurikulum_kode" binding:"required,max=255"`
+		Name            string `json:"name" binding:"required,max=255" example:"TI-5A"`
+		Semester        uint   `json:"semester" binding:"omitempty,gte=0" example:"5"`
+		ProdiName       string `json:"prodi_name" binding:"required,max=255" example:"Teknik Informatika"`
+		TahunAkademikID uint   `json:"tahun_akademik_id" binding:"required" example:"20241"`
+		KurikulumKode   string `json:"kurikulum_kode" binding:"required,max=255" example:"mk-hutao"`
 	}
 
 	KelasUpdateRequest struct {
-		Name            string `json:"name" binding:"omitempty,max=255"`
-		Semester        uint   `json:"semester" binding:"omitempty,gte=0"`
-		ProdiName       string `json:"prodi_name" binding:"omitempty,max=255"`
-		TahunAkademikID uint   `json:"tahun_akademik_id" binding:"omitempty"`
-		KurikulumKode   string `json:"kurikulum_kode" binding:"omitempty,max=255"`
+		Name            string `json:"name" binding:"omitempty,max=255" example:"TI-5A"`
+		Semester        uint   `json:"semester" binding:"omitempty,gte=0" example:"5"`
+		ProdiName       string `json:"prodi_name" binding:"omitempty,max=255" example:"Teknik Informatika"`
+		TahunAkademikID uint   `json:"tahun_akademik_id" binding:"omitempty" example:"20241"`
+		KurikulumKode   string `json:"kurikulum_kode" binding:"omitempty,max=255" example:"mk-hutao"`
 	}
 
 	ProdiNameURI struct {
