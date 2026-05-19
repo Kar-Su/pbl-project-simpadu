@@ -120,3 +120,16 @@ CREATE TABLE IF NOT EXISTS kelas_mahasiswa(
     CONSTRAINT fk_kelas_mahasiswa_kelas FOREIGN KEY (kelas_id) REFERENCES kelas(id) ON DELETE CASCADE,
     CONSTRAINT fk_kelas_mahasiswa_mahasiswa FOREIGN KEY (mahasiswa_id) REFERENCES users(detail_id) ON UPDATE CASCADE
 ) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS pengampu(
+    id char(36) PRIMARY KEY,
+    kelas_id char(36) NOT NULL,
+    mk_kode char(12) NOT NULL,
+    dosen_id char(36) NOT NULL,
+
+    CONSTRAINT idx_kelas_mk UNIQUE (kelas_id, mk_kode),
+
+    CONSTRAINT fk_pengampu_kelas FOREIGN KEY (kelas_id) REFERENCES kelas(id) ON DELETE CASCADE,
+    CONSTRAINT fk_pengampu_mk FOREIGN KEY (mk_kode) REFERENCES mata_kuliah(kode) ON DELETE CASCADE,
+    CONSTRAINT fk_pengampu_dosen FOREIGN KEY (dosen_id) REFERENCES users(detail_id) ON UPDATE CASCADE
+) engine=InnoDB;

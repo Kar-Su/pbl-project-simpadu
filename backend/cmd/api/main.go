@@ -8,6 +8,7 @@ import (
 	"web-hosting/internal/modules/kelas"
 	"web-hosting/internal/modules/kurikulum"
 	"web-hosting/internal/modules/mk"
+	"web-hosting/internal/modules/pengampu"
 	"web-hosting/internal/modules/prodi"
 	"web-hosting/internal/modules/role"
 	"web-hosting/internal/modules/user"
@@ -77,7 +78,7 @@ func run(server *gin.Engine) {
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
 // @name                        Authorization
-// @description                 Format: Bearer <access token>
+// @description                 Format: Bearer :access token:
 func main() {
 	injector := do.New()
 
@@ -95,6 +96,7 @@ func main() {
 	akademik.RegisterRoutes(server, injector)
 	kurikulum.RegisterRoutes(server, injector)
 	kelas.RegisterRoutes(server, injector)
+	pengampu.RegisterRoutes(server, injector)
 
 	worker := do.MustInvoke[workers.Schedule](injector)
 	worker.StartSchedule()

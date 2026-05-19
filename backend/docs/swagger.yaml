@@ -105,33 +105,29 @@ definitions:
   web-hosting_internal_modules_kelas_dto.KelasCreateRequest:
     properties:
       kurikulum_kode:
+        example: mk-hutao
         maxLength: 255
         type: string
       name:
+        example: TI-5A
         maxLength: 255
         type: string
       prodi_name:
+        example: Teknik Informatika
         maxLength: 255
         type: string
       semester:
+        example: 5
         minimum: 0
         type: integer
       tahun_akademik_id:
+        example: 20241
         type: integer
     required:
     - kurikulum_kode
     - name
     - prodi_name
     - tahun_akademik_id
-    type: object
-  web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest:
-    properties:
-      kelas_id:
-        type: string
-      mahasiswa_id:
-        type: string
-    required:
-    - mahasiswa_id
     type: object
   web-hosting_internal_modules_kelas_dto.KelasMahasiswaResponse:
     properties:
@@ -171,18 +167,23 @@ definitions:
   web-hosting_internal_modules_kelas_dto.KelasUpdateRequest:
     properties:
       kurikulum_kode:
+        example: mk-hutao
         maxLength: 255
         type: string
       name:
+        example: TI-5A
         maxLength: 255
         type: string
       prodi_name:
+        example: Teknik Informatika
         maxLength: 255
         type: string
       semester:
+        example: 5
         minimum: 0
         type: integer
       tahun_akademik_id:
+        example: 20241
         type: integer
     type: object
   web-hosting_internal_modules_kelas_dto.KurikulumMKResponse:
@@ -425,6 +426,35 @@ definitions:
         minimum: 0
         type: integer
     type: object
+  web-hosting_internal_modules_pengampu_dto.DosenResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  web-hosting_internal_modules_pengampu_dto.MataKuliahResponse:
+    properties:
+      id:
+        type: string
+      kode:
+        type: string
+      name:
+        type: string
+      sks:
+        type: integer
+    type: object
+  web-hosting_internal_modules_pengampu_dto.PengampuResponse:
+    properties:
+      dosen:
+        $ref: '#/definitions/web-hosting_internal_modules_pengampu_dto.DosenResponse'
+      mata_kuliah:
+        $ref: '#/definitions/web-hosting_internal_modules_pengampu_dto.MataKuliahResponse'
+      pengampu_id:
+        type: string
+    type: object
   web-hosting_internal_modules_prodi_dto.ProdiCreateRequest:
     properties:
       jenjang:
@@ -577,6 +607,23 @@ definitions:
       tipe_semester:
         example: genap
         type: string
+    type: object
+  web-hosting_internal_package_swagger.CreatePengampuRequest:
+    properties:
+      dosen_id:
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
+      kelas_id:
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
+      mkkode:
+        example: MK001
+        maxLength: 12
+        type: string
+    required:
+    - dosen_id
+    - kelas_id
+    - mkkode
     type: object
   web-hosting_internal_package_swagger.ErrCountAllUsersInternalServer:
     properties:
@@ -1823,6 +1870,30 @@ definitions:
         example: false
         type: boolean
     type: object
+  web-hosting_internal_package_swagger.KelasMahasiswaCreateRequest:
+    properties:
+      kelas_id:
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
+      mahasiswa_id:
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
+    required:
+    - mahasiswa_id
+    type: object
+  web-hosting_internal_package_swagger.UpdatePengampuRequest:
+    properties:
+      dosen_id:
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
+      kelas_id:
+        example: 01965a1d-7777-7777-7777-777777777777
+        type: string
+      mkkode:
+        example: MK001
+        maxLength: 12
+        type: string
+    type: object
   web-hosting_internal_package_swagger.UserAdminCreateRequest:
     properties:
       detail_id:
@@ -2030,6 +2101,22 @@ definitions:
       success:
         type: boolean
     type: object
+  web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_pengampu_dto_PengampuResponse-any:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_pengampu_dto.PengampuResponse'
+        type: array
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
   web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_prodi_dto_ProdiResponse-any:
     properties:
       data:
@@ -2178,6 +2265,20 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/web-hosting_internal_modules_mk_dto.MkResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_pengampu_dto_PengampuResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_pengampu_dto.PengampuResponse'
       error: {}
       message:
         example: Operation successful
@@ -2974,7 +3075,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/web-hosting_internal_modules_kelas_dto.KelasMahasiswaCreateRequest'
+          $ref: '#/definitions/web-hosting_internal_package_swagger.KelasMahasiswaCreateRequest'
       produces:
       - application/json
       responses:
@@ -3746,6 +3847,217 @@ paths:
       summary: Get Current User (Profil Saya)
       tags:
       - user
+  /api/pengampu:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan pengampu baru ke dalam sistem.
+
+        **Akses:** Super Admin, Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'Pengampu...' Error:..."`
+        - `400` pengampu dengan nama tersebut sudah ada -> `message: "failed to create pengampu", error: "pengampu already exists"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to create role", error: "Internal Error"`
+      parameters:
+      - description: Payload Create Pengampu
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_package_swagger.CreatePengampuRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Buat Pengampu Baru
+      tags:
+      - pengampu
+  /api/pengampu/{pengampu_id}:
+    delete:
+      consumes:
+      - application/json
+      description: |-
+        Menghapus pengampu dari sistem secara permanen berdasarkan id.
+
+        **Akses:** Khusus Super Admin.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'RoleName' Error:..."`
+        - `400` Pengampu dengan id tersebut tidak ditemukan -> `message: "failed to delete pengampu", error: "pengampu not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to delete pengampu", error: "Internal Error"`
+      parameters:
+      - description: ID Pengampu yang Akan Dihapus
+        example: g202gdvs-h4rtrh-56tjt
+        in: path
+        name: pengampu_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Hapus Pengampu by id
+      tags:
+      - pengampu
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mendapatkan pengampu dari sistem berdasarkan id.
+
+        **Akses:** Logged User.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'RoleName' Error:..."`
+        - `400` Pengampu dengan id tersebut tidak ditemukan -> `message: "failed to delete pengampu", error: "pengampu not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `500` Kesalahan internal server -> `message: "failed to delete pengampu", error: "Internal Error"`
+      parameters:
+      - description: ID Pengampu
+        example: 32kg-k3943-
+        in: path
+        name: pengampu_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_pengampu_dto_PengampuResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Pengampu by id
+      tags:
+      - pengampu
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengubah data pengampu berdasarkan ID.
+
+        **Akses:** Super Admin, Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate pengampu uri", error: "Key: 'pengampuID..' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'Pengampu..' Error:..."`
+        - `400` Pengampu dengan ID tersebut tidak ditemukan -> `message: "failed to update pengampu", error: "pengampu not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` Role user tidak memiliki akses -> `message: "Role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
+      parameters:
+      - description: ID Pengampu yang Akan Diubah
+        example: rrh55dfb-h4o796gntyt
+        in: path
+        name: pengampu_id
+        required: true
+        type: string
+      - description: Payload Update Pengampu
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_package_swagger.UpdatePengampuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_pengampu_dto_PengampuResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateRoleInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Pengampu
+      tags:
+      - pengampu
+  /api/pengampu/kelas/{kelas_id}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mendapatkan pengampu dari sistem berdasarkan id.
+
+        **Akses:** Logged User.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'RoleName' Error:..."`
+        - `400` Pengampu dengan id tersebut tidak ditemukan -> `message: "failed to delete pengampu", error: "pengampu not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `500` Kesalahan internal server -> `message: "failed to delete pengampu", error: "Internal Error"`
+      parameters:
+      - description: UUID kelas
+        example: da322-f33
+        in: path
+        name: kelas_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_pengampu_dto_PengampuResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Pengampu by kelas id
+      tags:
+      - pengampu
   /api/prodi:
     get:
       consumes:
@@ -5072,7 +5384,7 @@ paths:
       - user
 securityDefinitions:
   ApiKeyAuth:
-    description: 'Format: Bearer <access token>'
+    description: 'Format: Bearer :access token:'
     in: header
     name: Authorization
     type: apiKey

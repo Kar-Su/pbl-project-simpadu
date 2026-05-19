@@ -21,6 +21,9 @@ import (
 	mkController "web-hosting/internal/modules/mk/controller"
 	mkRepo "web-hosting/internal/modules/mk/repository"
 	mkService "web-hosting/internal/modules/mk/service"
+	pengampuController "web-hosting/internal/modules/pengampu/controller"
+	pengampuRepo "web-hosting/internal/modules/pengampu/repository"
+	pengampuService "web-hosting/internal/modules/pengampu/service"
 	prodiController "web-hosting/internal/modules/prodi/controller"
 	prodiRepo "web-hosting/internal/modules/prodi/repository"
 	prodiService "web-hosting/internal/modules/prodi/service"
@@ -73,6 +76,7 @@ func RegisterProviders(injector do.Injector) {
 	kPivotRepo := kurikulumRepo.NewKurikulumMKRepository(db)
 	kelasRepo := kelasRepository.NewKelasRepository(db)
 	kelasPivotRepo := kelasRepository.NewKelasMahasiswaRepository(db)
+	pengampuRepo := pengampuRepo.NewPengampuRepository(db)
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
@@ -85,6 +89,7 @@ func RegisterProviders(injector do.Injector) {
 	kPivotService := kurikulumService.NewKurikulumMKService(db, kRepo, kPivotRepo, mkRepo)
 	kelasServiceVar := kelasService.NewKelasService(db, kelasRepo, akademikRepo, prodiRepo, kRepo)
 	kelasPivotService := kelasService.NewKelasMahasiswaService(db, userRepo, kelasRepo, kelasPivotRepo)
+	pengampuService := pengampuService.NewPengampuService(db, pengampuRepo)
 
 	do.Provide(injector, func(i do.Injector) (authService.AuthService, error) {
 		return authService.NewAuthService(userRepo, refreshTokenRepo, kelasPivotRepo, jwtService, db), nil
@@ -133,5 +138,8 @@ func RegisterProviders(injector do.Injector) {
 	})
 	do.Provide(injector, func(i do.Injector) (kelasController.KelasMahasiswaController, error) {
 		return kelasController.NewKelasMahasiswaController(i, db, kelasPivotService), nil
+	})
+	do.Provide(injector, func(i do.Injector) (pengampuController.PengampuController, error) {
+		return pengampuController.NewPengampuController(i, db, pengampuService), nil
 	})
 }

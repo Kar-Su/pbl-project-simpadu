@@ -45,7 +45,7 @@ func NewKelasMahasiswaController(injector do.Injector, db *gorm.DB, pivotService
 // @Produce json
 // @Security ApiKeyAuth
 // @Param kelas_id path string true "Kelas ID (UUID)"
-// @Param request body dto.KelasMahasiswaCreateRequest true "Kelas Mahasiswa Request"
+// @Param request body swagger.KelasMahasiswaCreateRequest true "Kelas Mahasiswa Request"
 // @Success      201      {object}  utils.Response[any,any]
 // @Failure      400      {object}  swagger.ErrCreateKelasFailed
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
