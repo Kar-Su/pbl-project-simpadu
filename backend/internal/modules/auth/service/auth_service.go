@@ -14,6 +14,7 @@ import (
 	"web-hosting/internal/package/constants"
 	"web-hosting/internal/package/helpers"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -63,7 +64,7 @@ func (s *authService) FindRefreshToken(ctx context.Context, token string) (authD
 func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (authDto.TokenResponse, error) {
 	user, isExist, err := s.useRepo.CheckEmail(ctx, s.db, req.Email)
 	if err != nil {
-		log.Printf("Internal Error: %v", err)
+		log.Printf("Internal Error(%v): %v", req.Email, err)
 		return authDto.TokenResponse{}, constants.ErrInternalErr
 	}
 	if !isExist {
@@ -74,10 +75,13 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 		return authDto.TokenResponse{}, err
 	}
 
-	kelasId, err := s.kelasPivotRepo.GetKelasIdByMahasiswa(ctx, s.db, user.DetailID)
-	if err != nil {
-		log.Printf("Internal Error: %v", err)
-		return authDto.TokenResponse{}, constants.ErrInternalErr
+	kelasId := uuid.Nil
+	if user.Role.Name == constants.ROLE_MAHASISWA {
+		kelasId, err = s.kelasPivotRepo.GetKelasIdByMahasiswa(ctx, s.db, user.DetailID)
+		if err != nil {
+			log.Printf("Internal Error: %v", err)
+			return authDto.TokenResponse{}, constants.ErrInternalErr
+		}
 	}
 
 	accessToken, err := s.jwtService.GenerateAccessToken(user.ID.String(), user.Role.Name, user.Email, user.DetailID, kelasId)

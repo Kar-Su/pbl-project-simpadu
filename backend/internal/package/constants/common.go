@@ -23,6 +23,7 @@ const (
 	ROLE_ADMIN_MAHASISWA = "admin-mahasiswa"
 	ROLE_ADMIN_KEUANGAN  = "admin-keuangan"
 	ROLE_DOSEN           = "dosen"
+	ROLE_MAHASISWA       = "mahasiswa"
 
 	EMAIL_SUPER_ADMIN     = "tim1@poliban.ac.id"
 	EMAIL_ADMIN_PEGAWAI   = "tim2@poliban.ac.id"
