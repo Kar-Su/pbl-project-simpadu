@@ -79,6 +79,8 @@ func (s *authService) Login(ctx context.Context, req userDto.UserLoginRequest) (
 	if user.Role.Name == constants.ROLE_MAHASISWA {
 		kelasId, err = s.kelasPivotRepo.GetKelasIdByMahasiswa(ctx, s.db, user.DetailID)
 		if err != nil {
+			if errors.Is(err, gorm.ErrRecordNotFound) {
+			}
 			log.Printf("Internal Error: %v", err)
 			return authDto.TokenResponse{}, constants.ErrInternalErr
 		}
