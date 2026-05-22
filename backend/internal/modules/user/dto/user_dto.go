@@ -107,8 +107,8 @@ type (
 	}
 
 	UserLoginRequest struct {
-		Email    string `json:"email" form:"email" binding:"required,email" example:"rezi@example.com // required, must be a valid email address"`
-		Password string `json:"password" form:"password" binding:"required,min=8" example:"inipasswordrezi // required, min 8 characters"`
+		Email    string `json:"email" form:"email" binding:"required,email" example:"super@admin.com"`
+		Password string `json:"password" form:"password" binding:"required,min=8" example:"pass#super"`
 	}
 )
 

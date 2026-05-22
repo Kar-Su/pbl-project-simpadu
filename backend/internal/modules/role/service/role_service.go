@@ -18,7 +18,7 @@ type RoleService interface {
 	Update(ctx context.Context, req dto.RoleUpdateRequest, roleId uint) (entities.Role, error)
 	Delete(ctx context.Context, roleId uint) error
 	GetRoleIdByRoleName(ctx context.Context, roleName string) (uint, error)
-	GetAllRole(ctx context.Context) ([]entities.Role, error)
+	GetAllRole(ctx context.Context) (any, error)
 }
 
 type roleService struct {
@@ -106,7 +106,7 @@ func (s *roleService) GetRoleIdByRoleName(ctx context.Context, roleName string) 
 	return roleId, nil
 }
 
-func (s *roleService) GetAllRole(ctx context.Context) ([]entities.Role, error) {
+func (s *roleService) GetAllRole(ctx context.Context) (any, error) {
 	roles, err := s.roleRepo.GetAllRole(ctx, s.db)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -116,5 +116,13 @@ func (s *roleService) GetAllRole(ctx context.Context) ([]entities.Role, error) {
 		return nil, constants.ErrInternalErr
 	}
 
-	return roles, nil
+	data := struct {
+		Role       []entities.Role `json:"role"`
+		TotalItems int             `json:"total_items"`
+	}{
+		Role:       roles,
+		TotalItems: len(roles),
+	}
+
+	return data, nil
 }

@@ -133,3 +133,33 @@ CREATE TABLE IF NOT EXISTS pengampu(
     CONSTRAINT fk_pengampu_mk FOREIGN KEY (mk_kode) REFERENCES mata_kuliah(kode) ON DELETE CASCADE,
     CONSTRAINT fk_pengampu_dosen FOREIGN KEY (dosen_id) REFERENCES users(detail_id) ON UPDATE CASCADE
 ) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS presensi (
+    id char(36) PRIMARY KEY,
+    tipe enum('mahasiswa', 'pegawai') NOT NULL,
+    pengampu_id char(36) DEFAULT NULL,
+    created_at date DEFAULT CURRENT_DATE,
+    updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_presensi_pengampu FOREIGN KEY (pengampu_id) REFERENCES pengampu(id) ON UPDATE CASCADE
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS presensi_mahasiswa (
+    presensi_id char(36) NOT NULL,
+    mahasiswa_id char(36) NOT NULL,
+    status enum('hadir', 'sakit', 'izin', 'alpha') DEFAULT 'alpha',
+
+    PRIMARY KEY (presensi_id, mahasiswa_id),
+    CONSTRAINT fk_presensi_mahasiswa_presensi FOREIGN KEY (presensi_id) REFERENCES presensi(id) ON DELETE CASCADE,
+    CONSTRAINT fk_presensi_mahasiswa_mahasiswa FOREIGN KEY (mahasiswa_id) REFERENCES users(detail_id) ON UPDATE CASCADE
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS presensi_pegawai (
+    presensi_id char(36) NOT NULL,
+    pegawai_id char(36) NOT NULL,
+    status enum('hadir', 'sakit', 'izin', 'alpha') DEFAULT 'alpha',
+
+    PRIMARY KEY (presensi_id, pegawai_id),
+    CONSTRAINT fk_presensi_pegawai_presensi FOREIGN KEY (presensi_id) REFERENCES presensi(id) ON DELETE CASCADE,
+    CONSTRAINT fk_presensi_pegawai_pegawai FOREIGN KEY (pegawai_id) REFERENCES users(detail_id) ON UPDATE CASCADE
+) engine=InnoDB;

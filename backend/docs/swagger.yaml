@@ -519,10 +519,10 @@ definitions:
   web-hosting_internal_modules_user_dto.UserLoginRequest:
     properties:
       email:
-        example: rezi@example.com // required, must be a valid email address
+        example: super@admin.com
         type: string
       password:
-        example: inipasswordrezi // required, min 8 characters
+        example: pass#super
         minLength: 8
         type: string
     required:

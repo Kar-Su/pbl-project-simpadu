@@ -4537,12 +4537,12 @@ const docTemplate = `{
             "properties": {
                 "email": {
                     "type": "string",
-                    "example": "rezi@example.com // required, must be a valid email address"
+                    "example": "super@admin.com"
                 },
                 "password": {
                     "type": "string",
                     "minLength": 8,
-                    "example": "inipasswordrezi // required, min 8 characters"
+                    "example": "pass#super"
                 }
             }
         },
