@@ -1975,6 +1975,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/pengampu/dosen/{dosen_id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mendapatkan pengampu dari sistem berdasarkan id.\n\n**Akses:** Logged User.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"failed to validate role uri\", error: \"Key: 'PengampuID' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Pengampu dengan id tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to delete pengampu\", error: \"pengampu not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to delete pengampu\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "pengampu"
+                ],
+                "summary": "Get Pengampu by dosen id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "da322-f33",
+                        "description": "UUID dosen",
+                        "name": "dosen_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_pengampu_dto_PengampuResponse-any"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer"
+                        }
+                    }
+                }
+            }
+        },
         "/api/pengampu/kelas/{kelas_id}": {
             "get": {
                 "security": [

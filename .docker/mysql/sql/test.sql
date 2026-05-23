@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS pengampu(
     dosen_id char(36) NOT NULL,
 
     CONSTRAINT idx_kelas_mk UNIQUE (kelas_id, mk_kode),
+    INDEX idx_dosen_id (dosen_id),
 
     CONSTRAINT fk_pengampu_kelas FOREIGN KEY (kelas_id) REFERENCES kelas(id) ON DELETE CASCADE,
     CONSTRAINT fk_pengampu_mk FOREIGN KEY (mk_kode) REFERENCES mata_kuliah(kode) ON DELETE CASCADE,

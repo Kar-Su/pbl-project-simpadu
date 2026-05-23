@@ -16,6 +16,7 @@ type (
 		DeleteByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) error
 		GetByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Pengampu, error)
 		GetByKelasID(ctx context.Context, tx *gorm.DB, kelasID uuid.UUID) ([]entities.Pengampu, error)
+		GetByDosenID(ctx context.Context, tx *gorm.DB, dosenID uuid.UUID) ([]entities.Pengampu, error)
 	}
 
 	pengampuRepository struct {
@@ -92,6 +93,19 @@ func (r *pengampuRepository) GetByKelasID(ctx context.Context, tx *gorm.DB, kela
 
 	var pengampu []entities.Pengampu
 	if err := tx.WithContext(ctx).Preload("MataKuliah").Preload("Dosen", helpers.SelectFields("detail_id, name, email")).Where("kelas_id = ?", kelasID).Find(&pengampu).Error; err != nil {
+		return nil, err
+	}
+
+	return pengampu, nil
+}
+
+func (r *pengampuRepository) GetByDosenID(ctx context.Context, tx *gorm.DB, dosenID uuid.UUID) ([]entities.Pengampu, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var pengampu []entities.Pengampu
+	if err := tx.WithContext(ctx).Preload("MataKuliah").Preload("Dosen", helpers.SelectFields("detail_id, name, email")).Where("dosen_id = ?", dosenID).Find(&pengampu).Error; err != nil {
 		return nil, err
 	}
 

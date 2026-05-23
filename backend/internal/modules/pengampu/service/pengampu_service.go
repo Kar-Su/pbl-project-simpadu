@@ -20,6 +20,7 @@ type (
 		DeletePengampuByID(ctx context.Context, id uuid.UUID) error
 		GetPengampuByID(ctx context.Context, id uuid.UUID) (dto.PengampuResponse, error)
 		GetPengampuByKelasID(ctx context.Context, kelasID uuid.UUID) ([]dto.PengampuResponse, error)
+		GetPengampuByDosenID(ctx context.Context, dosenID uuid.UUID) ([]dto.PengampuResponse, error)
 	}
 
 	pengampuService struct {
@@ -109,6 +110,23 @@ func (s *pengampuService) GetPengampuByID(ctx context.Context, id uuid.UUID) (dt
 
 func (s *pengampuService) GetPengampuByKelasID(ctx context.Context, kelasID uuid.UUID) ([]dto.PengampuResponse, error) {
 	entities, err := s.PengampuRepo.GetByKelasID(ctx, s.db, kelasID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, dto.ErrPengampuNotFound
+		}
+		log.Printf("Internal Error: %v", err)
+		return nil, constants.ErrInternalErr
+	}
+
+	responses := make([]dto.PengampuResponse, len(entities))
+	for i, entity := range entities {
+		responses[i] = dto.ToPengampuResponse(entity)
+	}
+	return responses, nil
+}
+
+func (s *pengampuService) GetPengampuByDosenID(ctx context.Context, dosenID uuid.UUID) ([]dto.PengampuResponse, error) {
+	entities, err := s.PengampuRepo.GetByDosenID(ctx, s.db, dosenID)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, dto.ErrPengampuNotFound

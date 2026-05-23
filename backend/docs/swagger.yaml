@@ -4126,6 +4126,45 @@ paths:
       summary: Update Pengampu
       tags:
       - pengampu
+  /api/pengampu/dosen/{dosen_id}:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mendapatkan pengampu dari sistem berdasarkan id.
+
+        **Akses:** Logged User.
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'PengampuID' Error:..."`
+        - `400` Pengampu dengan id tersebut tidak ditemukan -> `message: "failed to delete pengampu", error: "pengampu not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `500` Kesalahan internal server -> `message: "failed to delete pengampu", error: "Internal Error"`
+      parameters:
+      - description: UUID dosen
+        example: da322-f33
+        in: path
+        name: dosen_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-array_web-hosting_internal_modules_pengampu_dto_PengampuResponse-any'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrDeleteRoleInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Pengampu by dosen id
+      tags:
+      - pengampu
   /api/pengampu/kelas/{kelas_id}:
     get:
       consumes:

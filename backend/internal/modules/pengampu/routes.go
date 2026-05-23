@@ -22,5 +22,6 @@ func RegisterRoutes(r *gin.Engine, injector do.Injector) {
 		pengampuRoute.DELETE("/:pengampu_id", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_PEGAWAI), pengampuController.DeletePengampuByID)
 		pengampuRoute.GET("/:pengampu_id", pengampuController.GetPengampuByID)
 		pengampuRoute.GET("/kelas/:kelas_id", pengampuController.GetPengampuByKelasID)
+		pengampuRoute.GET("/dosen/:dosen_id", pengampuController.GetPengampuByDosenID)
 	}
 }

@@ -87,4 +87,8 @@ type (
 	PengampuKelasIdURI struct {
 		KelasID string `uri:"kelas_id" binding:"required"`
 	}
+
+	PengampuDosenIdURI struct {
+		DosenID string `uri:"dosen_id" binding:"required"`
+	}
 )

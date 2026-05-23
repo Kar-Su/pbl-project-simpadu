@@ -23,6 +23,7 @@ type (
 		DeletePengampuByID(ctx *gin.Context)
 		GetPengampuByID(ctx *gin.Context)
 		GetPengampuByKelasID(ctx *gin.Context)
+		GetPengampuByDosenID(ctx *gin.Context)
 	}
 
 	pengampuController struct {
@@ -218,8 +219,8 @@ func (c *pengampuController) GetPengampuByID(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-
-	data, err := c.pengampuService.GetPengampuByID(ctx.Request.Context(), uuid.MustParse(URI.PengampuID))
+	pengampuID := uuid.MustParse(URI.PengampuID)
+	data, err := c.pengampuService.GetPengampuByID(ctx.Request.Context(), pengampuID)
 	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
@@ -264,8 +265,55 @@ func (c *pengampuController) GetPengampuByKelasID(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
+	kelasID := uuid.MustParse(URI.KelasID)
+	data, err := c.pengampuService.GetPengampuByKelasID(ctx.Request.Context(), kelasID)
+	if err != nil {
+		status := http.StatusBadRequest
+		if errors.Is(err, constants.ErrInternalErr) {
+			status = http.StatusInternalServerError
+		}
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PENGAMPU, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(status, res)
+		return
+	}
 
-	data, err := c.pengampuService.GetPengampuByKelasID(ctx.Request.Context(), uuid.MustParse(URI.KelasID))
+	res := utils.BuildResponseSuccess(dto.SUCCESS_GET_PENGAMPU, data, path)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// GetPengampuByDosenID godoc
+// @Summary      Get Pengampu by dosen id
+// @Description  Mendapatkan pengampu dari sistem berdasarkan id.
+// @Description
+// @Description  **Akses:** Logged User.
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Parameter URI tidak valid -> `message: "failed to validate role uri", error: "Key: 'PengampuID' Error:..."`
+// @Description  - `400` Pengampu dengan id tersebut tidak ditemukan -> `message: "failed to delete pengampu", error: "pengampu not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to delete pengampu", error: "Internal Error"`
+// @Tags         pengampu
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        dosen_id  path      string  true  "UUID dosen"  example(da322-f33)
+// @Success      200        {object}  utils.Response[[]dto.PengampuResponse,any]
+// @Failure      500        {object}  swagger.ErrDeleteRoleInternalServer
+// @Router       /api/pengampu/dosen/{dosen_id} [get]
+func (c *pengampuController) GetPengampuByDosenID(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+
+	var URI dto.PengampuDosenIdURI
+	if err := ctx.ShouldBindUri(&URI); err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PENGAMPU, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	dosenID := uuid.MustParse(URI.DosenID)
+	data, err := c.pengampuService.GetPengampuByDosenID(ctx.Request.Context(), dosenID)
 	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
