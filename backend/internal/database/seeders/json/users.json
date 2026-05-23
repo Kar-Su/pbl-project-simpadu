@@ -37,6 +37,13 @@
     "detail_id": "67a5ee4d-c6a9-4293-af43-a4c673522cd8"
   },
   {
+    "name": "Farish",
+    "email": "398503152010211215@dosen.com",
+    "password": "398503152010211215",
+    "role_name": "dosen",
+    "detail_id": "019e4305-f045-71c9-a823-7e07b160d9c0"
+  },
+  {
     "name": "dummy mahasiswa",
     "email": "dummymahasiswa@user.com",
     "password": "pass#mahasiswa",
