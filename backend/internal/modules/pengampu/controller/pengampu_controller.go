@@ -219,7 +219,12 @@ func (c *pengampuController) GetPengampuByID(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	pengampuID := uuid.MustParse(URI.PengampuID)
+	pengampuID, err := uuid.Parse(URI.PengampuID)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PENGAMPU, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 	data, err := c.pengampuService.GetPengampuByID(ctx.Request.Context(), pengampuID)
 	if err != nil {
 		status := http.StatusBadRequest
@@ -265,7 +270,12 @@ func (c *pengampuController) GetPengampuByKelasID(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	kelasID := uuid.MustParse(URI.KelasID)
+	kelasID, err := uuid.Parse(URI.KelasID)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PENGAMPU, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 	data, err := c.pengampuService.GetPengampuByKelasID(ctx.Request.Context(), kelasID)
 	if err != nil {
 		status := http.StatusBadRequest
@@ -312,7 +322,12 @@ func (c *pengampuController) GetPengampuByDosenID(ctx *gin.Context) {
 		return
 	}
 
-	dosenID := uuid.MustParse(URI.DosenID)
+	dosenID, err := uuid.Parse(URI.DosenID)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PENGAMPU, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
 	data, err := c.pengampuService.GetPengampuByDosenID(ctx.Request.Context(), dosenID)
 	if err != nil {
 		status := http.StatusBadRequest
