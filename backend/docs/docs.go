@@ -2156,6 +2156,343 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/presensi/mahasiswa": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil presensi mahasiswa berdasarkan id\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Tidak ada presensi dengan id tersebut -\u003e ` + "`" + `message: \"failed to get presensi\", error: \"presensi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Get Presensi Mahasiswa",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "SESI_ID",
+                        "name": "sesi_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiMahasiswaResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update Status presensi untuk mahasiswa\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Update Presensi Mahasiswa",
+                "parameters": [
+                    {
+                        "description": "Presensi Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.PresensiMahasiswaUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan presensi baru untuk mahasiswa\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` presensi dengan id tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create presensi\", error: \"presensi already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Create Presensi Mahasiswa",
+                "parameters": [
+                    {
+                        "description": "Presensi Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.PresensiMahasiswaCreateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiMahasiswaResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/presensi/mahasiswa/qr": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update Status presensi untuk mahasiswa menggunakan QR code\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Update Presensi Mahasiswa QR",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "SESI_ID",
+                        "name": "sesi_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/presensi/pegawai": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil presensi pegawai berdasarkan id\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Tidak ada presensi dengan id tersebut -\u003e ` + "`" + `message: \"failed to get presensi\", error: \"presensi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Get Presensi Pegawai",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "YYYY-MM-DD",
+                        "name": "date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "PRESENSI_ID",
+                        "name": "sesi_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Update Status presensi untuk pegawai\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'KelasName' Error:...\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Update Presensi Pegawai",
+                "parameters": [
+                    {
+                        "description": "Presensi Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.PresensiPegawaiUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan presensi baru untuk pegawai\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'PresensiName' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` presensi dengan id tersebut sudah ada -\u003e ` + "`" + `message: \"failed to create presensi\", error: \"presensi already exists\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Create Presensi Pegawai",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            }
+        },
         "/api/prodi": {
             "get": {
                 "security": [
@@ -4441,6 +4778,51 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_modules_presensi_dto.PresensiMahasiswaResponse": {
+            "type": "object",
+            "properties": {
+                "mahasiswa": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.UserResponse"
+                    }
+                },
+                "pengampu_id": {
+                    "type": "string"
+                },
+                "sesi_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_presensi_dto.PresensiPegawaiResponse": {
+            "type": "object",
+            "properties": {
+                "pegawai": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.UserResponse"
+                    }
+                },
+                "sesi_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_presensi_dto.UserResponse": {
+            "type": "object",
+            "properties": {
+                "detail_id": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "web-hosting_internal_modules_prodi_dto.ProdiCreateRequest": {
             "type": "object",
             "required": [
@@ -4674,6 +5056,23 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 12,
                     "example": "MK001"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.DetailPresensiUpdateRequest": {
+            "type": "object",
+            "required": [
+                "detail_id",
+                "status"
+            ],
+            "properties": {
+                "detail_id": {
+                    "type": "string",
+                    "example": "mahasiswa/pegawai ID"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "hadir/sakit/izin/alpha"
                 }
             }
         },
@@ -6436,6 +6835,61 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_swagger.PresensiMahasiswaCreateRequest": {
+            "type": "object",
+            "required": [
+                "pengampu_id",
+                "sesi_id"
+            ],
+            "properties": {
+                "pengampu_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                },
+                "sesi_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.PresensiMahasiswaUpdateRequest": {
+            "type": "object",
+            "required": [
+                "detail",
+                "sesi_id"
+            ],
+            "properties": {
+                "detail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_package_swagger.DetailPresensiUpdateRequest"
+                    }
+                },
+                "sesi_id": {
+                    "type": "string",
+                    "example": "01965a1d-7777-7777-7777-777777777777"
+                }
+            }
+        },
+        "web-hosting_internal_package_swagger.PresensiPegawaiUpdateRequest": {
+            "type": "object",
+            "required": [
+                "date",
+                "detail"
+            ],
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "example": "YYYY-MM-DD"
+                },
+                "detail": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_package_swagger.DetailPresensiUpdateRequest"
+                    }
+                }
+            }
+        },
         "web-hosting_internal_package_swagger.UpdatePengampuRequest": {
             "type": "object",
             "properties": {
@@ -7012,6 +7466,46 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiMahasiswaResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiMahasiswaResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
             "type": "object",
             "properties": {
@@ -7155,7 +7649,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "ApiKeyAuth": {
-            "description": "Format: Bearer :access token:",
+            "description": "Format: Bearer access_token",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS kelas(
     kurikulum_kode char(12) NOT NULL,
     prodi_id int NOT NULL,
 
+    INDEX idx_name (name),
     CONSTRAINT fk_kelas_tahun_akademik FOREIGN KEY (tahun_akademik_id) REFERENCES tahun_akademik(id) ON DELETE CASCADE,
     CONSTRAINT fk_kelas_kurikulum FOREIGN KEY (kurikulum_kode) REFERENCES kurikulum(kode) ON DELETE CASCADE,
     CONSTRAINT fk_kelas_prodi FOREIGN KEY (prodi_id) REFERENCES prodi(id) ON DELETE CASCADE
@@ -138,9 +139,10 @@ CREATE TABLE IF NOT EXISTS presensi (
     id char(36) PRIMARY KEY,
     tipe enum('mahasiswa', 'pegawai') NOT NULL,
     pengampu_id char(36) DEFAULT NULL,
-    created_at date DEFAULT CURRENT_DATE,
+    created_at date DEFAULT (CURRENT_DATE),
     updated_at timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
+    INDEX idx_created_at (created_at),
     CONSTRAINT fk_presensi_pengampu FOREIGN KEY (pengampu_id) REFERENCES pengampu(id) ON UPDATE CASCADE
 ) engine=InnoDB;
 

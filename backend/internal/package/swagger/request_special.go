@@ -69,3 +69,25 @@ type (
 		DosenID string `json:"dosen_id" binding:"omitempty" example:"01965a1d-7777-7777-7777-777777777777"`
 	}
 )
+
+type (
+	PresensiMahasiswaCreateRequest struct {
+		ID         string `json:"sesi_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+		PengampuID string `json:"pengampu_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+	}
+
+	PresensiMahasiswaUpdateRequest struct {
+		PresensiID string                        `json:"sesi_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+		Detail     []DetailPresensiUpdateRequest `json:"detail" binding:"required"`
+	}
+
+	DetailPresensiUpdateRequest struct {
+		DetailID string `json:"detail_id" binding:"required" example:"mahasiswa/pegawai ID"`
+		Status   string `json:"status" binding:"required" example:"hadir/sakit/izin/alpha"`
+	}
+
+	PresensiPegawaiUpdateRequest struct {
+		Date   string                        `json:"date" binding:"required" example:"YYYY-MM-DD"`
+		Detail []DetailPresensiUpdateRequest `json:"detail" binding:"required"`
+	}
+)

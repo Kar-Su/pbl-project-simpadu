@@ -24,6 +24,9 @@ import (
 	pengampuController "web-hosting/internal/modules/pengampu/controller"
 	pengampuRepo "web-hosting/internal/modules/pengampu/repository"
 	pengampuService "web-hosting/internal/modules/pengampu/service"
+	presensiController "web-hosting/internal/modules/presensi/controller"
+	presensiRepo "web-hosting/internal/modules/presensi/repository"
+	presensiService "web-hosting/internal/modules/presensi/service"
 	prodiController "web-hosting/internal/modules/prodi/controller"
 	prodiRepo "web-hosting/internal/modules/prodi/repository"
 	prodiService "web-hosting/internal/modules/prodi/service"
@@ -33,6 +36,7 @@ import (
 	userController "web-hosting/internal/modules/user/controller"
 	userRepo "web-hosting/internal/modules/user/repository"
 	userService "web-hosting/internal/modules/user/service"
+
 	"web-hosting/internal/package/constants"
 	"web-hosting/internal/workers"
 
@@ -77,6 +81,7 @@ func RegisterProviders(injector do.Injector) {
 	kelasRepo := kelasRepository.NewKelasRepository(db)
 	kelasPivotRepo := kelasRepository.NewKelasMahasiswaRepository(db)
 	pengampuRepo := pengampuRepo.NewPengampuRepository(db)
+	presensiRepo := presensiRepo.NewPresensiRepository(db)
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
@@ -90,6 +95,7 @@ func RegisterProviders(injector do.Injector) {
 	kelasServiceVar := kelasService.NewKelasService(db, kelasRepo, akademikRepo, prodiRepo, kRepo)
 	kelasPivotService := kelasService.NewKelasMahasiswaService(db, userRepo, kelasRepo, kelasPivotRepo)
 	pengampuService := pengampuService.NewPengampuService(db, pengampuRepo)
+	presensiService := presensiService.NewPresensiService(db, presensiRepo)
 
 	do.Provide(injector, func(i do.Injector) (authService.AuthService, error) {
 		return authService.NewAuthService(userRepo, refreshTokenRepo, kelasPivotRepo, jwtService, db), nil
@@ -100,8 +106,12 @@ func RegisterProviders(injector do.Injector) {
 		return workers.NewSchedule(i, authService), nil
 	})
 
+	do.Provide(injector, func(i do.Injector) (presensiController.PresensiController, error) {
+		return presensiController.NewPresensiController(injector, db, presensiService, userService), nil
+	})
+
 	do.Provide(injector, func(i do.Injector) (userController.UserController, error) {
-		return userController.NewUserController(i, userService, roleService), nil
+		return userController.NewUserController(i, db, userService, roleService), nil
 	})
 
 	do.Provide(injector, func(i do.Injector) (authController.AuthController, error) {
