@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 	"web-hosting/internal/modules/akademik"
 	"web-hosting/internal/modules/auth"
 	"web-hosting/internal/modules/jurusan"
@@ -85,7 +86,14 @@ func main() {
 	injector := do.New()
 
 	server := gin.Default()
-	server.Use(cors.Default())
+	configCors := cors.Config{
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}
+	configCors.AllowAllOrigins = true
+	server.Use(cors.New(configCors))
 
 	providers.RegisterProviders(injector)
 
