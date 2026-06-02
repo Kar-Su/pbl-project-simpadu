@@ -1,301 +1,358 @@
-# Kurikulum.vue
-
 ```vue
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, watch } from "vue"
+import { useRouter } from "vue-router"
 
 const router = useRouter()
 
-const jurusan = ref('')
-const prodi = ref('')
-const tahunAkademik = ref('')
+// ================= FILTER =================
+const jurusan = ref("")
+const prodi = ref("")
+const tahunAkademik = ref("")
 
-const dataKurikulum = ref([
-  {
-    id: 1,
-    nama: 'Merdeka',
-    prodi: 'Teknik Informatika',
-    semester: 'Semester 1',
-    tahun: '2023-2024'
-  },
-  {
-    id: 2,
-    nama: 'Merdeka',
-    prodi: 'SIKC',
-    semester: 'Semester 2',
-    tahun: '2023-2024'
-  }
-])
+// ================= DATA =================
+const kurikulumData = ref<any[]>([])
 
+// ================= PAGINATION =================
 const currentPage = ref(1)
-const perPage = ref(5)
+const perPage = ref(10)
 
-const totalPages = computed(() => {
-  return Math.ceil(dataKurikulum.value.length / perPage.value)
+const totalPages = ref(1)
+const totalItems = ref(0)
+
+// ================= HEADER =================
+const getHeaders = () => ({
+  "Content-Type": "application/json",
+  accept: "application/json",
+  Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
 })
 
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * perPage.value
-  const end = start + perPage.value
-  return dataKurikulum.value.slice(start, end)
-})
+// ================= GET KURIKULUM =================
+const getKurikulum = async () => {
+  try {
 
-const goToTambahAkademik = () => {
-  router.push('/Tambah_akademik')
+    const res = await fetch(
+      `/api/kurikulum?page=${currentPage.value}`,
+      {
+        headers: getHeaders(),
+      }
+    )
+
+    const json = await res.json()
+
+    console.log("KURIKULUM:", json)
+
+    const raw = json.data?.items ?? []
+
+    kurikulumData.value = raw.map((item: any) => ({
+      id: item.id ?? item.kode,
+
+      nama:
+        item.name ??
+        item.nama_kurikulum ??
+        "Merdeka",
+
+      prodi:
+        item.prodi?.name ??
+        item.program_studi?.name ??
+        "-",
+
+      semester:
+        item.kurikulum_mk?.[0]?.semester
+          ? `Semester ${item.kurikulum_mk[0].semester}`
+          : "-",
+
+      tahun:
+        item.tahun_akademik ??
+        "-",
+    }))
+
+    // pagination backend
+    totalPages.value =
+      json.data?.pagination?.total_pages ?? 1
+
+    totalItems.value =
+      json.data?.pagination?.total_items ?? 0
+
+    perPage.value =
+      json.data?.pagination?.per_page ?? 10
+
+  } catch (err) {
+    console.error("GET KURIKULUM ERROR:", err)
+    kurikulumData.value = []
+  }
 }
 
-const editData = (id: number) => {
-  console.log('Edit data:', id)
+// ================= WATCH PAGE =================
+watch(currentPage, () => {
+  getKurikulum()
+})
+
+// ================= ON MOUNT =================
+onMounted(() => {
+  getKurikulum()
+})
+
+// ================= PAGINATION BUTTON =================
+const goToPage = (page: number | string): void => {
+  const p = Number(page)
+
+  if (p < 1 || p > totalPages.value) return
+
+  currentPage.value = p
+}
+
+const prevPage = (): void => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+  }
+}
+
+const nextPage = (): void => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+  }
+}
+
+// ================= PAGE NUMBER =================
+const pages = computed<(number | string)[]>(() => {
+  const total = totalPages.value
+  const current = currentPage.value
+
+  if (total <= 5) {
+    return Array.from(
+      { length: total },
+      (_, i) => i + 1
+    )
+  }
+
+  if (current <= 3) {
+    return [1, 2, 3, "...", total]
+  }
+
+  if (current >= total - 2) {
+    return [1, "...", total - 2, total - 1, total]
+  }
+
+  return [
+    1,
+    "...",
+    current,
+    "...",
+    total,
+  ]
+})
+
+// ================= ACTION =================
+const pilihData = () => {
+  console.log({
+    jurusan: jurusan.value,
+    prodi: prodi.value,
+    tahun: tahunAkademik.value,
+  })
+}
+
+const tambahData = () => {
+  router.push("/dashboard-admin/tambah_kurikulum")
+}
+
+const editData = (item: any) => {
+  console.log("EDIT:", item)
 }
 </script>
+```
+
 
 <template>
-  <div class="min-h-screen bg-[#eef3fb] p-6">
-    
-    <!-- Breadcrumb -->
-    <p class="text-sm text-gray-500 mb-2">
-      Mahasiswa > Kurikulum
-    </p>
+  <div class="min-h-screen bg-[#eef4fb] p-5">
 
-    <!-- Title -->
-    <h1 class="text-3xl font-bold text-gray-700">
+    <!-- BREADCRUMB -->
+    <div class="text-sm text-gray-500 font-medium mb-2">
+      Mahasiswa > Kurikulum
+    </div>
+
+    <!-- TITLE -->
+    <h1 class="text-[42px] font-bold text-[#404040] leading-none">
       Kurikulum
     </h1>
 
-    <p class="text-gray-500 mt-1 mb-6">
+    <p class="text-gray-500 text-sm mt-2 mb-6">
       Pengelolaan Data
     </p>
 
-    <!-- Card -->
-    <div class="bg-white rounded-2xl border border-blue-200 shadow-sm p-5">
-      
-      <!-- Header -->
-      <h2 class="text-2xl font-semibold text-gray-700 mb-6">
-        Data Kurikulum
-      </h2>
+    <!-- CARD -->
+    <div
+      class="border-b border-gray-100 px-6 py-5"
+    >
 
-      <!-- Filter -->
-      <div class="flex flex-wrap gap-4 items-center mb-6">
-        
-        <!-- Jurusan -->
-        <select
-          v-model="jurusan"
-          class="border-b-2 border-blue-300 outline-none px-3 py-2 min-w-[150px] text-gray-600"
-        >
-          <option value="">Jurusan</option>
-          <option value="TI">Teknik Informatika</option>
-          <option value="SI">Sistem Informasi</option>
-        </select>
-
-        <!-- Prodi -->
-        <select
-          v-model="prodi"
-          class="border-b-2 border-blue-300 outline-none px-3 py-2 min-w-[150px] text-gray-600"
-        >
-          <option value="">Prodi</option>
-          <option value="TI">Teknik Informatika</option>
-          <option value="SIKC">SIKC</option>
-        </select>
-
-        <!-- Tahun Akademik -->
-        <select
-          v-model="tahunAkademik"
-          class="border-b-2 border-blue-300 outline-none px-3 py-2 min-w-[170px] text-gray-600"
-        >
-          <option value="">Tahun Akademik</option>
-          <option value="2023-2024">2023-2024</option>
-          <option value="2024-2025">2024-2025</option>
-        </select>
-
-        <!-- Tombol -->
-        <div class="flex gap-3 ml-auto">
-          
-          <button
-            class="bg-blue-800 hover:bg-blue-900 text-white px-5 py-2 rounded-lg flex items-center gap-2 transition"
-          >
-            <span>⇅</span>
-            Pilih
-          </button>
-
-          <button
-            @click="goToTambahAkademik"
-            class="bg-blue-800 hover:bg-blue-900 text-white px-5 py-2 rounded-lg flex items-center gap-2 transition"
-          >
-            <span>+</span>
-            Tambah Kelas
-          </button>
-
-        </div>
+      <!-- HEADER -->
+      <div class="px-5 pt-4">
+        <h2 class="text-[36px] font-semibold text-[#505050]">
+          Data Kurikulum
+        </h2>
       </div>
 
-      <!-- Table -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-separate border-spacing-y-4">
+      <!-- FILTER -->
+      <div class="px-5 pt-5 flex items-center gap-4 flex-wrap">
+
+        <!-- JURUSAN -->
+        <select
+          v-model="jurusan"
+          class="w-65 h-13.5 border border-gray-300 rounded-xl px-4 text-[18px] text-gray-600 outline-none bg-white focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Pilih Jurusan</option>
+          <option>Teknik Elektro</option>
+          <option>Teknik Sipil</option>
+        </select>
+
+        <!-- PRODI -->
+        <select
+          v-model="prodi"
+          class="w-65 h-13.5 border border-gray-300 rounded-xl px-4 text-[18px] text-gray-600 outline-none bg-white focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Pilih Prodi</option>
+          <option>Teknik Informatika</option>
+          <option>SIKC</option>
+        </select>
+
+        <!-- TAHUN AKADEMIK -->
+        <select
+          v-model="tahunAkademik"
+          class="w-65 h-13.5 border border-gray-300 rounded-xl px-4 text-[18px] text-gray-600 outline-none bg-white focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Pilih Tahun Akademik</option>
+          <option>2023-2024</option>
+          <option>2024-2025</option>
+        </select>
+
+        <!-- BUTTON PILIH -->
+        <button
+          @click="pilihData"
+          class="h-13.5 px-6 bg-[#29479d] hover:bg-[#1d377f] rounded-xl text-white font-semibold text-[18px] shadow-md transition"
+        >
+          Pilih
+        </button>
+
+        <!-- BUTTON TAMBAH -->
+        <button
+          @click="tambahData"
+          class="h-13.5 px-6 bg-[#29479d] hover:bg-[#1d377f] rounded-xl text-white font-semibold text-[18px] shadow-md transition"
+        >
+          + Tambah
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="px-5 pt-8">
+
+        <table class="w-full">
+
+          <!-- HEADER -->
           <thead>
-            <tr class="text-gray-500 text-sm">
-              <th>No</th>
-              <th>Nama Kurikulum</th>
-              <th>Prodi</th>
-              <th>Semester</th>
-              <th>Tahun Akademik</th>
-              <th class="text-center">Aksi</th>
+            <tr class="text-left text-gray-600">
+              <th class="text-[18px] font-semibold">No</th>
+              <th class="text-[18px] font-semibold">Nama Kurikulum</th>
+              <th class="text-[18px] font-semibold">Prodi</th>
+              <th class="text-[18px] font-semibold">Semester</th>
+              <th class="text-[18px] font-semibold">Tahun Akademik</th>
+              <th class="text-[18px] font-semibold text-center">Aksi</th>
             </tr>
           </thead>
+<tbody>
+  <tr
+    v-for="(item, index) in kurikulumData"
+    :key="item.id"
+    class="hover:bg-gray-50"
+  >
+    <td class="py-4 text-[18px]">
+      {{ (currentPage - 1) * perPage + index + 1 }}
+    </td>
 
-          <tbody>
-            <tr
-              v-for="(item, index) in paginatedData"
-              :key="item.id"
-              class="text-gray-700 font-medium"
-            >
-              <td>{{ index + 1 }}</td>
-              <td>{{ item.nama }}</td>
-              <td>{{ item.prodi }}</td>
-              <td>{{ item.semester }}</td>
-              <td>{{ item.tahun }}</td>
+    <td class="py-4 text-[18px] font-medium">
+      {{ item.nama }}
+    </td>
 
-              <td class="text-center">
-                <button
-                  @click="editData(item.id)"
-                  class="bg-orange-400 hover:bg-orange-500 text-white px-4 py-1 rounded-lg transition"
-                >
-                  ✏ Edit
-                </button>
-              </td>
-            </tr>
-          </tbody>
+    <td class="py-4 text-[18px]">
+      {{ item.prodi }}
+    </td>
+
+    <td class="py-4 text-[18px]">
+      {{ item.semester }}
+    </td>
+
+    <td class="py-4 text-[18px]">
+      {{ item.tahun }}
+    </td>
+
+    <td class="py-4 text-center">
+      <button
+        type="button"
+        @click="editData(item)"
+        class="bg-[#f3a317] hover:bg-[#d78e0f] text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer"
+      >
+        ✎ Edit
+      </button>
+    </td>
+  </tr>
+</tbody>
         </table>
       </div>
 
-      <!-- Footer -->
-      <div class="flex flex-wrap items-center justify-between mt-16">
-        
-        <!-- Per Page -->
-        <select
-          v-model="perPage"
-          class="border rounded-lg px-3 py-2 text-sm text-gray-600"
-        >
-          <option :value="5">5 Baris</option>
-          <option :value="10">10 Baris</option>
-          <option :value="20">20 Baris</option>
-        </select>
+<!-- FOOTER -->
+<div
+  class="flex items-center justify-between px-5 py-5 mt-8"
+>
 
-        <!-- Pagination -->
-        <div class="flex items-center gap-3 text-sm text-gray-500">
-          
-          <button class="hover:text-blue-700">
-            ← Previous
-          </button>
+  <!-- BARIS -->
+  <select
+    v-model="perPage"
+    class="w-22.5 h-10.5  border border-[#d8e1f0] bg-white p-5 shadow-sm"
+  >
+    <option :value="5">5 Baris</option>
+    <option :value="10">10 Baris</option>
+    <option :value="25">25 Baris</option>
+  </select>
 
-          <button
-            class="w-8 h-8 rounded-lg bg-blue-800 text-white"
-          >
-            1
-          </button>
+  <!-- PAGINATION -->
+<div v-if="totalPages > 1" class="flex items-center gap-2">
 
-          <button class="hover:text-blue-700">2</button>
-          <button class="hover:text-blue-700">3</button>
+  <button
+    @click="prevPage"
+    :disabled="currentPage === 1"
+    class="px-3 py-1 border rounded-lg"
+  >
+    Previous
+  </button>
 
-          <span>...</span>
+  <template v-for="p in pages" :key="p">
 
-          <button class="hover:text-blue-700">67</button>
-          <button class="hover:text-blue-700">68</button>
+    <span v-if="p === '...'">
+      ...
+    </span>
 
-          <button class="hover:text-blue-700">
-            Next →
-          </button>
+    <button
+      v-else
+      @click="goToPage(Number(p))"
+      class="w-8 h-8 rounded-lg"
+      :class="currentPage === p
+        ? 'bg-blue-500 text-white'
+        : 'bg-gray-100'"
+    >
+      {{ p }}
+    </button>
 
-        </div>
-      </div>
+  </template>
+
+  <button
+    @click="nextPage"
+    :disabled="currentPage === totalPages"
+    class="px-3 py-1 border rounded-lg"
+  >
+    Next
+  </button>
+
+</div>
+</div>
     </div>
   </div>
 </template>
-```
-
----
-
-# Router (`src/router/index.ts`)
-
-```ts
-import { createRouter, createWebHistory } from 'vue-router'
-import Kurikulum from '@/views/Kurikulum.vue'
-import Tambah_akademik from '@/views/Tambah_akademik.vue'
-
-const routes = [
-  {
-    path: '/',
-    name: 'Kurikulum',
-    component: Kurikulum
-  },
-  {
-    path: '/Tambah_akademik',
-    name: 'Tambah_akademik',
-    component: Tambah_akademik
-  }
-]
-
-const router = createRouter({
-  history: createWebHistory(),
-  routes
-})
-
-export default router
-```
-
----
-
-# Tambah_akademik.vue
-
-```vue
-<template>
-  <div class="min-h-screen bg-[#eef3fb] p-6">
-    <div class="bg-white rounded-2xl shadow-sm p-6">
-      <h1 class="text-3xl font-bold text-gray-700 mb-4">
-        Tambah Akademik
-      </h1>
-
-      <p class="text-gray-500">
-        Halaman tambah data akademik.
-      </p>
-    </div>
-  </div>
-</template>
-```
-
----
-
-# Install Tailwind CSS
-
-```bash
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-```
-
----
-
-# tailwind.config.js
-
-```js
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    './index.html',
-    './src/**/*.{vue,js,ts,jsx,tsx}',
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
-```
-
----
-
-# src/style.css
-
-```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-```
