@@ -60,7 +60,10 @@ func (s *presensiService) GetPresensi(ctx context.Context, tipePresensi string, 
 
 	switch tipePresensi {
 	case "mahasiswa":
-		presensiID := uuid.MustParse(filter.(string))
+		presensiID, err := uuid.Parse(filter.(string))
+		if err != nil {
+			return nil, err
+		}
 		data, err := s.repo.GetPresensiMahasiswa(ctx, s.db, presensiID)
 		if err != nil {
 			return nil, err

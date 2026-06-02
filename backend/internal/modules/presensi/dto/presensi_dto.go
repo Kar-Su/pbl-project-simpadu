@@ -54,9 +54,10 @@ type (
 	}
 
 	UserResponse struct {
-		ID    uuid.UUID `json:"detail_id"`
-		Name  string    `json:"name"`
-		Email string    `json:"email"`
+		ID     uuid.UUID `json:"detail_id"`
+		Name   string    `json:"name"`
+		Email  string    `json:"email"`
+		Status string    `json:"status"`
 	}
 )
 
@@ -69,9 +70,10 @@ func ToPresensiResponse(tipePresensi string, entity entities.Presensi) any {
 		}
 		for _, p := range entity.PresensiMahasiswa {
 			response.Mahasiswa = append(response.Mahasiswa, UserResponse{
-				ID:    *p.Mahasiswa.DetailID,
-				Name:  p.Mahasiswa.Name,
-				Email: p.Mahasiswa.Email,
+				ID:     *p.Mahasiswa.DetailID,
+				Name:   p.Mahasiswa.Name,
+				Email:  p.Mahasiswa.Email,
+				Status: p.Status,
 			})
 		}
 		return response
@@ -81,9 +83,10 @@ func ToPresensiResponse(tipePresensi string, entity entities.Presensi) any {
 		}
 		for _, p := range entity.PresensiPegawai {
 			response.Pegawai = append(response.Pegawai, UserResponse{
-				ID:    *p.Pegawai.DetailID,
-				Name:  p.Pegawai.Name,
-				Email: p.Pegawai.Email,
+				ID:     *p.Pegawai.DetailID,
+				Name:   p.Pegawai.Name,
+				Email:  p.Pegawai.Email,
+				Status: p.Status,
 			})
 		}
 		return response

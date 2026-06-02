@@ -301,7 +301,7 @@ func (c *presensiController) GetPresensiMahasiswa(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
-	data, err := c.presensiService.GetPresensi(ctx.Request.Context(), tipePresensi, query)
+	data, err := c.presensiService.GetPresensi(ctx.Request.Context(), tipePresensi, query.ID)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
