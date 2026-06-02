@@ -2426,13 +2426,20 @@ const docTemplate = `{
                         "example": "PRESENSI_ID",
                         "name": "sesi_id",
                         "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1, 10 per halaman)",
+                        "name": "page",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiResponse-any"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
                         }
                     },
                     "401": {
@@ -4839,20 +4846,6 @@ const docTemplate = `{
                 }
             }
         },
-        "web-hosting_internal_modules_presensi_dto.PresensiPegawaiResponse": {
-            "type": "object",
-            "properties": {
-                "pegawai": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.UserResponse"
-                    }
-                },
-                "sesi_id": {
-                    "type": "string"
-                }
-            }
-        },
         "web-hosting_internal_modules_presensi_dto.UserResponse": {
             "type": "object",
             "properties": {
@@ -4863,6 +4856,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -7515,26 +7511,6 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiMahasiswaResponse"
-                },
-                "error": {},
-                "message": {
-                    "type": "string",
-                    "example": "Operation successful"
-                },
-                "path": {
-                    "type": "string",
-                    "example": "/api/resource"
-                },
-                "success": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiResponse-any": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiResponse"
                 },
                 "error": {},
                 "message": {

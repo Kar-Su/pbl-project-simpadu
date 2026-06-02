@@ -16,6 +16,7 @@ type (
 		CreatePresensi(ctx context.Context, req any) (any, error)
 		UpdatePresensi(ctx context.Context, tipePresensi string, req any) error
 		GetPresensi(ctx context.Context, tipePresensi string, filter any) (any, error)
+		GetAllPresensiPaginated(ctx context.Context, tipePresensi string, filter any, page int) (any, int64, error)
 	}
 	presensiService struct {
 		db   *gorm.DB
@@ -73,10 +74,32 @@ func (s *presensiService) GetPresensi(ctx context.Context, tipePresensi string, 
 		data, err := s.repo.GetPresensiPegawai(ctx, s.db, filter)
 		if err != nil {
 			return nil, err
+		} else if data.ID == uuid.Nil {
+			return nil, fmt.Errorf("presensi pegawai not found")
 		}
 		return dto.ToPresensiResponse(tipePresensi, data), nil
 
 	default:
 		return nil, fmt.Errorf("invalid tipe presensi: %s", tipePresensi)
 	}
+}
+
+func (s *presensiService) GetAllPresensiPaginated(ctx context.Context, tipePresensi string, filter any, page int) (any, int64, error) {
+	tipePresensi = helpers.NormalizeString(tipePresensi)
+	switch tipePresensi {
+	case "pegawai":
+		offset := (page - 1) * 10
+		data, total, err := s.repo.GetAllPresensiPegawai(ctx, s.db, offset, 10)
+		if err != nil {
+			return nil, 0, err
+		}
+		responses := make([]dto.PresensiPegawaiResponse, 0, len(data))
+		for _, d := range data {
+			responses = append(responses, dto.ToPresensiResponse(tipePresensi, d).(dto.PresensiPegawaiResponse))
+		}
+		return responses, total, nil
+	default:
+		return nil, 0, fmt.Errorf("invalid tipe presensi: %s", tipePresensi)
+	}
+
 }

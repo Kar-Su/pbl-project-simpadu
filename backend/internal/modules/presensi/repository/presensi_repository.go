@@ -22,6 +22,7 @@ type (
 		UpdatePresensi(ctx context.Context, tx *gorm.DB, req any) error
 		GetPresensiMahasiswa(ctx context.Context, tx *gorm.DB, presensiID uuid.UUID) (entities.Presensi, error)
 		GetPresensiPegawai(ctx context.Context, tx *gorm.DB, filter any) (entities.Presensi, error)
+		GetAllPresensiPegawai(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Presensi, int64, error)
 	}
 
 	presensiRepository struct {
@@ -229,4 +230,25 @@ func (r *presensiRepository) GetPresensiPegawai(ctx context.Context, tx *gorm.DB
 	}
 
 	return presensi, nil
+}
+
+func (r *presensiRepository) GetAllPresensiPegawai(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Presensi, int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).Where("tipe = ?", "pegawai").Count(&total).Error; err != nil {
+		return nil, 0, err
+	}
+
+	var presensi []entities.Presensi
+	query := tx.WithContext(ctx).
+		Preload("PresensiPegawai.Pegawai", helpers.SelectFields("detail_id, email, name,created_at, updated_at")).Where("tipe = ?", "pegawai").Offset(offset).Limit(limit)
+
+	if err := query.Find(&presensi).Error; err != nil {
+		return nil, 0, err
+	}
+
+	return presensi, total, nil
 }

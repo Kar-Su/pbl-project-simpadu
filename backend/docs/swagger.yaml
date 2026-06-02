@@ -466,15 +466,6 @@ definitions:
       sesi_id:
         type: string
     type: object
-  web-hosting_internal_modules_presensi_dto.PresensiPegawaiResponse:
-    properties:
-      pegawai:
-        items:
-          $ref: '#/definitions/web-hosting_internal_modules_presensi_dto.UserResponse'
-        type: array
-      sesi_id:
-        type: string
-    type: object
   web-hosting_internal_modules_presensi_dto.UserResponse:
     properties:
       detail_id:
@@ -482,6 +473,8 @@ definitions:
       email:
         type: string
       name:
+        type: string
+      status:
         type: string
     type: object
   web-hosting_internal_modules_prodi_dto.ProdiCreateRequest:
@@ -2372,20 +2365,6 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/web-hosting_internal_modules_presensi_dto.PresensiMahasiswaResponse'
-      error: {}
-      message:
-        example: Operation successful
-        type: string
-      path:
-        example: /api/resource
-        type: string
-      success:
-        type: boolean
-    type: object
-  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiResponse-any:
-    properties:
-      data:
-        $ref: '#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiResponse'
       error: {}
       message:
         example: Operation successful
@@ -4393,13 +4372,18 @@ paths:
         in: query
         name: sesi_id
         type: string
+      - description: Halaman (default 1, 10 per halaman)
+        example: 1
+        in: query
+        name: page
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiResponse-any'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
         "401":
           description: Unauthorized
           schema:

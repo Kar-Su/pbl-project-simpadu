@@ -49,8 +49,9 @@ type (
 	}
 
 	PresensiPegawaiResponse struct {
-		ID      uuid.UUID      `json:"sesi_id"`
-		Pegawai []UserResponse `json:"pegawai"`
+		ID        uuid.UUID      `json:"sesi_id"`
+		Pegawai   []UserResponse `json:"pegawai"`
+		CreatedAt string         `json:"created_at"`
 	}
 
 	UserResponse struct {
@@ -79,7 +80,8 @@ func ToPresensiResponse(tipePresensi string, entity entities.Presensi) any {
 		return response
 	case "pegawai":
 		response := PresensiPegawaiResponse{
-			ID: entity.ID,
+			ID:        entity.ID,
+			CreatedAt: entity.CreatedAt.String(),
 		}
 		for _, p := range entity.PresensiPegawai {
 			response.Pegawai = append(response.Pegawai, UserResponse{

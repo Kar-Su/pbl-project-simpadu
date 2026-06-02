@@ -329,7 +329,8 @@ func (c *presensiController) GetPresensiMahasiswa(ctx *gin.Context) {
 // @Produce json
 // @Security ApiKeyAuth
 // @Param q query dto.GetPresensiPegawaiQuery true "presensi ID or date (YYYY-MM-DD)"
-// @Success      200      {object}  utils.Response[dto.PresensiPegawaiResponse,any]
+// @Param page query int false "Halaman (default 1, 10 per halaman)" example(1)
+// @Success      200      {object}  utils.Response[any,any]
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Router /api/presensi/pegawai [get]
@@ -364,7 +365,22 @@ func (c *presensiController) GetPresensiPegawai(ctx *gin.Context) {
 			return
 		}
 	} else {
-		filter = nil
+		var pageQuery utils.PaginationQuery
+		if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+			pageQuery.Page = 1
+		}
+
+		data, total, err := c.presensiService.GetAllPresensiPaginated(ctx.Request.Context(), tipePresensi, nil, pageQuery.Page)
+		if err != nil {
+			res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, err.Error(), nil, path)
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+			return
+		}
+
+		paginated := utils.BuildPaginatedResponse(data, pageQuery.Page, total)
+		res := utils.BuildResponseSuccess(dto.SUCCESS_GET_PRESENSI, paginated, path)
+		ctx.JSON(http.StatusOK, res)
+		return
 	}
 
 	data, err := c.presensiService.GetPresensi(ctx.Request.Context(), tipePresensi, filter)
