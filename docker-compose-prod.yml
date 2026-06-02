@@ -42,9 +42,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.golang-service.entrypoints=web"
-      - "traefik.http.routers.golang-service.rule=Host(`$be.{DOMAIN:-localhost}`)"
+      - "traefik.http.routers.golang-service.rule=Host(`be.${DOMAIN:-localhost}`)"
       - "traefik.http.services.golang-service.loadbalancer.server.port=8080"
-      - "traefik.http.routers.golang-service.priority=1"
 
   frontend:
     build:
@@ -59,7 +58,6 @@ services:
       - "traefik.http.routers.frontend-prod.entrypoints=web"
       - "traefik.http.routers.frontend-prod.rule=Host(`${DOMAIN:-localhost}`)"
       - "traefik.http.services.frontend-prod.loadbalancer.server.port=80"
-      - "traefik.http.routers.frontend-prod.priority=1"
 
   db:
     image: "mysql:8.0"
