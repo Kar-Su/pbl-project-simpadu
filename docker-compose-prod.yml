@@ -42,7 +42,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.golang-service.entrypoints=web"
-      - "traefik.http.routers.golang-service.rule=Host(`${DOMAIN_BE:-localhost}`)"
+      - "traefik.http.routers.golang-service.rule=Host(`$be.{DOMAIN:-localhost}`)"
       - "traefik.http.services.golang-service.loadbalancer.server.port=8080"
       - "traefik.http.routers.golang-service.priority=1"
 
