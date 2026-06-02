@@ -2,71 +2,101 @@ import { createRouter, createWebHistory } from "vue-router"
 
 import Login from "@/views/Login.vue"
 
-// import DashboardAdmin from "@/views/DashboardAdmin.vue"
-import DashboardSuperAdmin from '@/views/dashboard_super_admin/Dashboardsuperadmin.vue'
-import Home from '@/views/dashboard_super_admin/akademik/Home.vue'
+// super admin
+import DashboardSuperAdmin from "@/views/dashboard_super_admin/Dashboardsuperadmin.vue"
 
-//password
-import Reset_password from '@/views/dashboard_super_admin/akademik/password/Reset_password.vue'
-
-// impor akun
-import Akun from '@/views/dashboard_super_admin/akademik/akun/Akun.vue'
-import Edit_akun from '@/views/dashboard_super_admin/akademik/akun/Edit_akun.vue'
-import konfirmasi_hapus from "../views/dashboard_super_admin/akademik/akun/konfirmasi_hapus.vue"
-import Tambah_akun from "../views/dashboard_super_admin/akademik/akun/Tambah_akun.vue"
-
-// ADMIN AKADEMIK
-import DashboardAdmin from '@/views/dashboard_admin_akademik/Dashboard_admin_akademik.vue'
+// admin akademik
+import DashboardAdmin from "@/views/dashboard_admin_akademik/Dashboard_admin_akademik.vue"
 
 // akademik
-// import KHS from "../views/dashboard_admin_akademik/akademik/KHS.vue"
-// import Nilai from "../views/dashboard_admin_akademik/akademik/Nilai.vue"
-// import Presensi from "../views/dashboard_admin_akademik/akademik/Presensi.vue"
-// import Tahun_akademik from "../views/dashboard_admin_akademik/akademik/Tahun_akademik.vue"
+import KHS from "@/views/dashboard_admin_akademik/akademik/KHS/KHS.vue"
+import Nilai from "@/views/dashboard_admin_akademik/akademik/nilai/Nilai.vue"
+import Presensi from "@/views/dashboard_admin_akademik/akademik/Presensi.vue"
+import Tahun_akademik from "@/views/dashboard_admin_akademik/akademik/tahun-akademik/Tahun_akademik.vue"
+import Tambah_tahunakademik from "../views/dashboard_admin_akademik/akademik/tahun-akademik/Tambah_tahunakademik.vue"
 
 // kurikulum
-// import Kurikulum from "../views/dashboard_admin_akademik/kurikulum/Kurikulum.vue"
-// import Tambah_akun from "../views/dashboard_super_admin/akademik/akun/Tambah_akun.vue"
+import Kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulum/Kurikulum.vue"
+import Tambah_kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulum/Tambah_kurikulum.vue"
 
 // mahasiswa
-// import Tambah_kelas from "../views/dashboard_admin_akademik/mahasiswa/Tambah_kelas.vue"
+import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Tambah_kelas.vue"
 
-// // kelas
-// import Kelas from "../views/dashboard_admin_akademik/mahasiswa/kelas/kelas.vue"
-// import detail_kelas from "../views/dashboard_admin_akademik/mahasiswa/kelas/detail_kelas.vue"
+// kelas
+import Kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Kelas.vue"
 
-// // peserta kelas
-// import Peserta_kelas from "../views/dashboard_admin_akademik/mahasiswa/peserta_kelas/Peserta_kelas.vue"
-// import Tambah_peserta_kelas from "../views/dashboard_admin_akademik/mahasiswa/peserta_kelas/Tambah_peserta_kelas.vue"
-// // pegwai
-// import Pegawai from "../views/dashboard_admin_akademik/pegawai/Pegawai.vue"
+// peserta kelas
+import Peserta_kelas from "@/views/dashboard_admin_akademik/akademik/peserta-kelas/Peserta_kelas.vue"
+import Detail_pesertakelas from "@/views/dashboard_admin_akademik/akademik/peserta-kelas/Detail_pesertakelas.vue"
+
+// pegawai
+import Dosen from "@/views/dashboard_admin_akademik/akademik/pegawai/Dosen.vue"
+import Dashboard_kurikulum from "../views/dashboard_admin_akademik/Dashboard_kurikulum.vue"
+import Dashboard_tahunakademik from "../views/dashboard_admin_akademik/Dashboard_tahunakademik.vue"
+
+
+import profile from "../views/dashboard_admin_akademik/profile.vue"
+
+
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: "/", component: Login },
-    { path: "/dashboard-admin", component: DashboardAdmin },
-    { path: "/dashboard-superadmin", component: DashboardSuperAdmin, 
-      children: [
-        // super admin
-      { path: "reset_password", component: Reset_password },
-      { path: "akun", component: Akun },
-      { path: "edit_akun", component: Edit_akun },
-      { path: "", component: Home },
-      { path: "konfirmasi_hapus", component: konfirmasi_hapus },
-      { path: "tambah_akun", component: Tambah_akun },
 
-        // admin akademik
-        // { path: "kHS", component: KHS },
-        // { path: "nilai", component: Nilai },
-        // { path: "presensi", component: Presensi },
-        // { path: "tahun_akademik", component: Tahun_akademik },
-        // { path: "kurikulum", component: Kurikulum },
-        // { path: "tambah_kelas", component: Tambah_kelas },
-        // { path: "kelas", component: Kelas },
-        // { path: "pegawai", component: Pegawai }
-   
-    ] }
+    {
+      path: "/dashboard-superadmin", component: DashboardSuperAdmin,
+      children: [
+
+        // akun
+
+        { path: "reset_password", component: () => import("@/views/dashboard_super_admin/akademik/password/Reset_password.vue") },
+        { path: "akun", component: () => import("@/views/dashboard_super_admin/akademik/akun/Akun.vue") },
+        { path: "edit_akun/:id", component: () => import("@/views/dashboard_super_admin/akademik/akun/Edit_akun.vue") },
+        { path: "tambah_akun", component: () => import("@/views/dashboard_super_admin/akademik/akun/Tambah_akun.vue") },
+        { path: "role", component: () => import("@/views/dashboard_super_admin/akademik/role/Role.vue") },
+        { path: "tambah_role", component: () => import("@/views/dashboard_super_admin/akademik/role/Tambah_role.vue") },
+        { path: "edit_role/:id", component: () => import("@/views/dashboard_super_admin/akademik/role/Edit_role.vue") },
+
+      ]
+    },
+
+    {
+      path: "/dashboard-admin", component: DashboardAdmin,
+      children: [
+
+        { path: "dashboard_kurikulum", component: Dashboard_kurikulum },
+        { path: "dashboard_tahunakademik", component: Dashboard_tahunakademik },
+        // akademik
+        { path: "khs", component: KHS },
+        { path: "nilai", component: Nilai },
+        { path: "presensi", component: Presensi },
+        { path: "tahun_akademik", component: Tahun_akademik },
+        { path: "tambah_tahunakademik", component: Tambah_tahunakademik },
+
+        // kurikulum
+        { path: "kurikulum", component: Kurikulum },
+        { path: "detail_kurikulum/:id", component: () => import("@/views/dashboard_admin_akademik/akademik/kurikulum/Detail_kurikulum.vue") },
+
+        // mahasiswa
+        { path: "tambah_kelas", component: Tambah_kelas },
+
+        // kelas
+        { path: "kelas", component: Kelas },
+
+        // peserta kelas
+        { path: "peserta_kelas", component: Peserta_kelas },
+        { path: "detail_pesertakelas", component: Detail_pesertakelas },
+
+        // pegawai
+        { path: "dosen", component: Dosen },
+
+        //kurikulum
+        { path: "tambah_kurikulum", component: Tambah_kurikulum },
+        { path: "profile", component: profile}
+
+      ]
+    },
   ],
 })
 
