@@ -10,6 +10,7 @@ const showPass = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const errorMsg = ref<string>('')
 
+
 const ENDPOINT = '/api/auth/login'
 
 const handleLogin = async (): Promise<void> => {
@@ -44,29 +45,38 @@ const handleLogin = async (): Promise<void> => {
       return
     }
 
+ 
+
+    // const role: string = (
+    //   data.data.role_name ||
+    //   data.data.role ||
+    //   data.data.user?.role_name ||
+    //   data.data.user?.role ||
+    //   ''
+    // ).toLowerCase()
+
+    const role: string = (data.data.role_name ?? '').toLowerCase()
+
+    if (!data?.data) {
+  errorMsg.value = 'Response login tidak valid'
+  return
+}
+
     const token: string = data.data.access_token
     const refreshToken: string = data.data.refresh_token
-
-    const role: string = (
-      data.data.role_name ||
-      data.data.role ||
-      data.data.user?.role_name ||
-      data.data.user?.role ||
-      ''
-    ).toLowerCase()
-
     localStorage.setItem('token', token)
     localStorage.setItem('refresh_token', refreshToken)
     localStorage.setItem('role', role)
     
-if (data.success) {
-  localStorage.setItem("token", data.data.access_token)
-  localStorage.setItem("refresh_token", data.data.refresh_token)
-  localStorage.setItem("role", data.data.role)
-  localStorage.setItem("email", data.data.email)
+    
+// if (data.success) {
+//   localStorage.setItem("token", data.data.access_token)
+//   localStorage.setItem("refresh_token", data.data.refresh_token)
+//   localStorage.setItem("role", data.data.role)
+//   localStorage.setItem("email", data.data.email)
 
-  router.push("/dashboard-admin")
-}
+//   router.push("/dashboard-admin")
+// }
 
     console.log('ROLE:', role)
 
