@@ -54,7 +54,8 @@ const handleSimpan = async () => {
   errorMsg.value = ""
 
   try {
-    const response = await fetch(`/api/users/`, {
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL
+    const response = await fetch(`${BASE_URL}/api/users/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -90,8 +91,8 @@ const handleSimpan = async () => {
   const getRoles = async () => {
   try {
     const token = localStorage.getItem("token")
-
-    const res = await fetch("/api/roles", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/roles`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

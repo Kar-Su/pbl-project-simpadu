@@ -147,8 +147,8 @@ const simpanKurikulum = async () => {
       alert("Prodi tidak valid / tidak ditemukan")
       return
     }
-
-    const responseKurikulum = await fetch("/api/kurikulum/", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const responseKurikulum = await fetch(`${BASE_URL}/api/kurikulum/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

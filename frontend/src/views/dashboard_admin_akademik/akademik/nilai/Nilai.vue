@@ -40,7 +40,8 @@ const getHeaders = (): Record<string, string> => ({
 // ================= GET KURIKULUM =================
 const getKurikulum = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/kurikulum/", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/kurikulum/`, {
       headers: getHeaders(),
     })
 
@@ -55,7 +56,8 @@ const getKurikulum = async (): Promise<void> => {
 // ================= GET TAHUN AKADEMIK =================
 const getTahunAkademik = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/tahun-akademik", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/tahun-akademik`, {
       headers: getHeaders(),
     })
 

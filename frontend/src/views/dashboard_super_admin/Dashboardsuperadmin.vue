@@ -55,7 +55,8 @@ const getHeaders = () => ({
 
 const getTotalAkun = async () => {
   try {
-    const res = await fetch(`/api/users/count`, {
+   const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/users/count`, {
       headers: getHeaders()
     })
 
@@ -69,15 +70,16 @@ const getTotalAkun = async () => {
 
 const getAkun = async (page = 1) => {
   try {
-   const res = await fetch(
-  `/api/users?page=${page}&per_page=${rowsPerPage.value}`,
-  {
-    headers: {
-      ...getHeaders(),
-      accept: "application/json"
-    }
-  }
-)
+   const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(
+      `${BASE_URL}/api/users?page=${page}&per_page=${rowsPerPage.value}`,
+      {
+        headers: {
+          ...getHeaders(),
+          accept: "application/json"
+        }
+      }
+    )
 
     const data = await res.json()
 

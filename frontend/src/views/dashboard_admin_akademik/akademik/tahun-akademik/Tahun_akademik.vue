@@ -4,14 +4,13 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 
+// ================= TYPE =================
 interface AkademikItem {
   id: number
   tipeSemester: string
   tahunAwal: string
   tahunAkhir: string
   status?: string
-
-  // tambahan
   rawTipeSemester?: string
 }
 
@@ -36,30 +35,6 @@ const editForm = ref({
   status: '',
 })
 
-// ================= PAGINATION NUMBER =================
-const displayedPages = computed(() => {
-  const total = totalPages.value
-  const current = currentPage.value
-
-  // jika total <= 3 tampil semua
-  if (total <= 3) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-
-  // halaman awal
-  if (current <= 2) {
-    return [1, 2, '...', total]
-  }
-
-  // halaman akhir
-  if (current >= total - 1) {
-    return [1, '...', total - 1, total]
-  }
-
-  // halaman tengah
-  return [1, '...', current, '...', total]
-})
-
 // ================= HEADER =================
 const getHeaders = () => ({
   'Content-Type': 'application/json',
@@ -67,21 +42,7 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token') ?? ''}`,
 })
 
-// ================= FORMAT DATE =================
-const formatDate = (date: string): string => {
-  if (!date) return '-'
-
-  const d = new Date(date)
-
-  if (isNaN(d.getTime())) return date
-
-  return d.toLocaleDateString('id-ID', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
-}
-
+// ================= FETCH API (TETAP INI) =================
 const getTahunAkademik = async (): Promise<void> => {
   try {
     const res = await fetch(
@@ -94,16 +55,10 @@ const getTahunAkademik = async (): Promise<void> => {
 
     const json = await res.json()
 
-    console.log('DATA API:', json)
-
-    const raw = Array.isArray(json.data)
-      ? json.data
-      : []
+    const raw = Array.isArray(json.data) ? json.data : []
 
     allData.value = raw.map((item: any) => ({
       id: item.id,
-
-      // ambil tipe_semester asli
       tipeSemester:
         item.tipe_semester === 'ganjil'
           ? 'Ganjil'
@@ -129,8 +84,7 @@ const getTahunAkademik = async (): Promise<void> => {
 
     filteredData.value = [...allData.value]
 
-    console.log(filteredData.value)
-
+    currentPage.value = 1 // penting reset page
   } catch (err) {
     console.error('GET ERROR:', err)
   }
@@ -141,7 +95,7 @@ onMounted(() => {
 })
 
 // ================= FILTER =================
-const applyFilter = (): void => {
+const applyFilter = () => {
   filteredData.value = allData.value.filter((item) => {
     const semesterMatch = filterSemester.value
       ? item.tipeSemester === filterSemester.value
@@ -157,53 +111,41 @@ const applyFilter = (): void => {
   currentPage.value = 1
 }
 
-// ================= SEMESTER OPTIONS =================
-const semesterOptions = computed(() => {
-  return [...new Set(allData.value.map((item) => item.tipeSemester))]
-})
+// ================= PAGINATION =================
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredData.value.length / perPage.value))
+)
 
-// ================= TOTAL PAGE =================
-const totalPages = computed(() => {
-  return Math.max(
-    1,
-    Math.ceil(filteredData.value.length / perPage.value)
-  )
-})
-
-// ================= PAGINATED DATA =================
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
-
-  return filteredData.value.slice(
-    start,
-    start + perPage.value
-  )
+  return filteredData.value.slice(start, start + perPage.value)
 })
 
-// ================= VISIBLE PAGE =================
-const visiblePages = computed(() => {
-  return Array.from(
-    { length: totalPages.value },
-    (_, i) => i + 1
-  )
+// ================= PAGE NAV =================
+const nextPage = () => {
+  if (currentPage.value < totalPages.value) currentPage.value++
+}
+
+const prevPage = () => {
+  if (currentPage.value > 1) currentPage.value--
+}
+
+// ================= DISPLAY PAGE NUMBER =================
+const displayedPages = computed(() => {
+  const total = totalPages.value
+  const current = currentPage.value
+
+  if (total <= 3) return Array.from({ length: total }, (_, i) => i + 1)
+
+  if (current <= 2) return [1, 2, '...', total]
+
+  if (current >= total - 1) return [1, '...', total - 1, total]
+
+  return [1, '...', current, '...', total]
 })
-
-// ================= PREV PAGE =================
-const prevPage = (): void => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
-}
-
-// ================= NEXT PAGE =================
-const nextPage = (): void => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
-}
 
 // ================= EDIT =================
-const editItem = (item: AkademikItem): void => {
+const editItem = (item: AkademikItem) => {
   editingItem.value = item
 
   editForm.value = {
@@ -217,28 +159,21 @@ const editItem = (item: AkademikItem): void => {
 }
 
 // ================= SAVE EDIT =================
-const saveEdit = async (): Promise<void> => {
+const saveEdit = async () => {
   if (!editingItem.value) return
 
   try {
-
     const payload = {
       id: editingItem.value.id,
-
       status:
         editForm.value.status === 'Aktif/jalan'
           ? 'aktif'
           : 'tidak_aktif',
 
       tahun_awal: `${editForm.value.tahunAwal}-01-01`,
-
       tahun_akhir: `${editForm.value.tahunAkhir}-01-01`,
-
-      tipe_semester:
-        editForm.value.tipeSemester.toLowerCase(),
+      tipe_semester: editForm.value.tipeSemester.toLowerCase(),
     }
-
-    console.log('PAYLOAD:', payload)
 
     const res = await fetch(
       `https://be.karlearn.site/api/tahun-akademik/${editingItem.value.id}`,
@@ -251,19 +186,15 @@ const saveEdit = async (): Promise<void> => {
 
     const json = await res.json()
 
-    console.log('UPDATE:', json)
-
     if (!res.ok) {
       alert(json.message || 'Gagal update')
       return
     }
 
     alert('Berhasil update')
-
     showModal.value = false
 
     await getTahunAkademik()
-
   } catch (err) {
     console.error('UPDATE ERROR:', err)
   }

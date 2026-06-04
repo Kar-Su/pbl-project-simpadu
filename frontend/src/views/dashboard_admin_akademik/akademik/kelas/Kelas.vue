@@ -12,48 +12,54 @@ const tahunAkademik = ref<string>("")
 // ================= DATA =================
 const kelasData = ref<any[]>([])
 
+// ================= PAGINATION =================
+const currentPage = ref(1)
+const perPage = ref(5)
+const totalPages = ref(1)
+
 // ================= FETCH =================
 const getKelas = async () => {
   try {
-    const res = await fetch("/api/kelas/", {
+    const BASE_URL = "https://be.karlearn.site"
+
+    let url = `${BASE_URL}/api/kelas?page=${currentPage.value}`
+
+    if (prodi.value) {
+      url = `${BASE_URL}/api/kelas/prodi/${prodi.value}?page=${currentPage.value}`
+    }
+
+    const res = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
       },
     })
 
     const json = await res.json()
 
-    console.log("KELAS RAW:", json)
+    kelasData.value = json?.data?.items ?? []
 
-    kelasData.value =
-      json?.data?.items ??
-      json?.data?.data ??
-      json?.data ??
-      json?.result ??
-      []
+    totalPages.value =
+      json?.data?.pagination?.total_pages ??
+      json?.pagination?.total_pages ??
+      1
 
-    if (kelasData.value.length > 0) {
-      console.log(
-        "KELAS ITEM SAMPLE:",
-        JSON.stringify(kelasData.value[0], null, 2)
-      )
-    }
   } catch (err) {
     console.error("GET KELAS ERROR:", err)
+    kelasData.value = []
   }
 }
 
-// ================= DROPDOWN OTOMATIS =================
+// ================= DROPDOWN LIST =================
 const jurusanList = computed(() => {
   const map = new Map()
 
   kelasData.value.forEach((item) => {
-    const jurusan = item?.prodi?.jurusan
+    const j = item?.prodi?.jurusan
 
-    if (jurusan?.id && !map.has(jurusan.id)) {
-      map.set(jurusan.id, {
-        id: String(jurusan.id),
-        name: jurusan.name,
+    if (j?.id && !map.has(j.id)) {
+      map.set(j.id, {
+        id: String(j.id),
+        name: j.name,
       })
     }
   })
@@ -65,12 +71,12 @@ const prodiList = computed(() => {
   const map = new Map()
 
   kelasData.value.forEach((item) => {
-    const prodi = item?.prodi
+    const p = item?.prodi
 
-    if (prodi?.id && !map.has(prodi.id)) {
-      map.set(prodi.id, {
-        id: String(prodi.id),
-        name: prodi.name,
+    if (p?.id && !map.has(p.id)) {
+      map.set(p.id, {
+        id: String(p.id),
+        name: p.name,
       })
     }
   })
@@ -82,12 +88,12 @@ const tahunAkademikList = computed(() => {
   const map = new Map()
 
   kelasData.value.forEach((item) => {
-    const tahun = item?.tahun_akademik
+    const t = item?.tahun_akademik
 
-    if (tahun?.id && !map.has(tahun.id)) {
-      map.set(tahun.id, {
-        id: String(tahun.id),
-        label: `${tahun.tipe_semester} ${tahun.tahun_awal} - ${tahun.tahun_akhir}`,
+    if (t?.id && !map.has(t.id)) {
+      map.set(t.id, {
+        id: String(t.id),
+        label: `${t.tipe_semester} ${t.tahun_awal} - ${t.tahun_akhir}`,
       })
     }
   })
@@ -95,24 +101,34 @@ const tahunAkademikList = computed(() => {
   return Array.from(map.values())
 })
 
-// ================= HELPER =================
-const getJurusanName = (item: any): string => {
+// ================= WATCH =================
+import { watch } from "vue"
+
+watch(currentPage, () => {
+  getKelas()
+})
+
+watch(prodi, () => {
+  currentPage.value = 1
+  getKelas()
+})
+
+// ================= HELPER (INI YANG KURANG) =================
+const getJurusanName = (item: any) => {
   return item?.prodi?.jurusan?.name ?? "-"
 }
 
-const getProdiName = (item: any): string => {
+const getProdiName = (item: any) => {
   return item?.prodi?.name ?? "-"
 }
 
-const getTahunName = (item: any): string => {
-  const tahun = item?.tahun_akademik
-
-  if (!tahun) return "-"
-
-  return `${tahun.tipe_semester} ${tahun.tahun_awal} - ${tahun.tahun_akhir}`
+const getTahunName = (item: any) => {
+  const t = item?.tahun_akademik
+  if (!t) return "-"
+  return `${t.tipe_semester ?? ""} ${t.tahun_awal ?? ""} - ${t.tahun_akhir ?? ""}`
 }
 
-// ================= FILTER COMPUTED =================
+// ================= FILTER CLIENT =================
 const filteredData = computed(() => {
   return kelasData.value.filter((item) => {
     const jurusanId = String(item?.prodi?.jurusan?.id ?? "")
@@ -128,13 +144,6 @@ const filteredData = computed(() => {
 })
 
 // ================= PAGINATION =================
-const currentPage = ref(1)
-const perPage = ref(5)
-
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(filteredData.value.length / perPage.value))
-)
-
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
   return filteredData.value.slice(start, start + perPage.value)
@@ -143,53 +152,48 @@ const paginatedData = computed(() => {
 const rowNumber = (index: number) =>
   (currentPage.value - 1) * perPage.value + index + 1
 
-const pages = computed((): (number | "...")[] => {
+// ================= PAGINATION BUTTON (INI YANG KURANG) =================
+const pages = computed<(number | "...")[]>(() => {
   const total = totalPages.value
   const current = currentPage.value
   const result: (number | "...")[] = []
 
   if (total <= 7) {
-    for (let i = 1; i <= total; i++) {
-      result.push(i)
-    }
+    for (let i = 1; i <= total; i++) result.push(i)
     return result
   }
 
   result.push(1)
 
-  if (current > 3) {
-    result.push("...")
-  }
+  if (current > 3) result.push("...")
 
   const start = Math.max(2, current - 1)
   const end = Math.min(total - 1, current + 1)
 
-  for (let i = start; i <= end; i++) {
-    result.push(i)
-  }
+  for (let i = start; i <= end; i++) result.push(i)
 
-  if (current < total - 2) {
-    result.push("...")
-  }
+  if (current < total - 2) result.push("...")
 
   result.push(total)
 
   return result
 })
 
-const goToPage = (page: number): void => {
+// ================= PAGINATION CONTROL =================
+const goToPage = (page: number) => {
   if (page < 1 || page > totalPages.value) return
   currentPage.value = page
 }
 
-const prevPage = (): void => goToPage(currentPage.value - 1)
-const nextPage = (): void => goToPage(currentPage.value + 1)
-
-const pilihData = () => {
-  currentPage.value = 1
-}
+const prevPage = () => goToPage(currentPage.value - 1)
+const nextPage = () => goToPage(currentPage.value + 1)
 
 // ================= ACTION =================
+const pilihData = () => {
+  currentPage.value = 1
+  getKelas()
+}
+
 const tambahData = () => {
   router.push("/dashboard-admin/tambah_kelas")
 }
@@ -202,7 +206,7 @@ const hapusData = (item: any) => {
   console.log("HAPUS:", item)
 }
 
-// ================= MOUNT =================
+// ================= INIT =================
 onMounted(() => {
   getKelas()
 })

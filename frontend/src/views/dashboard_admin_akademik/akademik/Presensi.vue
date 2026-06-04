@@ -27,7 +27,7 @@ const selectedDate = ref(today)
 const getDosen = async () => {
   try {
     const token = localStorage.getItem("token")
-
+    const BASE_URL = 'https://be.karlearn.site'
     const response = await fetch("/api/roles", {
       method: "GET",
       headers: {

@@ -73,8 +73,8 @@ const getDosen = async (): Promise<void> => {
     let allUsers: any[] = []
 
     do {
-
-      const res = await fetch(`/api/users?page=${page}`, {
+      const BASE_URL = 'https://be.karlearn.site'
+      const res = await fetch(`${BASE_URL}/api/users?page=${page}`, {
         headers: getHeaders(),
       })
 

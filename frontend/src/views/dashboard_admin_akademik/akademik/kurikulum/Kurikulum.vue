@@ -1,4 +1,3 @@
-```vue
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
@@ -11,7 +10,7 @@ const prodi = ref("")
 const tahunAkademik = ref("")
 
 // ================= DATA =================
-const kurikulumData = ref<any[]>([])
+const kurikulumData = ref<any[]>([])  
 
 // ================= PAGINATION =================
 const currentPage = ref(1)
@@ -19,6 +18,8 @@ const perPage = ref(10)
 
 const totalPages = ref(1)
 const totalItems = ref(0)
+
+const BASE_URL = "https://be.karlearn.site"
 
 // ================= HEADER =================
 const getHeaders = () => ({
@@ -30,10 +31,10 @@ const getHeaders = () => ({
 // ================= GET KURIKULUM =================
 const getKurikulum = async () => {
   try {
-
     const res = await fetch(
-      `/api/kurikulum?page=${currentPage.value}`,
+      `${BASE_URL}/api/kurikulum?page=${currentPage.value}&per_page=${perPage.value}`,
       {
+        method: "GET",
         headers: getHeaders(),
       }
     )
@@ -45,102 +46,76 @@ const getKurikulum = async () => {
     const raw = json.data?.items ?? []
 
     kurikulumData.value = raw.map((item: any) => ({
-      id: item.id ?? item.kode,
-
-      nama:
-        item.name ??
-        item.nama_kurikulum ??
-        "Merdeka",
-
-      prodi:
-        item.prodi?.name ??
-        item.program_studi?.name ??
-        "-",
-
-      semester:
-        item.kurikulum_mk?.[0]?.semester
-          ? `Semester ${item.kurikulum_mk[0].semester}`
-          : "-",
-
-      tahun:
-        item.tahun_akademik ??
-        "-",
+      id: item.id,
+      nama: item.name ?? "-",
+      prodi: item.prodi?.name ?? "-",
+      semester: item.kurikulum_mk?.[0]?.semester
+        ? `Semester ${item.kurikulum_mk[0].semester}`
+        : "-",
+      tahun: "-",
     }))
 
-    // pagination backend
-    totalPages.value =
-      json.data?.pagination?.total_pages ?? 1
-
-    totalItems.value =
-      json.data?.pagination?.total_items ?? 0
-
-    perPage.value =
-      json.data?.pagination?.per_page ?? 10
-
+    totalPages.value = json.data?.pagination?.total_pages ?? 1
+    totalItems.value = json.data?.pagination?.total_items ?? 0
+    perPage.value = json.data?.pagination?.per_page ?? perPage.value
   } catch (err) {
     console.error("GET KURIKULUM ERROR:", err)
-    kurikulumData.value = []
   }
 }
 
-// ================= WATCH PAGE =================
-watch(currentPage, () => {
-  getKurikulum()
+// ================= PAGINATION LOGIC =================
+
+// NEXT
+const nextPage = async () => {
+  if (currentPage.value < totalPages.value) {
+    currentPage.value++
+    await getKurikulum()
+  }
+}
+
+// PREVIOUS
+const prevPage = async () => {
+  if (currentPage.value > 1) {
+    currentPage.value--
+    await getKurikulum()
+  }
+}
+
+// GO TO PAGE (NUMBER CLICK)
+const goToPage = async (page: number | string) => {
+  const p = Number(page)
+  if (!p || p < 1 || p > totalPages.value) return
+
+  currentPage.value = p
+  await getKurikulum()
+}
+
+// ================= WATCH PER PAGE =================
+watch(perPage, async () => {
+  currentPage.value = 1
+  await getKurikulum()
 })
 
-// ================= ON MOUNT =================
+// ================= MOUNT =================
 onMounted(() => {
   getKurikulum()
 })
 
-// ================= PAGINATION BUTTON =================
-const goToPage = (page: number | string): void => {
-  const p = Number(page)
-
-  if (p < 1 || p > totalPages.value) return
-
-  currentPage.value = p
-}
-
-const prevPage = (): void => {
-  if (currentPage.value > 1) {
-    currentPage.value--
-  }
-}
-
-const nextPage = (): void => {
-  if (currentPage.value < totalPages.value) {
-    currentPage.value++
-  }
-}
-
-// ================= PAGE NUMBER =================
+// ================= PAGINATION UI =================
 const pages = computed<(number | string)[]>(() => {
   const total = totalPages.value
   const current = currentPage.value
 
   if (total <= 5) {
-    return Array.from(
-      { length: total },
-      (_, i) => i + 1
-    )
+    return Array.from({ length: total }, (_, i) => i + 1)
   }
 
-  if (current <= 3) {
-    return [1, 2, 3, "...", total]
-  }
+  if (current <= 3) return [1, 2, 3, "...", total]
 
-  if (current >= total - 2) {
+  if (current >= total - 2)
     return [1, "...", total - 2, total - 1, total]
-  }
 
-  return [
-    1,
-    "...",
-    current,
-    "...",
-    total,
-  ]
+  return [1, "...", current, "...", total]
 })
 
 // ================= ACTION =================

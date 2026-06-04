@@ -41,7 +41,8 @@ const selectedMahasiswaList = ref<number[]>([])
 // ─────────────────────────────────────────────
 const getKelas = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/kelas", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/kelas`, {
       headers: getHeaders(),
     })
 

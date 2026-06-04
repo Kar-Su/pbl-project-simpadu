@@ -10,8 +10,9 @@ const showPass = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const errorMsg = ref<string>('')
 
-
-const ENDPOINT = '/api/auth/login'
+// 🔥 HARDCODE BACKEND (PALING AMAN UNTUK DEPLOY SEKARANG)
+const BASE_URL = 'https://be.karlearn.site'
+const ENDPOINT = `${BASE_URL}/api/auth/login`
 
 const handleLogin = async (): Promise<void> => {
   errorMsg.value = ''
@@ -39,57 +40,47 @@ const handleLogin = async (): Promise<void> => {
     const data = await res.json()
 
     console.log('LOGIN RESPONSE:', data)
+    console.log('PATH ENDPOINT:', res.url)
 
     if (!res.ok) {
       errorMsg.value = data.message || 'Login gagal'
       return
     }
 
- 
-
-    // const role: string = (
-    //   data.data.role_name ||
-    //   data.data.role ||
-    //   data.data.user?.role_name ||
-    //   data.data.user?.role ||
-    //   ''
-    // ).toLowerCase()
+    if (!data?.data) {
+      errorMsg.value = 'Response login tidak valid'
+      return
+    }
 
     const role: string = (data.data.role_name ?? '').toLowerCase()
 
-    if (!data?.data) {
-  errorMsg.value = 'Response login tidak valid'
-  return
-}
-
     const token: string = data.data.access_token
     const refreshToken: string = data.data.refresh_token
+
     localStorage.setItem('token', token)
     localStorage.setItem('refresh_token', refreshToken)
     localStorage.setItem('role', role)
-    
-    
-// if (data.success) {
-//   localStorage.setItem("token", data.data.access_token)
-//   localStorage.setItem("refresh_token", data.data.refresh_token)
-//   localStorage.setItem("role", data.data.role)
-//   localStorage.setItem("email", data.data.email)
-
-//   router.push("/dashboard-admin")
-// }
 
     console.log('ROLE:', role)
 
     if (role === 'super-admin') {
       router.push('/dashboard-superadmin')
     } else if (
-      ['admin-akademik', 'admin-mahasiswa', 'admin-keuangan',
-       'admin-pegawai', 'dummy-dosen', 'dummy-mahasiswa', 'tumbal'].includes(role)
+      [
+        'admin-akademik',
+        'admin-mahasiswa',
+        'admin-keuangan',
+        'admin-pegawai',
+        'dummy-dosen',
+        'dummy-mahasiswa',
+        'tumbal'
+      ].includes(role)
     ) {
       router.push('/dashboard-admin')
     } else {
       errorMsg.value = 'Role tidak dikenali: ' + role
     }
+
   } catch (error) {
     console.error('ERROR LOGIN:', error)
     errorMsg.value = 'Terjadi error saat login'

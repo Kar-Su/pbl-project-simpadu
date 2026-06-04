@@ -100,6 +100,7 @@ const pages = computed<(number | string)[]>(() => {
 // ─────────────────────────────────────────────
 const getJurusan = async (): Promise<void> => {
   try {
+    const BASE_URL = 'https://be.karlearn.site'
     const res = await fetch("/api/jurusan", {
       headers: getHeaders(),
     })

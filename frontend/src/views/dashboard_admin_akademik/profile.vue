@@ -5,6 +5,7 @@ const name = ref("Aka Demi")
 const email = ref("akademi@gmail.id.sabar")
 const role = ref("Admin Akademik")
 
+const BASE_URL = 'https://be.karlearn.site'
 const avatar = ref("https://i.pravatar.cc/300")
 
 const fileInput = ref<HTMLInputElement | null>(null)

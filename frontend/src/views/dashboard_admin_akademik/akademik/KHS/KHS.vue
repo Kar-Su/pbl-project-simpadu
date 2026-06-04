@@ -27,6 +27,8 @@ const kelasData = ref([
 const currentPage = ref(1)
 const perPage = ref(5)
 
+const BASE_URL = "https://be.karlearn.site"
+
 const totalPages = computed(() => 68)
 
 const paginatedData = computed(() => {

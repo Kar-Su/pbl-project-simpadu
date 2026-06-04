@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue"
 import { useRouter } from "vue-router"
 import DeleteConfirmModal from "./konfirmasi_hapus.vue"
 
+// ================= TYPE =================
 interface User {
   id: string
   email: string
@@ -10,6 +11,14 @@ interface User {
   role_name: string
 }
 
+// ================= CONFIG API =================
+const BASE_URL = "https://be.karlearn.site"
+
+const API = {
+  users: `${BASE_URL}/api/users`,
+}
+
+// ================= STATE =================
 const search = ref("")
 const perPage = ref(10)
 const currentPage = ref(1)
@@ -20,22 +29,26 @@ const selectedEmail = ref("")
 const router = useRouter()
 
 const users = ref<User[]>([])
-
-// ================= GET USERS =================
 const totalPages = ref(1)
 
+// ================= HEADERS =================
+const getHeaders = () => {
+  const token = localStorage.getItem("token")
+
+  return {
+    Authorization: `Bearer ${token}`,
+    accept: "application/json",
+  }
+}
+
+// ================= GET USERS =================
 const getUsers = async () => {
   try {
-
-    const token = localStorage.getItem("token")
-
     const response = await fetch(
-      `/api/users?page=${currentPage.value}&per_page=${perPage.value}`,
+      `${API.users}?page=${currentPage.value}&per_page=${perPage.value}`,
       {
         method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: getHeaders(),
       }
     )
 
@@ -51,99 +64,33 @@ const getUsers = async () => {
     users.value = data.data.items || []
 
     totalPages.value =
-      data.data.pagination.total_pages || 1
+      data.data.pagination?.total_pages || 1
 
   } catch (err) {
-    console.error(err)
+    console.error("GET USERS ERROR:", err)
   }
 }
 
-//     // ================= GET USER BERDASARKAN ROLE =================
-//    const results = await Promise.all(
-//   roles.map(async (roles: string) => {
-//     try {
-
-//       const res = await fetch(`/api/users`, {
-//         headers: {
-//           Authorization: `Bearer ${token}`
-//         }
-//       })
-
-//       if (!res.ok) {
-//         console.log(`ROLE GAGAL: ${roles}`)
-//         return []
-//       }
-
-//       const data = await res.json()
-
-//       return Array.isArray(data.data)
-//         ? data.data
-//         : []
-
-//     } catch (err) {
-
-//       console.log(`ERROR ROLE: ${role}`, err)
-
-//       return []
-//     }
-//   })
-// )
-
-//     users.value = results.flat()
-
-//     console.log("USERS:", users.value)
-
-//   } catch (err) {
-//     console.error("GET USERS ERROR:", err)
-//   }
-// }
-
 // ================= FILTER =================
-// const filteredUsers = computed(() =>
-//   users.value.filter(item =>
-//     item.name?.toLowerCase().includes(search.value.toLowerCase()) ||
-//     item.email?.toLowerCase().includes(search.value.toLowerCase()) ||
-//     item.role_name?.toLowerCase().includes(search.value.toLowerCase())
-//   )
-// )
-
-// ================= PAGINATION =================
-// const totalPages = computed(() =>
-//   Math.ceil(filteredUsers.value.length / perPage.value)
-// )
-
-// const paginatedUsers = computed(() => {
-
-//   const start = (currentPage.value - 1) * perPage.value
-
-//   return filteredUsers.value.slice(
-//     start,
-//     start + perPage.value
-//   )
-// })
-
 const filteredUsers = computed(() =>
-  users.value.filter(item =>
+  users.value.filter((item) =>
     item.name?.toLowerCase().includes(search.value.toLowerCase()) ||
     item.email?.toLowerCase().includes(search.value.toLowerCase()) ||
     item.role_name?.toLowerCase().includes(search.value.toLowerCase())
   )
 )
 
+// ================= PAGINATION =================
 const nextPage = async () => {
   if (currentPage.value < totalPages.value) {
-
     currentPage.value++
-
     await getUsers()
   }
 }
 
 const prevPage = async () => {
   if (currentPage.value > 1) {
-
     currentPage.value--
-
     await getUsers()
   }
 }
@@ -155,13 +102,11 @@ const openDeleteModal = (email: string) => {
 }
 
 const confirmDelete = () => {
-
   console.log("hapus:", selectedEmail.value)
-
   Konfirmasi_hapus.value = false
 }
 
-// ================= MOUNTED =================
+// ================= INIT =================
 onMounted(() => {
   getUsers()
 })

@@ -31,6 +31,8 @@ const currentPage = ref<number>(1)
 const perPage = ref<number>(5)
 const totalItems = ref<number>(0)
 
+  const BASE_URL = "https://be.karlearn.site"
+
 const totalPages = computed<number>(() =>
   Math.max(1, Math.ceil(totalItems.value / perPage.value))
 )

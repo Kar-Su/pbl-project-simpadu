@@ -20,8 +20,8 @@ const roleOptions = ref<string[]>([])
 const fetchRoles = async () => {
   try {
     const token = localStorage.getItem("token")
-
-    const response = await fetch("/api/roles", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const response = await fetch(`${BASE_URL}/api/roles`, {
       headers: {
         authorization: `Bearer ${token}`
       }

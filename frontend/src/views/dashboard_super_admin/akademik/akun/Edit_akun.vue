@@ -26,8 +26,8 @@ const getUser = async () => {
 
     const token = localStorage.getItem("token")
     const id = route.params.id
-
-    const res = await fetch(`/api/user/super/${id}`, {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/users${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -59,7 +59,7 @@ const getRoles = async () => {
 
     console.log("TOKEN ROLE:", token)
 
-    const res = await fetch("/api/role", {
+    const res = await fetch("/api/roles", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

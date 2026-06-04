@@ -45,8 +45,8 @@ const getTahunAkademik = async () => {
   try {
 
     const token = localStorage.getItem("token")
-
-    const response = await fetch("/api/tahun-akademik", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const response = await fetch(`${BASE_URL}/api/tahun-akademik`, {
 
       method: "GET",
 

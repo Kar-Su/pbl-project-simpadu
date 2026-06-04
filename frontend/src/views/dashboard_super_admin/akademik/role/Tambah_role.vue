@@ -27,7 +27,8 @@ const handleSimpan = async () => {
 
 console.log("TOKEN:", token)
   try {
-const response = await fetch(`/api/roles`, {
+const BASE_URL = 'https://be.karlearn.site'
+const response = await fetch(`${BASE_URL}/api/roles`, {
   method: "POST",
   credentials: "include",
   headers: {
