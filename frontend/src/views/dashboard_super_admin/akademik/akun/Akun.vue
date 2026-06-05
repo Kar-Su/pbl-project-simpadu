@@ -31,6 +31,34 @@ const router = useRouter()
 const users = ref<User[]>([])
 const totalPages = ref(1)
 
+const visiblePages = computed(() => {
+  const total = totalPages.value
+  const current = currentPage.value
+
+  if (total <= 4) {
+    return Array.from({ length: total }, (_, i) => i + 1)
+  }
+
+  const pages: (number | string)[] = []
+
+  pages.push(1)
+
+  const rangeStart = Math.max(2, current - 1)
+  const rangeEnd = Math.min(total - 1, current + 1)
+
+  if (rangeStart > 2) pages.push('...')
+
+  for (let i = rangeStart; i <= rangeEnd; i++) {
+    pages.push(i)
+  }
+
+  if (rangeEnd < total - 1) pages.push('...')
+
+  pages.push(total)
+
+  return pages
+})
+
 // ================= HEADERS =================
 const getHeaders = () => {
   const token = localStorage.getItem("token")
@@ -113,19 +141,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f5f7fb] p-6">
+  <div class="h-full bg-[#f5f7fb] p-6">
 
     <!-- BREADCRUMB -->
-    <div class="mb-2 text-sm text-gray-400">
+    <div class="mb-2 text-sm text-black-800">
       Akademik > Akun
     </div>
 
     <!-- TITLE -->
-    <h1 class="mb-1 text-3xl font-bold text-gray-800">
+    <h1 class="mb-1 text-3xl font-bold text-black-800">
       Akun
     </h1>
 
-    <p class="mb-6 text-gray-500">
+    <p class="mb-6 text-black-800">
       Kelola Data Akun
     </p>
 
@@ -162,7 +190,7 @@ onMounted(() => {
       <!-- BUTTON -->
       <button
         @click="router.push('/dashboard-superadmin/tambah_akun')"
-        class="rounded-lg bg-[#2f4a8a] px-4 py-2 text-sm font-medium text-white hover:bg-[#243b73]"
+        class="rounded-lg bg-[#2f4a8a] px-4 py-2 text-sm font-medium text-white hover:bg-[#37bd1d]"
       >
         + Tambah Akun
       </button>
@@ -170,12 +198,13 @@ onMounted(() => {
     </div>
 
     <!-- TABLE -->
-    <div class="rounded-2xl border border-gray-200 bg-white shadow-sm">
+    <div class="bg-[#ececec] rounded-xl shadow-sm
+border-l-[4px] border-b-[3px] border-[#9db9dc]">
 
       <!-- TABLE HEADER -->
       <div class="border-b border-gray-100 px-5 py-4">
 
-        <h2 class="text-xl font-semibold text-gray-700">
+        <h2 class="text-xl font-semibold text-black-800">
           Data Akun
         </h2>
 
@@ -188,7 +217,7 @@ onMounted(() => {
 
           <thead>
 
-            <tr class="text-left text-gray-500">
+            <tr class="text-left text-black-800">
 
               <th class="px-5 py-4">No</th>
               <th class="px-5 py-4">Email</th>
@@ -231,7 +260,7 @@ onMounted(() => {
                   <!-- EDIT -->
                   <button
                     @click="router.push(`/dashboard-superadmin/edit_akun/${item.id}`)"
-                    class="rounded-md bg-yellow-400 px-3 py-1 text-xs font-medium text-white hover:bg-yellow-500"
+                    class="rounded-md bg-yellow-400 px-3 py-1 text-xs font-medium text-white hover:bg-yellow-900"
                   >
                     ✏ Edit
                   </button>
@@ -239,7 +268,7 @@ onMounted(() => {
                   <!-- DELETE -->
                   <button
                     @click="openDeleteModal(item.email)"
-                    class="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-600"
+                    class="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-900"
                   >
                     🗑 Hapus
                   </button>
@@ -261,29 +290,36 @@ onMounted(() => {
 
 
         <!-- PAGINATION -->
-        <div class="flex items-center gap-3 text-sm">
+         <div class="flex justify-end mt-10"></div>
+<div class="flex items-center gap-2 text-gray-500 text-sm">
 
-          <button
-            @click="prevPage"
-            class="text-gray-400 hover:text-black"
-          >
-            ← Previous
-          </button>
+              <button @click="prevPage" :disabled="currentPage === 1"
+                class="flex items-center gap-1 px-2 py-1 rounded hover:text-black disabled:opacity-40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+              </button>
 
-          <button
-            class="flex h-8 w-8 items-center justify-center rounded bg-[#2f4a8a] text-white"
-          >
-            {{ currentPage }}
-          </button>
+              <template v-for="item in visiblePages" :key="item">
+                <span v-if="item === '...'" class="w-8 h-8 flex items-center justify-center text-gray-400">...</span>
+                <button v-else @click="currentPage = Number(item); getUsers()" :class="currentPage === Number(item)
+                  ? 'bg-[#1c3277] text-white shadow-md scale-105'
+                  : 'bg-white text-[#4b4b4b] hover:bg-[#d6ddee]'"
+                  class="w-8 h-8 rounded-md text-sm font-medium transition-all duration-200">
+                  {{ item }}
+                </button>
+              </template>
 
-          <button
-            @click="nextPage"
-            class="text-gray-400 hover:text-black"
-          >
-            Next →
-          </button>
+              <button @click="nextPage" :disabled="currentPage === totalPages"
+                class="flex items-center gap-1 px-2 py-1 rounded hover:text-black disabled:opacity-40">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
 
-        </div>
+            </div>
 
       </div>
 
