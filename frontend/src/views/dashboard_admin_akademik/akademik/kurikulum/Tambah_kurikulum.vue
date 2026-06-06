@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue"
+import { ref, onMounted, computed } from "vue"
+import { watch } from "vue"
 
 // ================= INTERFACE =================
 interface TahunAkademik {
@@ -29,6 +30,18 @@ const tahunAkademikList = ref<TahunAkademik[]>([])
 const mataKuliahList = ref<MataKuliah[]>([
   { nama: "", sks: null }
 ])
+
+const filteredProdiList = computed(() => {
+  if (!jurusan.value) return []
+
+  return prodiList.value.filter(
+    (p) => String(p.jurusan?.id) === String(jurusan.value)
+  )
+})
+
+watch(jurusan, () => {
+  prodi.value = ""
+})
 
 // ================= API =================
 const getTahunAkademik = async () => {
@@ -190,7 +203,7 @@ const simpanKurikulum = async () => {
 
     <!-- TITLE -->
     <h1 class="text-4xl font-bold text-gray-800">
-      Kurikulum
+      Tambah Kurikulum
     </h1>
 
     <p class="mb-6 mt-1 text-gray-500">
@@ -215,12 +228,8 @@ const simpanKurikulum = async () => {
           <label class="mb-2 block text-sm font-medium text-gray-700">
             Nama Kurikulum
           </label>
-          <input
-            v-model="namaKurikulum"
-            type="text"
-            placeholder="Isi Nama Kurikulum ..."
-            class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
-          />
+          <input v-model="namaKurikulum" type="text" placeholder="Isi Nama Kurikulum ..."
+            class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500" />
         </div>
 
         <!-- TAHUN AKADEMIK -->
@@ -228,17 +237,12 @@ const simpanKurikulum = async () => {
           <label class="mb-2 block text-sm font-medium text-gray-700">
             Tahun Akademik
           </label>
-          <select
-            v-model="tahunAkademikId"
-            class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
-          >
+          <select v-model="tahunAkademikId"
+            class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500">
             <option value="">Pilih Tahun Akademik</option>
-            <option
-              v-for="item in tahunAkademikList"
-              :key="item.id"
-              :value="item.id"
-            >
-              {{ item.tipee_semester }} ({{ item.tahun_awal?.split('-')?.[0] || '-' }})
+            <option v-for="item in tahunAkademikList" :key="item.id" :value="item.id">
+              {{ item.tahun_awal?.split('-')?.[0] || '-' }}/{{ item.tahun_akhir?.split('-')?.[0] || '-' }} {{
+                item.tipee_semester }}
             </option>
           </select>
         </div>
@@ -248,7 +252,8 @@ const simpanKurikulum = async () => {
           <label class="mb-2 block text-sm font-medium text-gray-700">
             Jurusan
           </label>
-          <select v-model="jurusan" class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500">
+          <select v-model="jurusan"
+            class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500">
             <option value="">Pilih Jurusan</option>
             <option v-for="j in jurusanList" :key="j.id" :value="j.id">
               {{ j.name }}
@@ -261,12 +266,9 @@ const simpanKurikulum = async () => {
           <label class="mb-2 block text-sm font-medium text-gray-700">
             Kode Kurikulum
           </label>
-          <input
-            v-model="kodeKurikulum"
-            type="text"
+          <input v-model="kodeKurikulum" type="text"
             class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
-            placeholder="Masukkan kode kurikulum"
-          />
+            placeholder="Masukkan kode kurikulum" />
         </div>
 
         <!-- PRODI -->
@@ -274,9 +276,11 @@ const simpanKurikulum = async () => {
           <label class="mb-2 block text-sm font-medium text-gray-700">
             Prodi
           </label>
-          <select v-model="prodi" class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500">
+          <select v-model="prodi"
+            class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500">
             <option value="">Pilih Prodi</option>
-            <option v-for="p in prodiList" :key="p.id" :value="p.id">
+
+            <option v-for="p in filteredProdiList" :key="p.id" :value="p.id">
               {{ p.name }}
             </option>
           </select>
@@ -299,23 +303,15 @@ const simpanKurikulum = async () => {
       <!-- CONTENT -->
       <div class="p-5">
 
-        <div
-          v-for="(mk, index) in mataKuliahList"
-          :key="index"
-          class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2"
-        >
+        <div v-for="(mk, index) in mataKuliahList" :key="index" class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2">
 
           <!-- NAMA MK -->
           <div>
             <label class="mb-2 block text-sm font-medium text-gray-700">
               Nama Matakuliah
             </label>
-            <input
-              v-model="mk.nama"
-              type="text"
-              placeholder="Isi Nama Matakuliah ..."
-              class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
-            />
+            <input v-model="mk.nama" type="text" placeholder="Isi Nama Matakuliah ..."
+              class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500" />
           </div>
 
           <!-- SKS -->
@@ -323,21 +319,14 @@ const simpanKurikulum = async () => {
             <label class="mb-2 block text-sm font-medium text-gray-700">
               SKS
             </label>
-            <input
-              v-model="mk.sks"
-              type="number"
-              placeholder="Isi SKS ..."
-              class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500"
-            />
+            <input v-model="mk.sks" type="number" placeholder="Isi SKS ..."
+              class="w-full rounded-xl border border-gray-300 px-4 py-3 text-sm outline-none focus:border-blue-500" />
           </div>
 
           <!-- BUTTON HAPUS -->
           <div class="md:col-span-2 flex justify-end">
-            <button
-              v-if="mataKuliahList.length > 1"
-              @click="hapusMataKuliah(index)"
-              class="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600"
-            >
+            <button v-if="mataKuliahList.length > 1" @click="hapusMataKuliah(index)"
+              class="rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600">
               Hapus
             </button>
           </div>
@@ -346,10 +335,8 @@ const simpanKurikulum = async () => {
 
         <!-- BUTTON TAMBAH -->
         <div class="flex justify-center">
-          <button
-            @click="tambahMataKuliah"
-            class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-gray-500 text-2xl text-gray-600 transition hover:bg-gray-100"
-          >
+          <button @click="tambahMataKuliah"
+            class="flex h-12 w-12 items-center justify-center rounded-full border-2 border-gray-500 text-2xl text-gray-600 transition hover:bg-gray-100">
             +
           </button>
         </div>
@@ -360,10 +347,8 @@ const simpanKurikulum = async () => {
 
     <!-- BUTTON SIMPAN -->
     <div class="mt-6">
-      <button
-        @click="simpanKurikulum"
-        class="rounded-xl bg-green-500 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-green-600"
-      >
+      <button @click="simpanKurikulum"
+        class="rounded-xl bg-green-500 px-6 py-3 text-sm font-semibold text-white shadow hover:bg-green-600">
         💾 Simpan
       </button>
     </div>

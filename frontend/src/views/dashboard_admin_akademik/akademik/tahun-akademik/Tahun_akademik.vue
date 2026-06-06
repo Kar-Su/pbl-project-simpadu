@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -7,7 +7,7 @@ const router = useRouter()
 // ================= TYPE =================
 interface AkademikItem {
   id: number
-  tipeSemester: string
+  tipeeSemester: string
   tahunAwal: string
   tahunAkhir: string
   status?: string
@@ -29,10 +29,20 @@ const filteredData = ref<AkademikItem[]>([])
 const editingItem = ref<AkademikItem | null>(null)
 
 const editForm = ref({
-  tipeSemester: '',
+  tipeeSemester: '',
   tahunAwal: '',
   tahunAkhir: '',
   status: '',
+})
+
+// ================= WATCH TAHUN =================
+watch(() => editForm.value.tahunAwal, (val) => {
+  const angka = Number(val)
+  if (val && val.length === 4 && !isNaN(angka)) {
+    editForm.value.tahunAkhir = String(angka + 1)
+  } else {
+    editForm.value.tahunAkhir = ''
+  }
 })
 
 // ================= HEADER =================
@@ -42,11 +52,11 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token') ?? ''}`,
 })
 
-// ================= FETCH API (TETAP INI) =================
+// ================= FETCH API =================
 const getTahunAkademik = async (): Promise<void> => {
   try {
     const res = await fetch(
-      'https://be.karlearn.site/api/tahun-akademik/status/aktif',
+      'https://be.karlearn.site/api/tahun-akademik',
       {
         method: 'GET',
         headers: getHeaders(),
@@ -59,14 +69,14 @@ const getTahunAkademik = async (): Promise<void> => {
 
     allData.value = raw.map((item: any) => ({
       id: item.id,
-      tipeSemester:
-        item.tipe_semester === 'ganjil'
+      tipeeSemester:
+        item.tipee_semester === 'ganjil'
           ? 'Ganjil'
-          : item.tipe_semester === 'genap'
-          ? 'Genap'
-          : '-',
+          : item.tipee_semester === 'genap'
+            ? 'Genap'
+            : '-',
 
-      rawTipeSemester: item.tipe_semester,
+      rawTipeSemester: item.tipee_semester,
 
       tahunAwal: item.tahun_awal
         ? item.tahun_awal.split('-')[0]
@@ -83,8 +93,7 @@ const getTahunAkademik = async (): Promise<void> => {
     }))
 
     filteredData.value = [...allData.value]
-
-    currentPage.value = 1 // penting reset page
+    currentPage.value = 1
   } catch (err) {
     console.error('GET ERROR:', err)
   }
@@ -98,7 +107,7 @@ onMounted(() => {
 const applyFilter = () => {
   filteredData.value = allData.value.filter((item) => {
     const semesterMatch = filterSemester.value
-      ? item.tipeSemester === filterSemester.value
+      ? item.tipeeSemester === filterSemester.value
       : true
 
     const tahunMatch = filterTahun.value
@@ -149,7 +158,7 @@ const editItem = (item: AkademikItem) => {
   editingItem.value = item
 
   editForm.value = {
-    tipeSemester: item.tipeSemester,
+    tipeeSemester: item.tipeeSemester,
     tahunAwal: item.tahunAwal,
     tahunAkhir: item.tahunAkhir,
     status: item.status ?? '',
@@ -169,10 +178,9 @@ const saveEdit = async () => {
         editForm.value.status === 'Aktif/jalan'
           ? 'aktif'
           : 'tidak_aktif',
-
       tahun_awal: `${editForm.value.tahunAwal}-01-01`,
       tahun_akhir: `${editForm.value.tahunAkhir}-01-01`,
-      tipe_semester: editForm.value.tipeSemester.toLowerCase(),
+      tipee_semester: editForm.value.tipeeSemester.toLowerCase(),
     }
 
     const res = await fetch(
@@ -221,9 +229,7 @@ const saveEdit = async () => {
     </p>
 
     <!-- Card -->
-    <div
-  class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
->
+    <div class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]">
 
       <!-- Tabel -->
       <div class="overflow-x-auto">
@@ -235,10 +241,7 @@ const saveEdit = async () => {
 
             <!-- Judul di dalam tabel -->
             <tr>
-              <th
-                colspan="6"
-                class="text-left text-2xl font-bold text-black-800 pb-6"
-              >
+              <th colspan="6" class="text-left text-2xl font-bold text-black-800 pb-6">
                 Tahun Akademik
               </th>
             </tr>
@@ -278,27 +281,21 @@ const saveEdit = async () => {
 
             <!-- Jika kosong -->
             <tr v-if="paginatedData.length === 0">
-              <td
-                colspan="6"
-                class="py-10 text-center text-slate-400"
-              >
+              <td colspan="6" class="py-10 text-center text-slate-400">
                 Tidak ada data semester
               </td>
             </tr>
 
             <!-- Data -->
-            <tr
-              v-for="(item, index) in paginatedData"
-              :key="item.id"
-              class="border-b border-slate-100 hover:bg-slate-50"
-            >
+            <tr v-for="(item, index) in paginatedData" :key="item.id"
+              class="border-b border-slate-100 hover:bg-slate-50">
 
               <td class="py-4 px-4">
                 {{ index + 1 }}
               </td>
 
               <td class="py-4 px-4 font-medium text-slate-700">
-                {{ item.tipeSemester }}
+                {{ item.tipeeSemester }}
               </td>
 
               <td class="py-4 px-4">
@@ -310,23 +307,17 @@ const saveEdit = async () => {
               </td>
 
               <td class="py-4 px-4">
-                <span
-                  class="px-3 py-1 rounded-full text-xs"
-                  :class="
-                    item.status === 'Aktif/jalan'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-red-100 text-red-700'
-                  "
-                >
+                <span class="px-3 py-1 rounded-full text-xs" :class="item.status === 'Aktif/jalan'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700'
+                  ">
                   {{ item.status }}
                 </span>
               </td>
 
               <td class="py-4 px-4 text-center">
-                <button
-                  @click="editItem(item)"
-                  class="bg-amber-400 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg"
-                >
+                <button @click="editItem(item)"
+                  class="bg-amber-400 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg">
                   Edit
                 </button>
               </td>
@@ -336,82 +327,55 @@ const saveEdit = async () => {
           </tbody>
 
         </table>
-<!-- Pagination -->
-<div
-  v-if="totalPages > 0"
-  class="flex items-center justify-end gap-2 mt-6"
->
+        <!-- Pagination -->
+        <div v-if="totalPages > 0" class="flex items-center justify-end gap-2 mt-6">
 
-  <!-- Previous -->
-  <button
-    @click="prevPage"
-    :disabled="currentPage === 1"
-    class="px-4 py-2 text-sm border rounded-lg transition"
-    :class="
-      currentPage === 1
-        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-        : 'bg-white hover:bg-slate-100 text-slate-700'
-    "
-  >
-    Previous
-  </button>
+          <!-- Previous -->
+          <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 text-sm border rounded-lg transition"
+            :class="currentPage === 1
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                : 'bg-white hover:bg-slate-100 text-slate-700'
+              ">
+            Previous
+          </button>
 
-  <!-- Number -->
-  <template
-    v-for="(page, index) in displayedPages"
-    :key="index"
-  >
+          <!-- Number -->
+          <template v-for="(page, index) in displayedPages" :key="index">
 
-    <!-- Titik -->
-    <span
-      v-if="page === '...'"
-      class="px-2 text-slate-500"
-    >
-      ...
-    </span>
+            <!-- Titik -->
+            <span v-if="page === '...'" class="px-2 text-slate-500">
+              ...
+            </span>
 
-    <!-- Button angka -->
-    <button
-      v-else
-      @click="currentPage = Number(page)"
-      class="w-10 h-10 rounded-lg text-sm font-medium transition"
-      :class="
-        currentPage === page
-          ? 'bg-[#1f3c93] text-white'
-          : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
-      "
-    >
-      {{ page }}
-    </button>
+            <!-- Button angka -->
+            <button v-else @click="currentPage = Number(page)"
+              class="w-10 h-10 rounded-lg text-sm font-medium transition" :class="currentPage === page
+                  ? 'bg-[#1f3c93] text-white'
+                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                ">
+              {{ page }}
+            </button>
 
-  </template>
+          </template>
 
-  <!-- Next -->
-  <button
-    @click="nextPage"
-    :disabled="currentPage === totalPages"
-    class="px-4 py-2 text-sm border rounded-lg transition"
-    :class="
-      currentPage === totalPages
-        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-        : 'bg-white hover:bg-slate-100 text-slate-700'
-    "
-  >
-    Next
-  </button>
+          <!-- Next -->
+          <button @click="nextPage" :disabled="currentPage === totalPages"
+            class="px-4 py-2 text-sm border rounded-lg transition" :class="currentPage === totalPages
+                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                : 'bg-white hover:bg-slate-100 text-slate-700'
+              ">
+            Next
+          </button>
 
-</div>
+        </div>
       </div>
     </div>
 
     <!-- ═══════════════════════════════════════
          MODAL EDIT
     ════════════════════════════════════════ -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
-      @click.self="showModal = false"
-    >
+    <div v-if="showModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+      @click.self="showModal = false">
 
       <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md mx-4">
 
@@ -419,87 +383,82 @@ const saveEdit = async () => {
           Edit Tahun Akademik
         </h3>
 
-        <div class="space-y-4">
+<div class="space-y-4">
 
-          <!-- Tipe Semester -->
-          <div>
-            <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-              Tipe Semester
-            </label>
+  <!-- Tipe Semester -->
+  <div>
+    <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+      Tipe Semester
+    </label>
+    <select
+      v-model="editForm.tipeeSemester"
+      class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
+    >
+      <option value="" disabled>Pilih Semester</option>
+      <option>Ganjil</option>
+      <option>Genap</option>
+    </select>
+  </div>
 
-            <select
-              v-model="editForm.tipeSemester"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Pilih Semester</option>
-              <option>Ganjil</option>
-              <option>Genap</option>
-            </select>
-          </div>
+  <!-- Tahun -->
+  <div class="flex gap-3">
 
-          <!-- Tahun -->
-          <div class="flex gap-3">
+    <div class="flex-1">
+      <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+        Tahun Awal
+      </label>
+      <input
+        v-model="editForm.tahunAwal"
+        type="text"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="cth: 2024"
+        @input="editForm.tahunAwal = editForm.tahunAwal.replace(/\D/g, '').slice(0, 4)"
+        class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
 
-            <div class="flex-1">
-              <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-                Tahun Awal
-              </label>
+    <div class="flex-1">
+      <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+        Tahun Akhir
+      </label>
+      <input
+        :value="editForm.tahunAkhir || '-'"
+        type="text"
+        disabled
+        class="w-full border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-slate-400 cursor-not-allowed"
+      />
+    </div>
 
-              <input
-                v-model="editForm.tahunAwal"
-                type="text"
-                placeholder="cth: 2023"
-                class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
+  </div>
 
-            <div class="flex-1">
-              <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-                Tahun Akhir
-              </label>
+  <!-- Status -->
+  <div>
+    <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+      Status
+    </label>
+    <select
+      v-model="editForm.status"
+      class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
+    >
+      <option value="" disabled>Pilih Status</option>
+      <option>Aktif/jalan</option>
+      <option>Tidak Aktif</option>
+    </select>
+  </div>
 
-              <input
-                v-model="editForm.tahunAkhir"
-                type="text"
-                placeholder="cth: 2024"
-                class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-              />
-            </div>
-
-          </div>
-
-          <!-- Status -->
-          <div>
-            <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-              Status
-            </label>
-
-            <select
-              v-model="editForm.status"
-              class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-            >
-              <option value="">Pilih Status</option>
-              <option>Aktif/jalan</option>
-              <option>Tidak Aktif</option>
-            </select>
-          </div>
-
-        </div>
+</div>
 
         <!-- Tombol -->
         <div class="flex justify-end gap-3 mt-6">
 
-          <button
-            @click="showModal = false"
-            class="px-4 py-2 text-sm text-slate-600 border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
-          >
+          <button @click="showModal = false"
+            class="px-4 py-2 text-sm text-slate-600 border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors">
             Batal
           </button>
 
-          <button
-            @click="saveEdit"
-            class="px-4 py-2 text-sm bg-[#1f3c93] hover:bg-blue-800 text-white font-semibold rounded-lg transition-colors"
-          >
+          <button @click="saveEdit"
+            class="px-4 py-2 text-sm bg-[#1f3c93] hover:bg-blue-800 text-white font-semibold rounded-lg transition-colors">
             Simpan
           </button>
 
