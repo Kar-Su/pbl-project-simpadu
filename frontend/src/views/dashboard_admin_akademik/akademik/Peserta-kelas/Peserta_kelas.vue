@@ -244,7 +244,7 @@ onMounted((): void => {
   <div class="min-h-screen bg-[#eef3fb] p-6">
 
     <!-- BREADCRUMB -->
-    <div class="mb-2 flex items-center gap-1 text-sm text-gray-500">
+    <div class="mb-2 flex items-center gap-1 text-sm text-black-700">
       <span>Mahasiswa</span>
       <span>›</span>
       <span class="text-gray-700">Peserta Kelas</span>
@@ -260,9 +260,9 @@ onMounted((): void => {
     </p>
 
     <!-- CARD -->
-    <div
-      class="mt-8 rounded-2xl border border-[#d8e1f0] bg-white p-5 shadow-sm"
-    >
+   <div
+  class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
       <!-- HEADER -->
       <h2 class="mb-8 text-[32px] font-bold text-[#444]">

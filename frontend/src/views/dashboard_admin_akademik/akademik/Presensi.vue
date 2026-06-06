@@ -200,7 +200,9 @@ onMounted(() => {
     <div class="mb-6 grid grid-cols-1 gap-5 md:grid-cols-3">
 
       <!-- HADIR -->
-      <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+<div
+  class="bg-[#ececec] rounded-xl p-4 flex flex-col shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
         <p class="text-sm font-semibold text-gray-500">
           TOTAL HADIR
@@ -213,7 +215,9 @@ onMounted(() => {
       </div>
 
       <!-- IZIN -->
-      <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+      <div
+  class="bg-[#ececec] rounded-xl p-4 flex flex-col shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
         <p class="text-sm font-semibold text-gray-500">
           TOTAL IZIN / SAKIT
@@ -226,7 +230,9 @@ onMounted(() => {
       </div>
 
       <!-- TIDAK HADIR -->
-      <div class="rounded-2xl border border-blue-100 bg-white p-5 shadow-sm">
+      <div
+  class="bg-[#ececec] rounded-xl p-4 flex flex-col shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
         <p class="text-sm font-semibold text-gray-500">
           TOTAL TIDAK HADIR
@@ -266,12 +272,14 @@ onMounted(() => {
     </div>
 
     <!-- TABLE -->
-    <div class="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+    <div
+  class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
       <!-- HEADER -->
       <div class="border-b border-gray-100 px-6 py-5">
 
-        <h2 class="text-2xl font-semibold text-gray-700">
+        <h2 class="text-2xl font-semibold text-black-700">
           Data Presensi
         </h2>
 

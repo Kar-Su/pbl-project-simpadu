@@ -8,6 +8,7 @@ const email = ref("")
 const nama = ref("")
 const jabatan = ref("")
 const password = ref("")
+const detailId = ref("67a5ee4d-c6a9-4293-af43-a4c673522ab9")
 
 const errorMsg = ref("")
 // const passwordError = ref("")
@@ -62,6 +63,7 @@ const handleSimpan = async () => {
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
+        detail_id: detailId.value,
         email: email.value,
         name: nama.value,
         password: password.value,
@@ -78,6 +80,7 @@ const handleSimpan = async () => {
     console.log("STATUS:", response.status)
     console.log("RESPONSE:", data)
     console.log("PAYLOAD:", {
+      detail_id: detailId.value,
       email: email.value,
       name: nama.value,
       password: password.value,

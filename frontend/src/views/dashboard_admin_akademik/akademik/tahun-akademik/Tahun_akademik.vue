@@ -221,7 +221,9 @@ const saveEdit = async () => {
     </p>
 
     <!-- Card -->
-    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+    <div
+  class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
       <!-- Tabel -->
       <div class="overflow-x-auto">
@@ -235,10 +237,9 @@ const saveEdit = async () => {
             <tr>
               <th
                 colspan="6"
-                class="text-left text-2xl font-bold text-slate-700 pb-6"
+                class="text-left text-2xl font-bold text-black-800 pb-6"
               >
                 Tahun Akademik
-                {{ filteredData[0]?.tahunAwal }}-{{ filteredData[0]?.tahunAkhir }}
               </th>
             </tr>
 
