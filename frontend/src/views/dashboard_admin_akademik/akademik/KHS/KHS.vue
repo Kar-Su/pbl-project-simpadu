@@ -65,8 +65,8 @@ const lihatDetail = (item: any) => {
     </p>
 
     <!-- FILTER -->
-    <div
-      class="bg-white rounded-xl border border-[#d7e3f3] shadow-[0_4px_10px_rgba(0,0,0,0.08)] p-5 mb-4"
+ <div
+      class="bg-[#ececec] border-[#8eb3e0] rounded-2xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] mb-4"
     >
       <h2 class="text-[38px] font-semibold text-[#404040] mb-5">
         Pilih Semester
@@ -108,8 +108,8 @@ const lihatDetail = (item: any) => {
 
     <!-- TABLE CARD -->
     <div
-      class="bg-white rounded-2xl border border-[#d7e3f3] shadow-[0_4px_12px_rgba(0,0,0,0.08)] overflow-hidden"
-    >
+      class="bg-[#ececec] border-[#8eb3e0] rounded-2xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] mb-4"
+    
 
       <!-- HEADER -->
       <div class="px-6 pt-5 pb-3">

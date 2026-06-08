@@ -178,9 +178,11 @@ onMounted(() => {
 
       </div>
 
+        
+
       <!-- BUTTON -->
       <button @click="router.push('/dashboard-superadmin/tambah_role')"
-        class="rounded-lg bg-[#2f4a8a] px-4 py-2 text-sm font-medium text-white hover:bg-[#243b73]">
+        class="rounded-lg bg-[#2f4a8a] px-4 py-2 text-sm font-medium text-white hover:bg-[#37bd1d]">
         + Tambah Role
       </button>
 

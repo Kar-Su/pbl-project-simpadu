@@ -167,9 +167,9 @@ onMounted((): void => {
     </p>
 
     <!-- CARD -->
-    <div
-      class="mt-8 rounded-2xl border border-[#d8e1f0] bg-white p-5 shadow-sm"
-    >
+<div
+  class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] px-8 py-5"
+>
 
       <!-- HEADER -->
       <h2 class="mb-10 text-[32px] font-bold text-[#444]">

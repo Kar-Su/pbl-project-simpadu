@@ -94,11 +94,11 @@ border-l-[4px] border-b-[3px] p-6 border-[#9db9dc]">
       <label>Role</label>
 
       <input v-model="role" type="text" placeholder="Masukkan role baru..."
-        class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
+        class="w-[15%] rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
     </div>
 
     <!-- BUTTON -->
-    <button @click="handleSimpan" :disabled="loading" class="bg-green-500 text-white px-5 py-2 rounded">
+    <button @click="handleSimpan" :disabled="loading" class="bg-[#2f4a8a] hover:bg-[#37bd1d] text-white px-5 py-2 rounded">
       Simpan
     </button>
 

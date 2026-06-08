@@ -154,7 +154,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex h-screen bg-[#dfe6ef] overflow-hidden">
+  <div class="flex h-screen bg-[#ffffff] overflow-hidden">
 
     <!-- SIDEBAR -->
     <aside :class="isSidebarOpen ? 'w-55' : 'w-17.5'" class="bg-[#b8c9e3] transition-all duration-300 flex flex-col">
@@ -317,7 +317,7 @@ onMounted(() => {
           <div class="mt-8 flex gap-6">
 
             <!-- TOTAL AKUN -->
-            <div class="relative bg-[#ececec] rounded-xl w-[320px] p-4 flex items-center gap-4 shadow-sm
+            <div class="relative bg-[#f8f3f3] rounded-xl w-[320px] p-4 flex items-center gap-4 shadow-sm
          border-l-[4px] border-b-[3px] border-[#9db9dc]">
               <!-- Icon -->
               <div class="w-20 h-20 rounded-lg bg-[#9db9dc] flex items-center justify-center">
@@ -344,7 +344,7 @@ onMounted(() => {
 
             <!-- TOTAL ROLE -->
             <div
-              class="bg-[#ececec] rounded-xl w-[320px] p-4 flex items-center gap-4 shadow-sm border-l-[3px] border-b-[2px] border-[#9db9dc]">
+              class="bg-[#f1ebeb] rounded-xl w-[320px] p-4 flex items-center gap-4 shadow-sm border-l-[3px] border-b-[2px] border-[#9db9dc]">
 
               <!-- Icon -->
               <div class="w-20 h-20 rounded-lg bg-[#9db9dc] flex items-center justify-center">
@@ -378,7 +378,7 @@ onMounted(() => {
         </div>
 
         <!-- TABLE -->
-<div v-if="route.path === '/dashboard-superadmin'" class="mt-8 bg-[#ececec] rounded-xl p-5 min-h-125 flex flex-col justify-between border-l-[3px] border-b-[2px] border-[#9db9dc] shadow-sm">
+<div v-if="route.path === '/dashboard-superadmin'" class="mt-8 bg-[#f8f3f3] rounded-xl p-5 min-h-125 flex flex-col justify-between border-l-[3px] border-b-[2px] border-[#9db9dc] shadow-sm">
           <div>
 
             <h2 class="text-[32px] font-semibold mb-8 text-[#000000]">

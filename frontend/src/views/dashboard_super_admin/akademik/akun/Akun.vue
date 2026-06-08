@@ -76,20 +76,29 @@ const getHeaders = () => {
 const allUsersLoaded = ref(false)
 const getAllUsers = async () => {
   try {
-    
-    const response = await fetch(
-      `${API.users}?page=1&per_page=1000`,
-      {
-        headers: getHeaders()
-      }
-    )
+    let page = 1
+    let totalPagesAll = 1
+    const result: User[] = []
 
-    const data = await response.json()
+    do {
+      const response = await fetch(
+        `${API.users}?page=${page}&per_page=10`,
+        { headers: getHeaders() }
+      )
+      const data = await response.json()
 
-    if (response.ok) {
-  allUsers.value = data.data.items || []
-  console.log("allUsers loaded:", allUsers.value.length) // ← tambah ini
-}
+      if (!response.ok) break
+
+      const items: User[] = data.data.items || []
+      result.push(...items)
+
+      totalPagesAll = data.data.pagination?.total_pages || 1
+      page++
+    } while (page <= totalPagesAll)
+
+    allUsers.value = result
+    allUsersLoaded.value = true
+    console.log("allUsers loaded:", allUsers.value.length)
   } catch (err) {
     console.error(err)
   }

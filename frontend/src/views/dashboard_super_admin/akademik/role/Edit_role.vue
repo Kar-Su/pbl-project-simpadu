@@ -40,6 +40,7 @@ const fetchRoles = async () => {
     const currentRole = data?.data?.role?.find(
       (item: any) => item.id == roleId
     )
+    .filter((name: string) => name !== "super-admin")
 
     if (currentRole) {
       selectedRole.value = currentRole.name

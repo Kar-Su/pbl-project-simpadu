@@ -8,7 +8,7 @@ const email = ref("")
 const nama = ref("")
 const jabatan = ref("")
 const password = ref("")
-const detailId = ref("67a5ee4d-c6a9-4293-af43-a4c673522ab9")
+
 
 const errorMsg = ref("")
 // const passwordError = ref("")
@@ -29,6 +29,16 @@ const roleOptions = ref<string[]>([])
 
 //   return ""
 // }
+
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+}
+
+const detailId = ref(generateUUID())
 
 const handleSimpan = async () => {
   // if (!email.value || !nama.value || !jabatan.value || !password.value) {
@@ -56,7 +66,7 @@ const handleSimpan = async () => {
 
   try {
     const BASE_URL = 'https://be.karlearn.site'
-    const response = await fetch(`${BASE_URL}/api/users`, {
+    const response = await fetch(`${BASE_URL}/api/users/admins`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -71,6 +81,7 @@ const handleSimpan = async () => {
       })
     })
 
+    
     let data: any = {}
     try {
       data = await response.json()
@@ -107,6 +118,7 @@ const handleSimpan = async () => {
 const getRoles = async () => {
   try {
     const token = localStorage.getItem("token")
+    
 
     const res = await fetch("https://be.karlearn.site/api/roles", {
       headers: {
@@ -127,9 +139,8 @@ const getRoles = async () => {
     console.log("DATA:", data.data)
 
     roleOptions.value = (data?.data?.role || []).map(
-      (item: any) => item.name
-    )
-
+      (item: any) => item.name)
+.filter((name: string) => name !== "super-admin")
     console.log("ROLE OPTIONS:", roleOptions.value)
 
   } catch (err) {
