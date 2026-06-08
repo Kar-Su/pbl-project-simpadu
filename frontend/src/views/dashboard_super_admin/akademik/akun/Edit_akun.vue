@@ -9,6 +9,7 @@ const router = useRouter()
 const email = ref("")
 const nama = ref("")
 const jabatan = ref("")
+const detailId = ref("")
 console.log("ROUTE:", route.fullPath)
 console.log("PARAMS:", route.params)
 console.log("ID:", route.params.id)
@@ -26,8 +27,8 @@ const getUser = async () => {
 
     const token = localStorage.getItem("token")
     const id = route.params.id
-
-    const res = await fetch(`/api/user/super/${id}`, {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/users/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -42,9 +43,15 @@ const getUser = async () => {
       return
     }
 
-    email.value = data.data.email || ""
-    nama.value = data.data.name || ""
-    jabatan.value = data.data.role || ""
+detailId.value = data?.data?.detail_id || ""
+email.value = data?.data?.email || ""
+nama.value = data?.data?.name || ""
+jabatan.value = data?.data?.role_name || ""
+
+    console.log("ROLE USER:", data?.data?.role)
+
+    console.log("JABATAN USER:", data?.data)
+console.log("ROLE OPTIONS:", roleOptions.value)
 
   } catch (err) {
     console.error(err)
@@ -53,20 +60,21 @@ const getUser = async () => {
     loading.value = false
   }
 }
+console.log("jabatan.value =", jabatan.value)
 const getRoles = async () => {
   try {
     const token = localStorage.getItem("token")
 
     console.log("TOKEN ROLE:", token)
 
-    const res = await fetch("/api/role", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    })
+const BASE_URL = "https://be.karlearn.site"
+
+const res = await fetch(`${BASE_URL}/api/roles`, {
+  method: "GET",
+  headers: {
+    Authorization: `Bearer ${token}`
+  }
+})
 
     const data = await res.json()
 
@@ -77,7 +85,7 @@ const getRoles = async () => {
       return
     }
 
-    roleOptions.value = data.data.map(
+    roleOptions.value = data?.data?.role?.map(
       (item: any) => item.name
     )
 
@@ -87,30 +95,35 @@ const getRoles = async () => {
     console.error(err)
   }
 }
+console.log("roleOptions =", roleOptions.value)
 
 // ================= UPDATE USER =================
 const handleSimpan = async () => {
   try {
+    loading.value = true
 
     const token = localStorage.getItem("token")
     const id = route.params.id
 
-    const res = await fetch(`/api/super/user/${id}`, {
+    const BASE_URL = "https://be.karlearn.site"
+
+    const res = await fetch(`${BASE_URL}/api/users/${id}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
+        detail_id: detailId.value,
         email: email.value,
         name: nama.value,
-        role: jabatan.value
+        role_name: jabatan.value
       })
     })
 
     const data = await res.json()
 
-    console.log("UPDATE:", data)
+    console.log("UPDATE RESPONSE:", data)
 
     if (!res.ok) {
       alert(data.message || "Gagal update akun")
@@ -118,12 +131,13 @@ const handleSimpan = async () => {
     }
 
     alert("Akun berhasil diupdate")
-
     router.push("/dashboard-superadmin/akun")
 
   } catch (err) {
     console.error(err)
     alert("Terjadi error")
+  } finally {
+    loading.value = false
   }
 }
 

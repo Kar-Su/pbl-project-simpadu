@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const BASE_URL = 'https://be.karlearn.site'
 const emit = defineEmits(["close", "confirm"])
 </script>
 

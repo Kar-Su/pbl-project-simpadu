@@ -97,7 +97,7 @@ const getHeaders = (): Record<string, string> => ({
 
 //   }
 // }
-
+const BaSE_URL = 'https://be.karlearn.site'
 const getTahunAkademik = async (): Promise<void> => {
   try {
 

@@ -27,6 +27,7 @@ const kurikulumList = ref<KurikulumItem[]>([])
 const loading = ref(false)
 
 // ================= HEADER =================
+const BASE_URL = 'https://be.karlearn.site'
 const getHeaders = (): Record<string, string> => ({
   'Content-Type': 'application/json',
   accept: 'application/json',

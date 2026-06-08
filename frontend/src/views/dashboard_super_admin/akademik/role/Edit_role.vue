@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, watch } from "vue"
-import { useRouter } from "vue-router"
+import { useRouter, useRoute } from "vue-router"
 
 const router = useRouter()
+const route = useRoute()
 
 // role lama yang dipilih
 const selectedRole = ref("")
@@ -16,25 +17,36 @@ const loading = ref(false)
 // list role dropdown
 const roleOptions = ref<string[]>([])
 
+const roleId = route.params.id
+
 // ================= GET ROLE =================
 const fetchRoles = async () => {
   try {
     const token = localStorage.getItem("token")
+    const BASE_URL = "https://be.karlearn.site"
 
-    const response = await fetch("/api/roles", {
+    const response = await fetch(`${BASE_URL}/api/roles`, {
       headers: {
-        authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       }
     })
 
     const data = await response.json()
 
-console.log("ROLE DATA:", data)
+    roleOptions.value =
+      data?.data?.role?.map((item: any) => item.name) || []
 
-  roleOptions.value = data.data.map(
-      (item: any) => item.name
+    // cari role sesuai id dari URL
+    const currentRole = data?.data?.role?.find(
+      (item: any) => item.id == roleId
     )
-    
+    .filter((name: string) => name !== "super-admin")
+
+    if (currentRole) {
+      selectedRole.value = currentRole.name
+      editedRole.value = currentRole.name
+    }
+
   } catch (err) {
     console.log(err)
   }

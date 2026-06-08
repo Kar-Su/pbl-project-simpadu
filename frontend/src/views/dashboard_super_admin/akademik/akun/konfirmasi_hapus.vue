@@ -5,6 +5,7 @@ defineProps<{
 
 const emit = defineEmits(["close", "confirm"])
 
+const BASE_URL = 'https://be.karlearn.site'
 const handleClose = () => {
   emit("close")
 }

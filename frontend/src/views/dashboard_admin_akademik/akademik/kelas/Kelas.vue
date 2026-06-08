@@ -8,116 +8,164 @@ const router = useRouter()
 const jurusan = ref<string>("")
 const prodi = ref<string>("")
 const tahunAkademik = ref<string>("")
+const prodiMap = ref<Record<number, any>>({})
+const tahunMap = ref<Record<number, any>>({})
+
+
 
 // ================= DATA =================
 const kelasData = ref<any[]>([])
 
+// ================= PAGINATION =================
+const currentPage = ref(1)
+const perPage = ref(5)
+const totalPages = ref(1)
+
 // ================= FETCH =================
 const getKelas = async () => {
   try {
-    const res = await fetch("/api/kelas/", {
+    const BASE_URL = "https://be.karlearn.site"
+
+    let url = `${BASE_URL}/api/kelas?page=${currentPage.value}`
+
+    if (prodi.value) {
+  url = `${BASE_URL}/api/kelas/prodi/${encodeURIComponent(prodi.value)}?page=${currentPage.value}`
+}
+
+    const res = await fetch(url, {
       headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
       },
     })
 
     const json = await res.json()
+console.log("KELAS RESPONSE", json)
+console.log("ITEMS", json?.data?.items)
+    kelasData.value = json?.data?.items ?? []
 
-    console.log("KELAS RAW:", json)
+    totalPages.value =
+      json?.data?.pagination?.total_pages ??
+      json?.pagination?.total_pages ??
+      1
 
-    kelasData.value =
-      json?.data?.items ??
-      json?.data?.data ??
-      json?.data ??
-      json?.result ??
-      []
-
-    if (kelasData.value.length > 0) {
-      console.log(
-        "KELAS ITEM SAMPLE:",
-        JSON.stringify(kelasData.value[0], null, 2)
-      )
-    }
   } catch (err) {
     console.error("GET KELAS ERROR:", err)
+    kelasData.value = []
   }
 }
 
-// ================= DROPDOWN OTOMATIS =================
+const getProdi = async () => {
+  const res = await fetch("https://be.karlearn.site/api/prodi", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
+  })
+  const json = await res.json()
+  const list = json?.data?.items ?? json?.data ?? []
+  list.forEach((p: any) => {
+    prodiMap.value[p.id] = p // p harus punya { id, name, jurusan: { id, name } }
+  })
+}
+
+const getTahunAkademik = async () => {
+  const res = await fetch("https://be.karlearn.site/api/tahun-akademik?per_page=10", {
+    headers: { Authorization: `Bearer ${localStorage.getItem("token") ?? ""}` },
+  })
+  const json = await res.json()
+  console.log("TAHUN RESPONSE:", JSON.stringify(json, null, 2)) // ← lihat struktur lengkap
+  
+  const list = Array.isArray(json?.data) ? json.data : json?.data?.items ?? []
+  console.log("LIST:", list) // ← apakah array-nya ada isinya?
+  
+  list.forEach((t: any) => {
+    tahunMap.value[t.id] = t
+  })
+  console.log("TAHUN MAP:", tahunMap.value) // ← apakah map terisi?
+}
+
+
+// ================= DROPDOWN LIST =================
 const jurusanList = computed(() => {
   const map = new Map()
-
-  kelasData.value.forEach((item) => {
-    const jurusan = item?.prodi?.jurusan
-
-    if (jurusan?.id && !map.has(jurusan.id)) {
-      map.set(jurusan.id, {
-        id: String(jurusan.id),
-        name: jurusan.name,
-      })
-    }
+  Object.values(prodiMap.value).forEach((p: any) => {
+    const j = p?.jurusan
+    if (j?.id && !map.has(j.id)) map.set(j.id, { id: String(j.id), name: j.name })
   })
-
   return Array.from(map.values())
 })
 
 const prodiList = computed(() => {
-  const map = new Map()
-
-  kelasData.value.forEach((item) => {
-    const prodi = item?.prodi
-
-    if (prodi?.id && !map.has(prodi.id)) {
-      map.set(prodi.id, {
-        id: String(prodi.id),
-        name: prodi.name,
-      })
-    }
-  })
-
-  return Array.from(map.values())
+  return Object.values(prodiMap.value).map((p: any) => ({
+    id: String(p.id),
+    name: p.name,
+    jurusanId: String(p.jurusan?.id ?? ""),
+  }))
 })
 
 const tahunAkademikList = computed(() => {
-  const map = new Map()
-
-  kelasData.value.forEach((item) => {
-    const tahun = item?.tahun_akademik
-
-    if (tahun?.id && !map.has(tahun.id)) {
-      map.set(tahun.id, {
-        id: String(tahun.id),
-        label: `${tahun.tipe_semester} ${tahun.tahun_awal} - ${tahun.tahun_akhir}`,
-      })
-    }
-  })
-
-  return Array.from(map.values())
+  return Object.values(tahunMap.value).map((t: any) => ({
+    id: String(t.id),
+    label: `${new Date(t.tahun_awal).getFullYear()}/${new Date(t.tahun_akhir).getFullYear()}`,
+  }))
 })
 
-// ================= HELPER =================
-const getJurusanName = (item: any): string => {
-  return item?.prodi?.jurusan?.name ?? "-"
+
+// const tahunAkademikList = computed(() => {
+//   const map = new Map()
+
+//   kelasData.value.forEach((item) => {
+//     const t = item?.tahun_akademik
+
+//     if (t?.id && !map.has(t.id)) {
+//       map.set(t.id, {
+//         id: String(t.id),
+//         label: `${t.tipe_semester} ${t.tahun_awal} - ${t.tahun_akhir}`,
+//       })
+//     }
+//   })
+
+//   return Array.from(map.values())
+// })
+
+// ================= WATCH =================
+import { watch } from "vue"
+
+watch(currentPage, () => {
+  getKelas()
+})
+watch(jurusan, () => {
+  prodi.value = ""
+})
+
+watch(prodi, () => {
+  currentPage.value = 1
+  getKelas()
+})
+
+// ================= HELPER (INI YANG KURANG) =================
+const getJurusanName = (item: any) => {
+  return prodiMap.value[item.prodi.id]?.jurusan?.name ?? "-"
 }
 
-const getProdiName = (item: any): string => {
-  return item?.prodi?.name ?? "-"
+const getProdiName = (item: any) => {
+  return prodiMap.value[item.prodi.id]?.name ?? "-"
 }
 
-const getTahunName = (item: any): string => {
-  const tahun = item?.tahun_akademik
+const getTahunName = (item: any) => {
+  const t = item.tahun_akademik
 
-  if (!tahun) return "-"
+  if (!t) return "-"
 
-  return `${tahun.tipe_semester} ${tahun.tahun_awal} - ${tahun.tahun_akhir}`
+  return `${t.tahun_awal}/${t.tahun_akhir}`
 }
 
-// ================= FILTER COMPUTED =================
+
+
+// ================= FILTER CLIENT =================
 const filteredData = computed(() => {
   return kelasData.value.filter((item) => {
-    const jurusanId = String(item?.prodi?.jurusan?.id ?? "")
-    const prodiId = String(item?.prodi?.id ?? "")
-    const tahunId = String(item?.tahun_akademik?.id ?? "")
+    const p = prodiMap.value[item.prodi.id]
+    const jurusanId = String(p?.jurusan?.id ?? "")
+    const prodiId = String(item.prodi.id ?? "")
+    const tahunId = String(item.tahun_akademik?.id ?? "")
 
     return (
       (!jurusan.value || jurusanId === jurusan.value) &&
@@ -127,69 +175,61 @@ const filteredData = computed(() => {
   })
 })
 
-// ================= PAGINATION =================
-const currentPage = ref(1)
-const perPage = ref(5)
+const filteredProdiList = computed(() => {
+  if (!jurusan.value) return prodiList.value
 
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(filteredData.value.length / perPage.value))
-)
-
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * perPage.value
-  return filteredData.value.slice(start, start + perPage.value)
+  return prodiList.value.filter(
+    (p) => p.jurusanId === jurusan.value
+  )
 })
+
+// ================= PAGINATION =================
+const paginatedData = filteredData
 
 const rowNumber = (index: number) =>
   (currentPage.value - 1) * perPage.value + index + 1
-
-const pages = computed((): (number | "...")[] => {
+// ================= PAGINATION BUTTON (INI YANG KURANG) =================
+const pages = computed<(number | "...")[]>(() => {
   const total = totalPages.value
   const current = currentPage.value
   const result: (number | "...")[] = []
 
   if (total <= 7) {
-    for (let i = 1; i <= total; i++) {
-      result.push(i)
-    }
+    for (let i = 1; i <= total; i++) result.push(i)
     return result
   }
 
   result.push(1)
 
-  if (current > 3) {
-    result.push("...")
-  }
+  if (current > 3) result.push("...")
 
   const start = Math.max(2, current - 1)
   const end = Math.min(total - 1, current + 1)
 
-  for (let i = start; i <= end; i++) {
-    result.push(i)
-  }
+  for (let i = start; i <= end; i++) result.push(i)
 
-  if (current < total - 2) {
-    result.push("...")
-  }
+  if (current < total - 2) result.push("...")
 
   result.push(total)
 
   return result
 })
 
-const goToPage = (page: number): void => {
+// ================= PAGINATION CONTROL =================
+const goToPage = (page: number) => {
   if (page < 1 || page > totalPages.value) return
   currentPage.value = page
 }
 
-const prevPage = (): void => goToPage(currentPage.value - 1)
-const nextPage = (): void => goToPage(currentPage.value + 1)
-
-const pilihData = () => {
-  currentPage.value = 1
-}
+const prevPage = () => goToPage(currentPage.value - 1)
+const nextPage = () => goToPage(currentPage.value + 1)
 
 // ================= ACTION =================
+const pilihData = () => {
+  currentPage.value = 1
+  getKelas()
+}
+
 const tambahData = () => {
   router.push("/dashboard-admin/tambah_kelas")
 }
@@ -202,8 +242,9 @@ const hapusData = (item: any) => {
   console.log("HAPUS:", item)
 }
 
-// ================= MOUNT =================
-onMounted(() => {
+// ================= INIT =================
+onMounted(async () => {
+  await Promise.all([getProdi(), getTahunAkademik()])
   getKelas()
 })
 </script>
@@ -226,8 +267,9 @@ onMounted(() => {
     </p>
 
     <!-- CARD -->
-    <div class="bg-white border border-[#d5e1f0] rounded-2xl min-h-[760px] shadow-[0_4px_12px_rgba(0,0,0,0.08)] overflow-hidden">
-
+      <div
+  class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
       <!-- HEADER -->
       <div class="px-5 pt-4">
         <h2 class="text-[36px] font-semibold text-[#505050]">
@@ -255,20 +297,20 @@ onMounted(() => {
         </select>
 
         <!-- PRODI -->
-        <select
-          v-model="prodi"
-          class="w-[240px] h-[54px] border border-gray-300 rounded-xl px-4"
-        >
-          <option value="">Pilih Prodi</option>
-
-          <option
-            v-for="p in prodiList"
-            :key="p.id"
-            :value="p.id"
-          >
-            {{ p.name }}
-          </option>
-        </select>
+<!-- PRODI -->
+<select
+  v-model="prodi"
+  class="w-[240px] h-[54px] border border-gray-300 rounded-xl px-4"
+>
+  <option value="">Pilih Prodi</option>
+<option
+  v-for="p in filteredProdiList"
+  :key="p.id"
+  :value="p.id"
+>
+  {{ p.name }}
+</option>
+</select>
 
         <!-- TAHUN AKADEMIK -->
         <select
@@ -382,9 +424,9 @@ onMounted(() => {
       </div>
 
       <!-- FOOTER -->
-      <div class="flex items-center justify-between px-5 pt-10 pb-5">
+      <div class="flex items-center justify-end px-5 pt-10 pb-5">
 
-        <select
+        <!-- <select
           v-model="perPage"
           @change="currentPage = 1"
           class="w-[90px] h-[42px] border border-gray-300 rounded-lg px-3 text-sm outline-none"
@@ -392,7 +434,7 @@ onMounted(() => {
           <option :value="5">5 Baris</option>
           <option :value="10">10 Baris</option>
           <option :value="25">25 Baris</option>
-        </select>
+        </select> -->
 
         <div class="flex items-center gap-2">
 
@@ -442,9 +484,3 @@ onMounted(() => {
 
   </div>
 </template>
-
-<style scoped>
-table {
-  border-collapse: separate;
-}
-</style>

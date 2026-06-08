@@ -50,8 +50,8 @@ const handleResetPassword = async () => {
   }
 
   try {
-
-    const res = await fetch(`/api/auth/reset-password`, {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/auth/reset-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

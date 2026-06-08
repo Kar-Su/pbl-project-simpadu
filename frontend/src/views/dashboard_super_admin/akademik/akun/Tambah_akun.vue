@@ -7,7 +7,8 @@ const router = useRouter()
 const email = ref("")
 const nama = ref("")
 const jabatan = ref("")
-// const password = ref("")
+const password = ref("")
+
 
 const errorMsg = ref("")
 // const passwordError = ref("")
@@ -28,6 +29,16 @@ const roleOptions = ref<string[]>([])
 
 //   return ""
 // }
+
+const generateUUID = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+}
+
+const detailId = ref(generateUUID())
 
 const handleSimpan = async () => {
   // if (!email.value || !nama.value || !jabatan.value || !password.value) {
@@ -54,29 +65,46 @@ const handleSimpan = async () => {
   errorMsg.value = ""
 
   try {
-    const response = await fetch(`/api/users/`, {
+    const BASE_URL = 'https://be.karlearn.site'
+    const response = await fetch(`${BASE_URL}/api/users/admins`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`
       },
       body: JSON.stringify({
-        name: nama.value,
+        detail_id: detailId.value,
         email: email.value,
-        // password: password.value,
+        name: nama.value,
+        password: password.value,
         role_name: jabatan.value
       })
     })
 
+    
     let data: any = {}
     try {
       data = await response.json()
     } catch {
       data = {}
     }
+    console.log("STATUS:", response.status)
+    console.log("RESPONSE:", data)
+    console.log("PAYLOAD:", {
+      detail_id: detailId.value,
+      email: email.value,
+      name: nama.value,
+      password: password.value,
+      role_name: jabatan.value
+    })
 
     if (!response.ok) {
-      throw new Error(data?.message || "Gagal menambah akun")
+      console.error("ERROR RESPONSE:", data)
+      throw new Error(
+        data?.error ||
+        data?.message ||
+        JSON.stringify(data)
+      )
     }
 
     router.push("/dashboard-superadmin/akun")
@@ -87,31 +115,36 @@ const handleSimpan = async () => {
   }
 }
 
-  const getRoles = async () => {
+const getRoles = async () => {
   try {
     const token = localStorage.getItem("token")
+    
 
-    const res = await fetch("/api/roles", {
+    const res = await fetch("https://be.karlearn.site/api/roles", {
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json"
       }
     })
 
     const data = await res.json()
 
-    console.log("ROLES:", data)
+    console.log("ROLE RESPONSE:", data)
 
     if (!res.ok) {
-      alert(data.message || "Gagal mengambil role")
-      return
+      throw new Error(data.message || "Gagal mengambil role")
     }
 
-    roleOptions.value = data.data.map(
-      (item: any) => item.name
-    )
+    // lihat struktur sebenarnya
+    console.log("DATA:", data.data)
+
+    roleOptions.value = (data?.data?.role || []).map(
+      (item: any) => item.name)
+.filter((name: string) => name !== "super-admin")
+    console.log("ROLE OPTIONS:", roleOptions.value)
 
   } catch (err) {
-    console.error(err)
+    console.error("GET ROLE ERROR:", err)
   }
 }
 onMounted(() => {
@@ -146,67 +179,42 @@ onMounted(() => {
       <!-- EMAIL -->
       <div class="mb-6">
         <label class="block text-sm text-gray-700 mb-2">Email</label>
-        <input
-          v-model="email"
-          type="email"
-          placeholder="Isi Email..."
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
-        />
+        <input v-model="email" type="email" placeholder="Isi Email..."
+          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
       </div>
 
       <!-- NAMA -->
       <div class="mb-6">
         <label class="block text-sm text-gray-700 mb-2">Nama</label>
-        <input
-          v-model="nama"
-          type="text"
-          placeholder="Isi Nama..."
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
-        />
+        <input v-model="nama" type="text" placeholder="Isi Nama..."
+          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
       </div>
 
       <!-- PASSWORD -->
-      <!-- <div class="mb-6">
-        <label class="block text-sm text-gray-700 mb-2">Password</label>
+      <div class="mb-6">
+        <label class="block text-sm text-gray-700 mb-2">
+          Password
+        </label>
 
-        <input
-          v-model="password"
-          type="text"
-          placeholder="Isi Password..."
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
-        />
-
-        <p
-          v-if="passwordError"
-          class="text-red-500 text-xs mt-2"
-        >
-          {{ passwordError }}
-        </p>
-      </div> -->
+        <input v-model="password" type="text" placeholder="Isi Password..."
+          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
+      </div>
 
       <!-- JABATAN -->
       <div class="mb-8">
         <label class="block text-sm text-gray-700 mb-2">Jabatan</label>
 
-        <select
-          v-model="jabatan"
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
-        >
-        <option
-  v-for="role in roleOptions"
-  :key="role"
-  :value="role"
->
-  {{ role }}
-</option>
+        <select v-model="jabatan"
+          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500">
+          <option v-for="role in roleOptions" :key="role" :value="role">
+            {{ role }}
+          </option>
         </select>
       </div>
 
       <!-- BUTTON -->
-      <button
-        @click="handleSimpan"
-        class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-xl text-sm font-semibold"
-      >
+      <button @click="handleSimpan"
+        class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-xl text-sm font-semibold">
         Simpan
       </button>
 

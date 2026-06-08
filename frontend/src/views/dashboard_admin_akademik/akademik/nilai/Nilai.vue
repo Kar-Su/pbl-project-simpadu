@@ -40,7 +40,8 @@ const getHeaders = (): Record<string, string> => ({
 // ================= GET KURIKULUM =================
 const getKurikulum = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/kurikulum/", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/kurikulum/`, {
       headers: getHeaders(),
     })
 
@@ -55,7 +56,8 @@ const getKurikulum = async (): Promise<void> => {
 // ================= GET TAHUN AKADEMIK =================
 const getTahunAkademik = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/tahun-akademik", {
+    const BASE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BASE_URL}/api/tahun-akademik`, {
       headers: getHeaders(),
     })
 
@@ -133,7 +135,7 @@ onMounted(() => {
 
     <!-- FILTER CARD -->
     <div
-      class="bg-white border border-[#d5e1f0] rounded-2xl p-5 shadow-[0_4px_12px_rgba(0,0,0,0.08)] mb-4"
+      class="bg-[#ececec] border-[#8eb3e0] rounded-2xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] mb-4"
     >
 
       <h2 class="text-[28px] font-semibold text-[#202020] mb-5">
@@ -208,9 +210,9 @@ onMounted(() => {
     </div>
 
     <!-- TABLE CARD -->
-    <div
-      class="bg-white border border-[#d5e1f0] rounded-2xl min-h-[650px] shadow-[0_4px_12px_rgba(0,0,0,0.08)] overflow-hidden"
-    >
+      <div
+  class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
+>
 
       <!-- HEADER -->
       <div class="px-5 pt-4">

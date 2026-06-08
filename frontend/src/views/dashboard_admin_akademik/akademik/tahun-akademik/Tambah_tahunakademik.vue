@@ -28,8 +28,8 @@ const simpanData = async () => {
     }
 
     loading.value = true
-
-    const res = await fetch("/api/tahun-akademik", {
+    const BaSE_URL = 'https://be.karlearn.site'
+    const res = await fetch(`${BaSE_URL}/api/tahun-akademik`, {
       method: "POST",
 
       headers: getHeaders(),

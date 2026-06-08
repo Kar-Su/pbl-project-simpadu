@@ -25,20 +25,20 @@ const handleSimpan = async () => {
   errorMsg.value = ""
   loading.value = true
 
-console.log("TOKEN:", token)
+  console.log("TOKEN:", token)
   try {
-const response = await fetch(`/api/roles`, {
-  method: "POST",
-  credentials: "include",
-  headers: {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-    Authorization: `Bearer ${token}`
-  },
-  body: JSON.stringify({
-    role_name: role.value.trim()
-  })
-})
+    const BASE_URL = 'https://be.karlearn.site'
+    const response = await fetch(`${BASE_URL}/api/roles`, {
+      method: "POST",   
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        role_name: role.value.trim()
+      })
+    })
 
     let data: any = {}
     try {
@@ -47,6 +47,11 @@ const response = await fetch(`/api/roles`, {
       data = {}
     }
 
+    if (data?.success) {
+      alert("Role berhasil ditambahkan")
+      router.push("/dashboard-superadmin/role")
+      return
+    }
     if (!response.ok) {
       throw new Error(data?.message || "Gagal menambah role")
     }
@@ -64,7 +69,8 @@ const response = await fetch(`/api/roles`, {
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#f5f7fb] p-6">
+  <div class="bg-[#ececec] rounded-xl shadow-sm
+border-l-[4px] border-b-[3px] p-6 border-[#9db9dc]">
 
     <p class="text-sm text-gray-400 mb-2">
       Akademik > Role > Tambah Role
@@ -87,20 +93,12 @@ const response = await fetch(`/api/roles`, {
     <div class="mb-8">
       <label>Role</label>
 
-      <input
-        v-model="role"
-        type="text"
-        placeholder="Masukkan role baru..."
-        class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500"
-      />
+      <input v-model="role" type="text" placeholder="Masukkan role baru..."
+        class="w-[15%] rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
     </div>
 
     <!-- BUTTON -->
-    <button
-      @click="handleSimpan"
-      :disabled="loading"
-      class="bg-green-500 text-white px-5 py-2 rounded"
-    >
+    <button @click="handleSimpan" :disabled="loading" class="bg-[#2f4a8a] hover:bg-[#37bd1d] text-white px-5 py-2 rounded">
       Simpan
     </button>
 
