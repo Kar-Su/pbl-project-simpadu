@@ -64,6 +64,7 @@ const getTahunAkademik = async (): Promise<void> => {
     )
 
     const json = await res.json()
+    console.log('RESPONSE:', json)
 
     const raw = Array.isArray(json.data) ? json.data : []
 
@@ -76,7 +77,7 @@ const getTahunAkademik = async (): Promise<void> => {
             ? 'Genap'
             : '-',
 
-      rawTipeSemester: item.tipee_semester,
+      rawTipeSemester: item.tipe_semester,
 
       tahunAwal: item.tahun_awal
         ? item.tahun_awal.split('-')[0]
@@ -86,12 +87,11 @@ const getTahunAkademik = async (): Promise<void> => {
         ? item.tahun_akhir.split('-')[0]
         : '-',
 
-      status:
-        item.status === 'aktif'
-          ? 'Aktif/jalan'
-          : 'Tidak Aktif',
+      status: item.status === 'aktif'
+        ? 'Aktif/jalan'
+        : 'Non Aktif',
     }))
-
+console.log("ALL DATA:", raw)
     filteredData.value = [...allData.value]
     currentPage.value = 1
   } catch (err) {
@@ -153,6 +153,26 @@ const displayedPages = computed(() => {
   return [1, '...', current, '...', total]
 })
 
+const isDuplicateData = computed(() => {
+  if (!editingItem.value) return false
+
+  return allData.value.some((item) => {
+    return (
+      item.id !== editingItem.value?.id &&
+      item.tipeeSemester.toLowerCase() ===
+      editForm.value.tipeeSemester.toLowerCase() &&
+      item.tahunAwal === editForm.value.tahunAwal
+    )
+  })
+})
+
+const isInvalidYear = computed(() => {
+  return (
+    editForm.value.tahunAwal.length > 0 &&
+    editForm.value.tahunAwal.length < 4
+  )
+})
+
 // ================= EDIT =================
 const editItem = (item: AkademikItem) => {
   editingItem.value = item
@@ -170,19 +190,32 @@ const editItem = (item: AkademikItem) => {
 // ================= SAVE EDIT =================
 const saveEdit = async () => {
   if (!editingItem.value) return
+  if (isDuplicateData.value) {
+    alert('Semester dan tahun awal sudah terdaftar')
+    return
+  }
+  if (isInvalidYear.value) {
+    alert('Tahun harus 4 digit')
+    return
+  }
 
+  if (isDuplicateData.value) {
+    alert('Semester dan tahun awal sudah terdaftar')
+    return
+  }
   try {
     const payload = {
       id: editingItem.value.id,
       status:
         editForm.value.status === 'Aktif/jalan'
           ? 'aktif'
-          : 'tidak_aktif',
+          : 'nonaktif',
       tahun_awal: `${editForm.value.tahunAwal}-01-01`,
       tahun_akhir: `${editForm.value.tahunAkhir}-01-01`,
-      tipee_semester: editForm.value.tipeeSemester.toLowerCase(),
+      tipe_semester: editForm.value.tipeeSemester.toLowerCase(),
     }
 
+    console.log('PAYLOAD:', payload)
     const res = await fetch(
       `https://be.karlearn.site/api/tahun-akademik/${editingItem.value.id}`,
       {
@@ -193,6 +226,7 @@ const saveEdit = async () => {
     )
 
     const json = await res.json()
+    console.log('PUT RESPONSE:', json)
 
     if (!res.ok) {
       alert(json.message || 'Gagal update')
@@ -207,6 +241,46 @@ const saveEdit = async () => {
     console.error('UPDATE ERROR:', err)
   }
 }
+// ================= TOGGLE STATUS =================
+const toggleStatus = async (item: AkademikItem) => {
+  try {
+    const payload = {
+      id: item.id,
+      status: item.status === 'Aktif/jalan'
+        ? 'nonaktif'
+        : 'aktif',
+      tahun_awal: `${item.tahunAwal}-01-01`,
+      tahun_akhir: `${item.tahunAkhir}-01-01`,
+      tipe_semester:
+        item.rawTipeSemester ??
+        item.tipeeSemester.toLowerCase(),
+    }
+
+    const res = await fetch(
+      `https://be.karlearn.site/api/tahun-akademik/${item.id}`,
+      {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(payload),
+      }
+    )
+
+    const json = await res.json()
+    console.log("STATUS:", res.status)
+    console.log("RESPONSE:", json)
+    console.log("PAYLOAD:", payload)
+
+    if (!res.ok) {
+      alert(json.message || 'Gagal update status')
+      return
+    }
+
+    await getTahunAkademik()
+  } catch (err) {
+    console.error('TOGGLE ERROR:', err)
+  }
+}
+
 </script>
 
 <template>
@@ -308,18 +382,31 @@ const saveEdit = async () => {
 
               <td class="py-4 px-4">
                 <span class="px-3 py-1 rounded-full text-xs" :class="item.status === 'Aktif/jalan'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700'
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-red-100 text-red-700'
                   ">
                   {{ item.status }}
                 </span>
               </td>
-
               <td class="py-4 px-4 text-center">
-                <button @click="editItem(item)"
-                  class="bg-amber-400 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg">
-                  Edit
-                </button>
+                <div class="flex items-center justify-center gap-2">
+
+                  <!-- Tombol Toggle Status -->
+                  <button @click="toggleStatus(item)" class="text-xs px-3 py-1.5 rounded-lg text-white transition"
+                    :class="item.status === 'Aktif/jalan'
+                      ? 'bg-red-400 hover:bg-red-500'
+                      : 'bg-green-500 hover:bg-green-600'
+                      ">
+                    {{ item.status === 'Aktif/jalan' ? 'Nonaktifkan' : 'Aktifkan' }}
+                  </button>
+
+                  <!-- Tombol Edit -->
+                  <button @click="editItem(item)"
+                    class="bg-amber-400 hover:bg-amber-500 text-white text-xs px-3 py-1.5 rounded-lg">
+                    Edit
+                  </button>
+
+                </div>
               </td>
 
             </tr>
@@ -333,8 +420,8 @@ const saveEdit = async () => {
           <!-- Previous -->
           <button @click="prevPage" :disabled="currentPage === 1" class="px-4 py-2 text-sm border rounded-lg transition"
             :class="currentPage === 1
-                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                : 'bg-white hover:bg-slate-100 text-slate-700'
+              ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              : 'bg-white hover:bg-slate-100 text-slate-700'
               ">
             Previous
           </button>
@@ -350,8 +437,8 @@ const saveEdit = async () => {
             <!-- Button angka -->
             <button v-else @click="currentPage = Number(page)"
               class="w-10 h-10 rounded-lg text-sm font-medium transition" :class="currentPage === page
-                  ? 'bg-[#1f3c93] text-white'
-                  : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
+                ? 'bg-[#1f3c93] text-white'
+                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                 ">
               {{ page }}
             </button>
@@ -361,8 +448,8 @@ const saveEdit = async () => {
           <!-- Next -->
           <button @click="nextPage" :disabled="currentPage === totalPages"
             class="px-4 py-2 text-sm border rounded-lg transition" :class="currentPage === totalPages
-                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                : 'bg-white hover:bg-slate-100 text-slate-700'
+              ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              : 'bg-white hover:bg-slate-100 text-slate-700'
               ">
             Next
           </button>
@@ -383,71 +470,66 @@ const saveEdit = async () => {
           Edit Tahun Akademik
         </h3>
 
-<div class="space-y-4">
+        <div class="space-y-4">
 
-  <!-- Tipe Semester -->
-  <div>
-    <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-      Tipe Semester
-    </label>
-    <select
-      v-model="editForm.tipeeSemester"
-      class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-    >
-      <option value="" disabled>Pilih Semester</option>
-      <option>Ganjil</option>
-      <option>Genap</option>
-    </select>
-  </div>
+          <!-- Tipe Semester -->
+          <div>
+            <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+              Tipe Semester
+            </label>
+            <select v-model="editForm.tipeeSemester"
+              class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400">
+              <option value="" disabled>Pilih Semester</option>
+              <option>Ganjil</option>
+              <option>Genap</option>
+            </select>
+            <p v-if="isDuplicateData" class="text-red-500 text-xs mt-1">
+              Kombinasi semester dan tahun awal sudah digunakan.
+            </p>
+          </div>
 
-  <!-- Tahun -->
-  <div class="flex gap-3">
+          <!-- Tahun -->
+          <div class="flex gap-3">
 
-    <div class="flex-1">
-      <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-        Tahun Awal
-      </label>
-      <input
-        v-model="editForm.tahunAwal"
-        type="text"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="cth: 2024"
-        @input="editForm.tahunAwal = editForm.tahunAwal.replace(/\D/g, '').slice(0, 4)"
-        class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-      />
-    </div>
+            <!-- Tahun Awal -->
+            <div class="flex-1">
+              <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+                Tahun Awal
+              </label>
 
-    <div class="flex-1">
-      <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-        Tahun Akhir
-      </label>
-      <input
-        :value="editForm.tahunAkhir || '-'"
-        type="text"
-        disabled
-        class="w-full border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-slate-400 cursor-not-allowed"
-      />
-    </div>
+              <input v-model="editForm.tahunAwal" type="text" inputmode="numeric" maxlength="4" placeholder="cth: 2024"
+                @input="editForm.tahunAwal = editForm.tahunAwal.replace(/\D/g, '').slice(0, 4)"
+                class="w-full border rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
+                :class="(isDuplicateData || editForm.tahunAwal.length > 0 && editForm.tahunAwal.length < 4)
+                  ? 'border-red-500'
+                  : 'border-slate-200'" />
 
-  </div>
+              <!-- Error 4 digit -->
+              <p v-if="editForm.tahunAwal.length > 0 && editForm.tahunAwal.length < 4"
+                class="text-red-500 text-xs mt-1">
+                Tahun harus terdiri dari 4 digit.
+              </p>
 
-  <!-- Status -->
-  <div>
-    <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-      Status
-    </label>
-    <select
-      v-model="editForm.status"
-      class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-    >
-      <option value="" disabled>Pilih Status</option>
-      <option>Aktif/jalan</option>
-      <option>Tidak Aktif</option>
-    </select>
-  </div>
+              <!-- Error duplikat -->
+              <p v-else-if="isDuplicateData" class="text-red-500 text-xs mt-1">
+                Tahun awal dan semester tersebut sudah terdaftar.
+              </p>
+            </div>
 
-</div>
+            <!-- Tahun Akhir -->
+            <div class="flex-1">
+              <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+                Tahun Akhir
+              </label>
+
+              <input :value="editForm.tahunAkhir || '-'" type="text" disabled
+                class="w-full border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-slate-400 cursor-not-allowed" />
+            </div>
+
+          </div>
+
+
+        </div>
 
         <!-- Tombol -->
         <div class="flex justify-end gap-3 mt-6">
@@ -457,8 +539,11 @@ const saveEdit = async () => {
             Batal
           </button>
 
-          <button @click="saveEdit"
-            class="px-4 py-2 text-sm bg-[#1f3c93] hover:bg-blue-800 text-white font-semibold rounded-lg transition-colors">
+          <button @click="saveEdit" :disabled="isDuplicateData || isInvalidYear"
+            class="px-4 py-2 text-sm text-white font-semibold rounded-lg transition-colors" :class="isDuplicateData || isInvalidYear
+              ? 'bg-slate-400 cursor-not-allowed'
+              : 'bg-[#1f3c93] hover:bg-blue-800'
+              ">
             Simpan
           </button>
 

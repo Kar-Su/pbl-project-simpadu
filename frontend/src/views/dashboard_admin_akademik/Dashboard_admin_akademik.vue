@@ -69,18 +69,57 @@ const getAllUsers = async (): Promise<any[]> => {
     }
 };
 
+// Tambah fungsi ini
+// Ambil total dari API pegawai eksternal
+const getTotalPegawaiExternal = async (): Promise<number> => {
+    try {
+        const res = await fetch(
+            'https://api-pegawai-4a.akufarish.my.id:1234/api/employees?page=1',
+            { headers: getHeaders() }
+        )
+        const data = await res.json()
+        return data.meta?.total ?? 0
+    } catch (err) {
+        console.error("getTotalPegawaiExternal:", err)
+        return 0
+    }
+}
+
+// Total Pegawai = karlearn (non-mahasiswa) + external
 const getTotalPegawai = async (): Promise<void> => {
     try {
-        const users = await getAllUsers();
-        totalPegawai.value = users.filter((item: any) => {
-            const role = item.role_name?.toLowerCase()?.trim();
-            return role !== "mahasiswa";
-        }).length;
-        console.log("TOTAL PEGAWAI:", totalPegawai.value);
+        const [users, externalTotal] = await Promise.all([
+            getAllUsers(),
+            getTotalPegawaiExternal()
+        ])
+        const karlearnPegawai = users.filter((item: any) => {
+            const role = item.role_name?.toLowerCase()?.trim()
+            return role !== "mahasiswa"
+        }).length
+        totalPegawai.value = karlearnPegawai + externalTotal
+        console.log("TOTAL PEGAWAI (gabungan):", totalPegawai.value)
     } catch (err) {
-        console.error("getTotalPegawai:", err);
+        console.error("getTotalPegawai:", err)
     }
-};
+}
+
+// Total Dosen = dosen dari karlearn + SEMUA pegawai external
+const getTotalDosen = async (): Promise<void> => {
+    try {
+        const [users, externalTotal] = await Promise.all([
+            getAllUsers(),
+            getTotalPegawaiExternal()
+        ])
+        const dosenKarlearn = users.filter((item: any) => {
+            const role = item.role_name?.toLowerCase()?.trim()
+            return role?.includes("dosen")
+        }).length
+        totalDosen.value = dosenKarlearn + externalTotal
+        console.log("TOTAL DOSEN (gabungan):", totalDosen.value)
+    } catch (err) {
+        console.error("getTotalDosen:", err)
+    }
+}
 
 const getTotalMahasiswa = async (): Promise<void> => {
     try {
@@ -93,18 +132,6 @@ const getTotalMahasiswa = async (): Promise<void> => {
     }
 };
 
-const getTotalDosen = async (): Promise<void> => {
-    try {
-        const users = await getAllUsers();
-        totalDosen.value = users.filter((item: any) => {
-            const role = item.role_name?.toLowerCase()?.trim();
-            return role?.includes("dosen");
-        }).length;
-        console.log("TOTAL DOSEN:", totalDosen.value);
-    } catch (err) {
-        console.error("getTotalDosen:", err);
-    }
-};
 
 // ─────────────────────────────────────────────
 // TAHUN AKADEMIK
@@ -113,6 +140,7 @@ interface TahunAkademik {
     id: number;
     tahun_awal: string;
     tahun_akhir: string;
+    tipee_semester: string;
 }
 const tahunAkademik = ref<TahunAkademik[]>([]);
 
@@ -264,17 +292,43 @@ const nextPage = async (): Promise<void> => {
     await goToPage(currentPage.value + 1);
 };
 
+
+
 // ─────────────────────────────────────────────
 // ON MOUNTED
 // ─────────────────────────────────────────────
-onMounted((): void => {
-    getTotalPegawai();
-    getTotalMahasiswa();
-    getTotalDosen();
-    getTahunAkademik();
-    getKurikulum();
-    getAkun();
-});
+// Ganti onMounted jadi ini untuk efisiensi
+onMounted(async (): Promise<void> => {
+    // Fetch sekali, pakai untuk 3 stat card sekaligus
+    const [users, externalTotal] = await Promise.all([
+        getAllUsers(),
+        getTotalPegawaiExternal()
+    ])
+
+    // Mahasiswa
+    totalMahasiswa.value = users.filter(
+        (item: any) => item.role_name?.toLowerCase() === "mahasiswa"
+    ).length
+
+    // Pegawai = non-mahasiswa karlearn + external
+    const karlearnPegawai = users.filter((item: any) => {
+        const role = item.role_name?.toLowerCase()?.trim()
+        return role !== "mahasiswa"
+    }).length
+    totalPegawai.value = karlearnPegawai + externalTotal
+
+    // Dosen = dosen karlearn + semua external
+    const dosenKarlearn = users.filter((item: any) => {
+        const role = item.role_name?.toLowerCase()?.trim()
+        return role?.includes("dosen")
+    }).length
+    totalDosen.value = dosenKarlearn + externalTotal
+
+    // Sisanya tetap
+    getTahunAkademik()
+    getKurikulum()
+    getAkun()
+})
 </script>
 
 <template>
@@ -376,9 +430,19 @@ onMounted((): void => {
                                 label: 'Kurikulum',
                                 icon: '📚',
                             },
+                             {
+                                path: '/dashboard-admin/jurusan',
+                                label: 'Jurusan',
+                                icon: '🏫',
+                            },
                             {
                                 path: '/dashboard-admin/kelas',
                                 label: 'Kelas',
+                                icon: '🏫',
+                            },
+                             {
+                                path: '/dashboard-admin/prodi',
+                                label: 'Prodi',
                                 icon: '🏫',
                             },
                             {
@@ -632,8 +696,9 @@ onMounted((): void => {
                             <!-- DATA -->
                             <div v-for="item in tahunAkademik.slice(0, 4)" :key="item.id"
                                 class="bg-gray-50 rounded-lg p-3 mb-2">
-                                {{ formatYear(item.tahun_awal) }} -
-                                {{ formatYear(item.tahun_akhir) }}
+                                {{ formatYear(item.tahun_awal) }} /
+                                {{ formatYear(item.tahun_akhir) }} 
+                                {{ item.tipee_semester === 'ganjil' ? 'Ganjil' : 'Genap' }}
                             </div>
 
                             <div v-if="tahunAkademik.length === 0" class="text-gray-400 text-sm">

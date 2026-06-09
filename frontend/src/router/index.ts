@@ -34,6 +34,12 @@ import Dosen from "@/views/dashboard_admin_akademik/akademik/pegawai/Dosen.vue";
 import Dashboard_kurikulum from "../views/dashboard_admin_akademik/Dashboard_kurikulum.vue";
 import Dashboard_tahunakademik from "../views/dashboard_admin_akademik/Dashboard_tahunakademik.vue";
 
+// jurusan
+import Jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Jurusan.vue";
+
+// prodi
+import Prodi from "@/views/dashboard_admin_akademik/akademik/Prodi/Prodi.vue";
+
 import profile from "../views/dashboard_admin_akademik/profile.vue";
 
 const router = createRouter({
@@ -122,6 +128,12 @@ const router = createRouter({
         //kurikulum
         { path: "tambah_kurikulum", component: Tambah_kurikulum },
         { path: "profile", component: profile },
+
+        // prodi
+        { path: "prodi", component: Prodi },
+
+        // jurusan
+        { path: "jurusan", component: Jurusan },
       ],
     },
   ],

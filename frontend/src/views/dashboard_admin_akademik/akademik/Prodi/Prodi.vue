@@ -288,7 +288,7 @@ onMounted(async () => {
     </div>
 
     <!-- TITLE -->
-    <h1 class="text-[42px] font-bold text-[#404040] leading-none">Kurikulum</h1>
+    <h1 class="text-[42px] font-bold text-[#404040] leading-none">Prodi</h1>
     <p class="text-gray-500 text-sm mt-2 mb-6">Pengelolaan Data</p>
 
     <!-- CARD -->
@@ -296,7 +296,7 @@ onMounted(async () => {
 
       <!-- HEADER -->
       <div class="px-5 pt-4">
-        <h2 class="text-[36px] font-semibold text-[#505050]">Data Kurikulum</h2>
+        <h2 class="text-[36px] font-semibold text-[#505050]">Prodi</h2>
       </div>
 
       <!-- FILTER -->

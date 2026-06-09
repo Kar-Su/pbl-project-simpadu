@@ -24,13 +24,18 @@ const totalPages = ref(1)
 // ================= FETCH =================
 const getKelas = async () => {
   try {
+    if (!prodi.value) {
+      kelasData.value = []
+      return
+    }
+
     const BASE_URL = "https://be.karlearn.site"
 
-    let url = `${BASE_URL}/api/kelas?page=${currentPage.value}`
+    const prodiNama =
+      prodiMap.value[Number(prodi.value)]?.name
 
-    if (prodi.value) {
-  url = `${BASE_URL}/api/kelas/prodi/${encodeURIComponent(prodi.value)}?page=${currentPage.value}`
-}
+    const url =
+      `${BASE_URL}/api/kelas/prodi/${encodeURIComponent(prodiNama)}?page=${currentPage.value}`
 
     const res = await fetch(url, {
       headers: {
@@ -39,14 +44,12 @@ const getKelas = async () => {
     })
 
     const json = await res.json()
-console.log("KELAS RESPONSE", json)
-console.log("ITEMS", json?.data?.items)
-    kelasData.value = json?.data?.items ?? []
 
+    console.log("KELAS RESPONSE:", json)
+
+    kelasData.value = json?.data?.items ?? json?.data ?? []
     totalPages.value =
-      json?.data?.pagination?.total_pages ??
-      json?.pagination?.total_pages ??
-      1
+      json?.data?.pagination?.total_pages ?? 1
 
   } catch (err) {
     console.error("GET KELAS ERROR:", err)
@@ -142,19 +145,19 @@ watch(prodi, () => {
 
 // ================= HELPER (INI YANG KURANG) =================
 const getJurusanName = (item: any) => {
-  return prodiMap.value[item.prodi.id]?.jurusan?.name ?? "-"
+  return (item.prodi?.jurusan?.name ?? "-").replace(/-/g, " ")
 }
 
 const getProdiName = (item: any) => {
-  return prodiMap.value[item.prodi.id]?.name ?? "-"
+  return (item.prodi?.name ?? "-").replace(/-/g, " ")
 }
 
 const getTahunName = (item: any) => {
   const t = item.tahun_akademik
-
   if (!t) return "-"
-
-  return `${t.tahun_awal}/${t.tahun_akhir}`
+  const awal = t.tahun_awal?.slice(0, 4) ?? "?"
+  const akhir = t.tahun_akhir?.slice(0, 4) ?? "?"
+  return `${awal}/${akhir}`
 }
 
 
@@ -244,8 +247,14 @@ const hapusData = (item: any) => {
 
 // ================= INIT =================
 onMounted(async () => {
-  await Promise.all([getProdi(), getTahunAkademik()])
-  getKelas()
+  await Promise.all([
+    getProdi(),
+    getTahunAkademik(),
+  ])
+
+  if (prodi.value) {
+    getKelas()
+  }
 })
 </script>
 
