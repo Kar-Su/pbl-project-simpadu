@@ -424,7 +424,7 @@ onMounted((): void => {
 
           <!-- HEAD -->
           <thead>
-            <tr class="text-left text-[15px] font-semibold text-[#555]">
+            <tr class="text-left text-black-600 border-b border-gray-300">
               <th class="pb-4">No</th>
               <th class="pb-4">Nama Kelas</th>
               <th class="pb-4">Jurusan</th>

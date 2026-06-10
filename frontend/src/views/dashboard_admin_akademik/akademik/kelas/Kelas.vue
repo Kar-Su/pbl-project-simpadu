@@ -360,7 +360,7 @@ onMounted(async () => {
         <table class="w-full border-separate border-spacing-y-5">
 
           <thead>
-            <tr class="text-left text-gray-600">
+            <tr class="text-left text-gray-600 border-b border-gray-300">
               <th class="text-[18px] font-semibold">No</th>
               <th class="text-[18px] font-semibold">Nama Kelas</th>
               <th class="text-[18px] font-semibold">Jurusan</th>

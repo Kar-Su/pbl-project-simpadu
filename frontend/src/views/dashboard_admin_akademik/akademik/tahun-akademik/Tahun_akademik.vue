@@ -321,7 +321,7 @@ const toggleStatus = async (item: AkademikItem) => {
             </tr>
 
             <!-- Header tabel -->
-            <tr class="border-b border-slate-200">
+            <tr class="text-left text-gray-600 border-b border-gray-300">
 
               <th class="text-left py-3 px-4 font-semibold text-slate-600 w-12">
                 No

@@ -5,15 +5,12 @@ import { useRouter } from "vue-router"
 const router = useRouter()
 
 // ================= FILTER =================
-const jurusan = ref("")
-const prodi = ref("")
-const tahunAkademik = ref("")
+const filterJurusan = ref("")
+const filterProdi = ref("")
 
 // ================= DATA =================
-const kurikulumData = ref<any[]>([])
-
-const prodiMap = ref<Record<number, any>>({})
-const tahunMap = ref<Record<number, any>>({})
+const prodiData = ref<any[]>([])
+const jurusanMap = ref<Record<number, any>>({})
 
 // ================= PAGINATION =================
 const currentPage = ref(1)
@@ -30,88 +27,111 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
 })
 
-// ================= GET KURIKULUM =================
-const getKurikulum = async () => {
+// ================= GET ALL JURUSAN (dari prodi list) =================
+const getAllProdi = async () => {
   try {
-    const res = await fetch(
-      `${BASE_URL}/api/kurikulum?page=${currentPage.value}&per_page=${perPage.value}`,
-      { method: "GET", headers: getHeaders() }
-    )
+    const res = await fetch(`${BASE_URL}/api/prodi`, { headers: getHeaders() })
     const json = await res.json()
-    console.log("KURIKULUM:", json)
+    console.log("ALL PRODI RAW:", JSON.stringify(json, null, 2))
 
-    const raw = json.data?.items ?? []
-    console.log("RAW ITEM:", JSON.stringify(raw[0], null, 2))
-    kurikulumData.value = raw.map((item: any) => ({
-      id: item.id,
-      nama: item.name ?? "-",
-      prodi: (item.prodi?.name ?? "-").replace(/-/g, " "),
-      semester: item.kurikulum_mk?.[0]?.semester
-        ? `Semester ${item.kurikulum_mk[0].semester}`
-        : "-",
-      tahun: tahunAktif.value,
-      rawData: item,
-    }))
+    // Response bisa array langsung atau object dengan items
+    const list = Array.isArray(json?.data)
+      ? json.data
+      : json?.data?.items ?? []
 
-    totalPages.value = json.data?.pagination?.total_pages ?? 1
-    totalItems.value = json.data?.pagination?.total_items ?? 0
-    perPage.value = json.data?.pagination?.per_page ?? perPage.value
+    // Build jurusanMap dari data prodi
+    list.forEach((p: any) => {
+      const j = p.jurusan
+      if (j?.id && !jurusanMap.value[j.id]) {
+        jurusanMap.value[j.id] = { id: j.id, name: j.name }
+      }
+    })
+
+    return list
   } catch (err) {
-    console.error("GET KURIKULUM ERROR:", err)
+    console.error("GET ALL PRODI ERROR:", err)
+    return []
   }
 }
 
-const tahunAktif = ref("-")
-
-const getTahunAktif = async () => {
+// ================= GET PRODI (with filter) =================
+const getProdi = async () => {
   try {
-    const res = await fetch(
-      `${BASE_URL}/api/tahun-akademik/status/aktif`,
-      { headers: getHeaders() }
-    )
-    const json = await res.json()
+    let url = `${BASE_URL}/api/prodi`
 
-    // data adalah array, ambil index 0
-    const data = Array.isArray(json?.data) ? json.data[0] : json?.data
-    if (data) {
-      const awal = data.tahun_awal?.slice(0, 4) ?? "?"
-      const akhir = data.tahun_akhir?.slice(0, 4) ?? "?"
-      tahunAktif.value = `${awal}/${akhir}`
+    // Filter by jurusan name jika dipilih
+    if (filterJurusan.value) {
+      const jurusan = jurusanMap.value[Number(filterJurusan.value)]
+      if (jurusan) {
+        url = `${BASE_URL}/api/prodi/jurusan/${encodeURIComponent(jurusan.name)}`
+      }
     }
+
+    const res = await fetch(url, { headers: getHeaders() })
+    const json = await res.json()
+    console.log("PRODI DATA:", JSON.stringify(json, null, 2))
+
+    const raw = Array.isArray(json?.data)
+      ? json.data
+      : json?.data?.items ?? (json?.data ? [json.data] : [])
+
+    // Filter by prodi name jika ada
+    let filtered = raw
+    if (filterProdi.value) {
+      filtered = raw.filter((p: any) =>
+        p.name?.toLowerCase().includes(filterProdi.value.toLowerCase())
+      )
+    }
+
+    // Pagination manual (karena API mungkin return semua)
+    totalItems.value = filtered.length
+    totalPages.value = Math.max(1, Math.ceil(filtered.length / perPage.value))
+
+    const start = (currentPage.value - 1) * perPage.value
+    const end = start + perPage.value
+    const paginated = filtered.slice(start, end)
+
+    prodiData.value = paginated.map((item: any) => ({
+      id: item.id,
+      nama: (item.name ?? "-").replace(/-/g, " "),
+      namaAsli: item.name ?? "",
+      jenjang: item.jenjang ?? "-",
+      jurusan: (item.jurusan?.name ?? "-").replace(/-/g, " "),
+      jurusanId: item.jurusan?.id ?? null,
+      rawData: item,
+    }))
   } catch (err) {
-    console.error("GET TAHUN AKTIF ERROR:", err)
+    console.error("GET PRODI ERROR:", err)
   }
 }
 
 // ================= EDIT MODAL =================
 const showEditModal = ref(false)
 const editForm = ref({
-  id: null as string | null,
+  namaAsli: "",
   nama: "",
-  kode: "",
-  kodeAsli: "", 
-  prodiId: "",
-  semester: "",
+  jenjang: "",
+  jurusanId: "" as string | number,
 })
 const editError = ref("")
 const editLoading = ref(false)
 
-const prodiListEdit = computed(() =>
-  Object.values(prodiMap.value).map((p: any) => ({
-    id: String(p.id),
-    name: p.name.replace(/-/g, " "),
+const jenjangOptions = ["D3", "D4", "S1", "S2", "S3"]
+
+const jurusanList = computed(() =>
+  Object.values(jurusanMap.value).map((j: any) => ({
+    id: String(j.id),
+    name: j.name.replace(/-/g, " "),
+    nameAsli: j.name,
   }))
 )
 
-
 const editData = (item: any) => {
   editForm.value = {
-    id: item.id,
+    namaAsli: item.namaAsli,
     nama: item.nama,
-    kode: (item.rawData?.kode ?? "").replace(/-/g, " "),
-    kodeAsli: item.rawData?.kode ?? "",   // ← simpan kode asli
-    prodiId: String(item.rawData?.prodi?.id ?? ""),
-    semester: String(item.rawData?.kurikulum_mk?.[0]?.semester ?? ""),
+    jenjang: item.jenjang,
+    jurusanId: String(item.jurusanId ?? ""),
   }
   editError.value = ""
   showEditModal.value = true
@@ -119,15 +139,15 @@ const editData = (item: any) => {
 
 const submitEdit = async () => {
   if (!editForm.value.nama.trim()) {
-    editError.value = "Nama kurikulum tidak boleh kosong."
+    editError.value = "Nama prodi tidak boleh kosong."
     return
   }
-  if (!editForm.value.kode.trim()) {
-    editError.value = "Kode kurikulum tidak boleh kosong."
+  if (!editForm.value.jenjang) {
+    editError.value = "Jenjang harus dipilih."
     return
   }
-  if (!editForm.value.prodiId) {
-    editError.value = "Prodi harus dipilih."
+  if (!editForm.value.jurusanId) {
+    editError.value = "Jurusan harus dipilih."
     return
   }
 
@@ -135,27 +155,20 @@ const submitEdit = async () => {
   editError.value = ""
 
   const payload = {
-    name: editForm.value.nama,
-    kode: editForm.value.kode ?? "",
-    prodi_id: editForm.value.prodiId,
-    semester: Number(editForm.value.semester),
+    name: editForm.value.nama.replace(/ /g, "-").toLowerCase(),
+    jenjang: editForm.value.jenjang,
+    jurusan_id: Number(editForm.value.jurusanId),
   }
 
   console.log("PAYLOAD EDIT:", payload)
+  console.log("URL:", `${BASE_URL}/api/prodi/${editForm.value.namaAsli}`)
 
   try {
-const res = await fetch(
-  `${BASE_URL}/api/kurikulum/${editForm.value.id}/${editForm.value.kodeAsli}`,  // ← kodeAsli
-  {
-    method: "PUT",
-    headers: getHeaders(),
-    body: JSON.stringify({
-      name: editForm.value.nama,
-      prodi_id: editForm.value.prodiId,
-      semester: Number(editForm.value.semester),
-    }),
-  }
-)
+    const res = await fetch(`${BASE_URL}/api/prodi/${editForm.value.namaAsli}`, {
+      method: "PUT",
+      headers: getHeaders(),
+      body: JSON.stringify(payload),
+    })
 
     if (!res.ok) {
       const json = await res.json()
@@ -165,11 +178,56 @@ const res = await fetch(
     }
 
     showEditModal.value = false
-    await getKurikulum()
+    await getProdi()
   } catch (err) {
     editError.value = "Terjadi kesalahan jaringan."
   } finally {
     editLoading.value = false
+  }
+}
+
+// ================= DELETE =================
+const showDeleteModal = ref(false)
+const deleteTarget = ref<any>(null)
+const deleteLoading = ref(false)
+const deleteError = ref("")
+
+const confirmDelete = (item: any) => {
+  deleteTarget.value = item
+  deleteError.value = ""
+  showDeleteModal.value = true
+}
+
+const submitDelete = async () => {
+  if (!deleteTarget.value) return
+
+  deleteLoading.value = true
+  deleteError.value = ""
+
+  try {
+    const res = await fetch(`${BASE_URL}/api/prodi/${deleteTarget.value.namaAsli}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    })
+
+    if (!res.ok) {
+      const json = await res.json()
+      deleteError.value = json?.message || "Gagal menghapus prodi."
+      return
+    }
+
+    showDeleteModal.value = false
+    deleteTarget.value = null
+
+    // Kembali ke halaman 1 jika data di halaman ini habis
+    if (prodiData.value.length === 1 && currentPage.value > 1) {
+      currentPage.value--
+    }
+    await getProdi()
+  } catch (err) {
+    deleteError.value = "Terjadi kesalahan jaringan."
+  } finally {
+    deleteLoading.value = false
   }
 }
 
@@ -197,85 +255,41 @@ const visiblePages = computed(() => {
 const nextPage = async () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++
-    await getKurikulum()
+    await getProdi()
   }
 }
 
 const prevPage = async () => {
   if (currentPage.value > 1) {
     currentPage.value--
-    await getKurikulum()
+    await getProdi()
   }
 }
 
 const goToPage = async (page: number) => {
   if (page < 1 || page > totalPages.value) return
   currentPage.value = page
-  await getKurikulum()
+  await getProdi()
 }
 
 watch(perPage, async () => {
   currentPage.value = 1
-  await getKurikulum()
+  await getProdi()
 })
-
-// ================= FETCH SUPPORTING DATA =================
-const getProdi = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/api/prodi`, { headers: getHeaders() })
-    const json = await res.json()
-    const list = json?.data?.items ?? json?.data ?? []
-    list.forEach((p: any) => { prodiMap.value[p.id] = p })
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-const getTahunAkademik = async () => {
-  try {
-    const res = await fetch(`${BASE_URL}/api/tahun-akademik?per_page=10`, { headers: getHeaders() })
-    const json = await res.json()
-    console.log("TAHUN AKTIF RAW:", JSON.stringify(json, null, 2))
-    const list = Array.isArray(json?.data) ? json.data : json?.data?.items ?? []
-    list.forEach((t: any) => { tahunMap.value[t.id] = t })
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-// ================= COMPUTED LISTS =================
-const jurusanList = computed(() => {
-  const map = new Map()
-  Object.values(prodiMap.value).forEach((p: any) => {
-    const j = p.jurusan
-    if (j?.id && !map.has(j.id)) map.set(j.id, { id: String(j.id), name: j.name })
-  })
-  return Array.from(map.values())
-})
-
-const prodiList = computed(() =>
-  Object.values(prodiMap.value).map((p: any) => ({ id: String(p.id), name: p.name }))
-)
-
-const tahunAkademikList = computed(() =>
-  Object.values(tahunMap.value).map((t: any) => ({
-    id: String(t.id),
-    label: `${t.tahun_awal.slice(0, 4)}/${t.tahun_akhir.slice(0, 4)}`,
-  }))
-)
 
 // ================= ACTION =================
-const pilihData = () => {
-  console.log({ jurusan: jurusan.value, prodi: prodi.value, tahun: tahunAkademik.value })
+const pilihData = async () => {
+  currentPage.value = 1
+  await getProdi()
 }
 
 const tambahData = () => {
-  router.push("/dashboard-admin/tambah_kurikulum")
+  router.push("/dashboard-admin/tambah_prodi")
 }
 
 onMounted(async () => {
-  await Promise.all([getProdi(), getTahunAkademik(), getTahunAktif()])
-  await getKurikulum()
+  await getAllProdi()
+  await getProdi()
 })
 </script>
 
@@ -284,7 +298,7 @@ onMounted(async () => {
 
     <!-- BREADCRUMB -->
     <div class="text-sm text-gray-500 font-medium mb-2">
-      Mahasiswa > Kurikulum
+      Akademik > Prodi
     </div>
 
     <!-- TITLE -->
@@ -302,19 +316,9 @@ onMounted(async () => {
       <!-- FILTER -->
       <div class="px-5 pt-5 flex items-center gap-4 flex-wrap">
 
-        <select v-model="jurusan" class="w-65 h-13.5 border border-gray-300 rounded-xl px-4">
+        <select v-model="filterJurusan" class="w-65 h-13.5 border border-gray-300 rounded-xl px-4 bg-white">
           <option value="">Pilih Jurusan</option>
           <option v-for="j in jurusanList" :key="j.id" :value="j.id">{{ j.name }}</option>
-        </select>
-
-        <select v-model="prodi" class="w-65 h-13.5 border border-gray-300 rounded-xl px-4">
-          <option value="">Pilih Prodi</option>
-          <option v-for="p in prodiList" :key="p.id" :value="p.id">{{ p.name }}</option>
-        </select>
-
-        <select v-model="tahunAkademik" class="w-65 h-13.5 border border-gray-300 rounded-xl px-4">
-          <option value="">Pilih Tahun Akademik</option>
-          <option v-for="t in tahunAkademikList" :key="t.id" :value="t.id">{{ t.label }}</option>
         </select>
 
         <button @click="pilihData"
@@ -329,30 +333,38 @@ onMounted(async () => {
       </div>
 
       <!-- TABLE -->
-      <div class="px-5 pt-8">
+      <div class="px-5 pt-8 overflow-x-auto">
         <table class="w-full">
           <thead>
-            <tr class="text-left text-gray-600">
-              <th class="text-[18px] font-semibold">No</th>
-              <th class="text-[18px] font-semibold">Nama Kurikulum</th>
-              <th class="text-[18px] font-semibold">Prodi</th>
-              <th class="text-[18px] font-semibold">Semester</th>
-              <th class="text-[18px] font-semibold">Tahun Akademik</th>
-              <th class="text-[18px] font-semibold text-center">Aksi</th>
+            <tr class="text-left text-gray-600 border-b border-gray-300">
+              <th class="text-[18px] font-semibold pb-3">No</th>
+              <th class="text-[18px] font-semibold pb-3">Nama Prodi</th>
+              <th class="text-[18px] font-semibold pb-3">Jenjang</th>
+              <th class="text-[18px] font-semibold pb-3">Jurusan</th>
+              <th class="text-[18px] font-semibold pb-3 text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in kurikulumData" :key="item.id" class="hover:bg-gray-50">
+            <tr v-if="prodiData.length === 0">
+              <td colspan="5" class="py-8 text-center text-gray-400 text-sm">Tidak ada data prodi.</td>
+            </tr>
+            <tr v-for="(item, index) in prodiData" :key="item.id"
+              class="border-b border-gray-200 hover:bg-gray-50 transition">
               <td class="py-4 text-[18px]">{{ (currentPage - 1) * perPage + index + 1 }}</td>
               <td class="py-4 text-[18px]">{{ item.nama }}</td>
-              <td class="py-4 text-[18px]">{{ item.prodi }}</td>
-              <td class="py-4 text-[18px]">{{ item.semester }}</td>
-              <td class="py-4 text-[18px]">{{ item.tahun }}</td>
+              <td class="py-4 text-[18px]">{{ item.jenjang }}</td>
+              <td class="py-4 text-[18px]">{{ item.jurusan }}</td>
               <td class="py-4 text-center">
-                <button type="button" @click="editData(item)"
-                  class="bg-[#f3a317] hover:bg-[#d78e0f] text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer">
-                  ✎ Edit
-                </button>
+                <div class="flex justify-center gap-2">
+                  <button type="button" @click="editData(item)"
+                    class="bg-[#f3a317] hover:bg-[#d78e0f] text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition">
+                    ✎ Edit
+                  </button>
+                  <button type="button" @click="confirmDelete(item)"
+                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer transition">
+                    🗑 Hapus
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -360,7 +372,9 @@ onMounted(async () => {
       </div>
 
       <!-- FOOTER / PAGINATION -->
-      <div class="flex items-center justify-end w-full px-5 py-5">
+      <div class="flex items-center justify-between w-full px-5 py-5">
+        <p class="text-sm text-gray-500">Total: {{ totalItems }} data</p>
+
         <div class="flex items-center gap-2 text-gray-500 text-sm">
 
           <button @click="prevPage" :disabled="currentPage === 1"
@@ -397,54 +411,53 @@ onMounted(async () => {
     </div><!-- end CARD -->
 
     <!-- ================================ -->
-    <!-- EDIT MODAL — di luar card/table  -->
+    <!-- EDIT MODAL                        -->
     <!-- ================================ -->
     <div v-if="showEditModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
       @click.self="showEditModal = false">
       <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-        <h2 class="text-xl font-bold text-[#404040] mb-4">Edit Kurikulum</h2>
+        <h2 class="text-xl font-bold text-[#404040] mb-4">Edit Prodi</h2>
 
         <!-- Error -->
-        <p v-if="editError" class="text-red-500 text-sm mb-3">{{ editError }}</p>
+        <p v-if="editError" class="text-red-500 text-sm mb-3 bg-red-50 px-3 py-2 rounded-lg">{{ editError }}</p>
 
-        <!-- Nama -->
+        <!-- Nama Prodi -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Kurikulum</label>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Nama Prodi</label>
           <input v-model="editForm.nama" type="text"
+            placeholder="contoh: teknik informatika"
             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29479d]" />
+          <p class="text-xs text-gray-400 mt-1">Otomatis dikonversi ke format: teknik-informatika</p>
         </div>
 
-        <!-- Kode -->
+        <!-- Jenjang -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Kode Kurikulum</label>
-          <input v-model="editForm.kode" type="text" maxlength="3"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29479d]" />
-        </div>
-
-        <!-- Prodi -->
-        <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Prodi</label>
-          <select v-model="editForm.prodiId" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
-            <option value="">Pilih Prodi</option>
-            <option v-for="p in prodiListEdit" :key="p.id" :value="p.id">{{ p.name }}</option>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Jenjang</label>
+          <select v-model="editForm.jenjang"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29479d]">
+            <option value="">Pilih Jenjang</option>
+            <option v-for="j in jenjangOptions" :key="j" :value="j">{{ j }}</option>
           </select>
         </div>
 
-        <!-- Semester -->
+        <!-- Jurusan -->
         <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Semester</label>
-          <input v-model="editForm.semester" type="number" min="1"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29479d]" />
+          <label class="block text-sm font-medium text-gray-700 mb-1">Jurusan</label>
+          <select v-model="editForm.jurusanId"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#29479d]">
+            <option value="">Pilih Jurusan</option>
+            <option v-for="j in jurusanList" :key="j.id" :value="j.id">{{ j.name }}</option>
+          </select>
         </div>
 
         <!-- Tombol -->
         <div class="flex justify-end gap-3">
           <button @click="showEditModal = false"
-            class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100">
+            class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 transition">
             Batal
           </button>
           <button @click="submitEdit" :disabled="editLoading"
-            class="px-4 py-2 rounded-lg bg-[#29479d] hover:bg-[#1d377f] text-white text-sm font-semibold disabled:opacity-50">
+            class="px-4 py-2 rounded-lg bg-[#29479d] hover:bg-[#1d377f] text-white text-sm font-semibold disabled:opacity-50 transition">
             {{ editLoading ? "Menyimpan..." : "Simpan" }}
           </button>
         </div>
@@ -452,6 +465,35 @@ onMounted(async () => {
       </div>
     </div>
     <!-- END EDIT MODAL -->
+
+    <!-- ================================ -->
+    <!-- DELETE CONFIRM MODAL              -->
+    <!-- ================================ -->
+    <div v-if="showDeleteModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+      @click.self="showDeleteModal = false">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
+        <h2 class="text-xl font-bold text-[#404040] mb-2">Hapus Prodi</h2>
+        <p class="text-gray-600 text-sm mb-4">
+          Apakah Anda yakin ingin menghapus prodi
+          <span class="font-semibold text-red-600">{{ deleteTarget?.nama }}</span>?
+          Tindakan ini tidak dapat dibatalkan.
+        </p>
+
+        <p v-if="deleteError" class="text-red-500 text-sm mb-3 bg-red-50 px-3 py-2 rounded-lg">{{ deleteError }}</p>
+
+        <div class="flex justify-end gap-3">
+          <button @click="showDeleteModal = false"
+            class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 transition">
+            Batal
+          </button>
+          <button @click="submitDelete" :disabled="deleteLoading"
+            class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-semibold disabled:opacity-50 transition">
+            {{ deleteLoading ? "Menghapus..." : "Hapus" }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- END DELETE MODAL -->
 
   </div>
 </template>

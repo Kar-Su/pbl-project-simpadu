@@ -446,6 +446,11 @@ onMounted(async (): Promise<void> => {
                                 icon: '🏫',
                             },
                             {
+                                path: '/dashboard-admin/matakuliah',
+                                label: 'Mata Kuliah',
+                                icon: '📚',
+                            },
+                            {
                                 path: '/dashboard-admin/nilai',
                                 label: 'Nilai',
                                 icon: '📊',

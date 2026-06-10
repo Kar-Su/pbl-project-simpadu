@@ -332,7 +332,7 @@ onMounted(async () => {
       <div class="px-5 pt-8">
         <table class="w-full">
           <thead>
-            <tr class="text-left text-gray-600">
+            <tr class="text-left text-gray-600 border-b border-gray-300">
               <th class="text-[18px] font-semibold">No</th>
               <th class="text-[18px] font-semibold">Nama Kurikulum</th>
               <th class="text-[18px] font-semibold">Prodi</th>

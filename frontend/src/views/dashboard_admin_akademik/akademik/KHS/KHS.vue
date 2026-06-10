@@ -102,7 +102,7 @@ const lihatDetail = (item: any) => {
         <table class="w-full border-separate border-spacing-y-4">
 
           <thead>
-            <tr class="text-left text-gray-600">
+            <tr class="text-left text-black-600 border-b border-gray-300">
               <th class="font-semibold text-[18px]">No</th>
               <th class="font-semibold text-[18px]">Nama Kelas</th>
               <th class="font-semibold text-[18px]">Jurusan</th>
