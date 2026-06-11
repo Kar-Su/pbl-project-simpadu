@@ -14,6 +14,7 @@ import (
 	"web-hosting/internal/modules/prodi"
 	"web-hosting/internal/modules/role"
 	"web-hosting/internal/modules/user"
+	workerAPI "web-hosting/internal/modules/workers"
 	"web-hosting/internal/package/env"
 	"web-hosting/internal/providers"
 	"web-hosting/internal/workers"
@@ -108,9 +109,10 @@ func main() {
 	kelas.RegisterRoutes(server, injector)
 	pengampu.RegisterRoutes(server, injector)
 	presensi.RegisterRoutes(server, injector)
+	workerAPI.RegisterRoutes(server, injector)
 
 	worker := do.MustInvoke[workers.Schedule](injector)
-	worker.StartSchedule()
+	go worker.StartAll()
 
 	run(server)
 }

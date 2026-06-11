@@ -36,6 +36,7 @@ import (
 	userController "web-hosting/internal/modules/user/controller"
 	userRepo "web-hosting/internal/modules/user/repository"
 	userService "web-hosting/internal/modules/user/service"
+	workerController "web-hosting/internal/modules/workers/controller"
 
 	"web-hosting/internal/package/constants"
 	"web-hosting/internal/workers"
@@ -103,7 +104,7 @@ func RegisterProviders(injector do.Injector) {
 
 	do.Provide(injector, func(i do.Injector) (workers.Schedule, error) {
 		authService := do.MustInvoke[authService.AuthService](i)
-		return workers.NewSchedule(i, authService), nil
+		return workers.NewSchedule(i, authService, presensiService), nil
 	})
 
 	do.Provide(injector, func(i do.Injector) (presensiController.PresensiController, error) {
@@ -151,5 +152,8 @@ func RegisterProviders(injector do.Injector) {
 	})
 	do.Provide(injector, func(i do.Injector) (pengampuController.PengampuController, error) {
 		return pengampuController.NewPengampuController(i, db, pengampuService), nil
+	})
+	do.Provide(injector, func(i do.Injector) (workerController.WorkerController, error) {
+		return workerController.NewWorkerController(i), nil
 	})
 }

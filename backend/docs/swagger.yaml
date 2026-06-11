@@ -5797,6 +5797,59 @@ paths:
       summary: Update User Non-Admin
       tags:
       - user
+  /api/workers/presensi/start:
+    post:
+      description: |-
+        **Akses:** Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `400` Worker presensi already on"`
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Otomatis Start Presensi pegawai
+      tags:
+      - workers
+  /api/workers/presensi/status:
+    get:
+      description: |-
+        **Akses:** Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get Status Presensi pegawai
+      tags:
+      - workers
+  /api/workers/presensi/stop:
+    post:
+      description: |-
+        **Akses:** Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `400` message": "Worker presensi already off"`
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Otomatis Stop Presensi pegawai
+      tags:
+      - workers
 securityDefinitions:
   ApiKeyAuth:
     description: 'Format: Bearer access_token'
