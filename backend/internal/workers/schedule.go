@@ -25,10 +25,11 @@ type (
 	schedule struct {
 		authService     authService.AuthService
 		presensiService presensiService.PresensiService
-		cleanupCron     *cron.Cron
-		presensiCron    *cron.Cron
 
-		presensiMu      sync.RWMutex
+		cleanupCron  *cron.Cron
+		presensiCron *cron.Cron
+		presensiMu   sync.RWMutex
+
 		presensiRunning bool
 	}
 )

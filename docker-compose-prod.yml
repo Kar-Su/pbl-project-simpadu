@@ -29,6 +29,8 @@ services:
     working_dir: /golang
     volumes:
       - ./backend:/golang
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
       - ENV=development
     env_file:
