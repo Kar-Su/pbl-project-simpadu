@@ -27,6 +27,7 @@ const currentPage = ref(1)
 
 const Konfirmasi_hapus = ref(false)
 const selectedEmail = ref("")
+const selectedUserId = ref("")
 
 const router = useRouter()
 
@@ -165,14 +166,31 @@ const prevPage = async () => {
 }
 
 // ================= DELETE =================
-const openDeleteModal = (email: string) => {
+const openDeleteModal = (id: string, email: string) => {
+  selectedUserId.value = id
   selectedEmail.value = email
   Konfirmasi_hapus.value = true
 }
 
-const confirmDelete = () => {
-  console.log("hapus:", selectedEmail.value)
-  Konfirmasi_hapus.value = false
+const confirmDelete = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/api/users/${selectedUserId.value}`, {
+      method: "DELETE",
+      headers: getHeaders(),
+    })
+
+    if (!res.ok) {
+      const json = await res.json()
+      console.error("DELETE ERROR:", json)
+      return
+    }
+
+    Konfirmasi_hapus.value = false
+    await getUsers()
+    await getAllUsers()
+  } catch (err) {
+    console.error("DELETE NETWORK ERROR:", err)
+  }
 }
 
 watch(search, () => {
@@ -295,7 +313,7 @@ border-l-[4px] border-b-[3px] border-[#9db9dc]">
                   </button>
 
                   <!-- DELETE -->
-                  <button @click="openDeleteModal(item.email)"
+                  <button @click="openDeleteModal(item.id, item.email)"
                     class="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-900">
                     🗑 Hapus
                   </button>

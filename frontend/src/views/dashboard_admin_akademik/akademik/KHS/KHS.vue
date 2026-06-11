@@ -6,22 +6,6 @@ const semester = ref("")
 const tahunAkademik = ref("")
 
 // ================== DATA ==================
-const kelasData = ref([
-  {
-    id: 1,
-    kelas: "4A",
-    jurusan: "Teknik Elektro",
-    prodi: "Teknik Informatika",
-    tahun: "2023-2024",
-  },
-  {
-    id: 2,
-    kelas: "4B",
-    jurusan: "Teknik Elektro",
-    prodi: "SIKC",
-    tahun: "2023-2024",
-  },
-])
 
 // ================== PAGINATION ==================
 const currentPage = ref(1)
@@ -33,7 +17,6 @@ const totalPages = computed(() => 68)
 
 const paginatedData = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
-  return kelasData.value.slice(start, start + perPage.value)
 })
 
 // ================== ACTION ==================
@@ -79,10 +62,7 @@ const lihatDetail = (item: any) => {
           v-model="semester"
           class="w-[260px] h-[56px] border border-gray-300 rounded-xl px-4 text-[20px] text-gray-600 bg-white outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Pilih Semester</option>
-          <option>Semester 1</option>
-          <option>Semester 2</option>
-          <option>Semester 3</option>
+          <option value="" disabled>Pilih Semester</option>
         </select>
 
         <!-- TAHUN AKADEMIK -->
@@ -90,9 +70,7 @@ const lihatDetail = (item: any) => {
           v-model="tahunAkademik"
           class="w-[260px] h-[56px] border border-gray-300 rounded-xl px-4 text-[20px] text-gray-600 bg-white outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <option value="">Pilih Tahun Akademik</option>
-          <option>2023-2024</option>
-          <option>2024-2025</option>
+          <option value="" disabled>Pilih Tahun Akademik</option>
         </select>
 
         <!-- BUTTON -->
@@ -124,7 +102,7 @@ const lihatDetail = (item: any) => {
         <table class="w-full border-separate border-spacing-y-4">
 
           <thead>
-            <tr class="text-left text-gray-600">
+            <tr class="text-left text-black-600 border-b border-gray-300">
               <th class="font-semibold text-[18px]">No</th>
               <th class="font-semibold text-[18px]">Nama Kelas</th>
               <th class="font-semibold text-[18px]">Jurusan</th>
@@ -180,41 +158,17 @@ const lihatDetail = (item: any) => {
       >
 
         <!-- SELECT BARIS -->
-        <select
+        <!-- <select
           v-model="perPage"
           class="w-[90px] h-[42px] border border-gray-300 rounded-lg px-3 text-sm outline-none"
         >
           <option :value="5">5 Baris</option>
           <option :value="10">10 Baris</option>
           <option :value="25">25 Baris</option>
-        </select>
+        </select> -->
 
         <!-- PAGINATION -->
-        <div class="flex items-center gap-5 text-gray-500">
 
-          <button class="text-gray-400">
-            ← Previous
-          </button>
-
-          <button
-            class="w-9 h-9 rounded-lg bg-[#29479d] text-white font-semibold"
-          >
-            1
-          </button>
-
-          <button>2</button>
-          <button>3</button>
-
-          <span>...</span>
-
-          <button>67</button>
-          <button>68</button>
-
-          <button class="text-gray-700 font-medium">
-            Next →
-          </button>
-
-        </div>
       </div>
     </div>
   </div>

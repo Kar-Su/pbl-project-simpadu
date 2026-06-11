@@ -11,6 +11,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      
       '/api': {
         target: 'https://be.karlearn.site',
         changeOrigin: true,

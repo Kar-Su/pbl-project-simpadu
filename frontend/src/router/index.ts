@@ -11,7 +11,7 @@ import DashboardAdmin from "@/views/dashboard_admin_akademik/Dashboard_admin_aka
 // akademik
 import KHS from "@/views/dashboard_admin_akademik/akademik/KHS/KHS.vue";
 import Nilai from "@/views/dashboard_admin_akademik/akademik/nilai/Nilai.vue";
-import Presensi from "@/views/dashboard_admin_akademik/akademik/Presensi.vue";
+import Presensi from "@/views/dashboard_admin_akademik/akademik/Presensi/Presensi.vue";
 import Tahun_akademik from "@/views/dashboard_admin_akademik/akademik/tahun-akademik/Tahun_akademik.vue";
 import Tambah_tahunakademik from "../views/dashboard_admin_akademik/akademik/tahun-akademik/Tambah_tahunakademik.vue";
 
@@ -30,9 +30,24 @@ import Peserta_kelas from "@/views/dashboard_admin_akademik/akademik/Peserta-kel
 import Detail_pesertakelas from "@/views/dashboard_admin_akademik/akademik/Peserta-kelas/Detail_pesertakelas.vue";
 
 // pegawai
-import Dosen from "@/views/dashboard_admin_akademik/akademik/pegawai/Dosen.vue";
+import Dosen from "@/views/dashboard_admin_akademik/akademik/Dosen/Dosen.vue";
 import Dashboard_kurikulum from "../views/dashboard_admin_akademik/Dashboard_kurikulum.vue";
 import Dashboard_tahunakademik from "../views/dashboard_admin_akademik/Dashboard_tahunakademik.vue";
+
+// jurusan
+import Jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Jurusan.vue";
+
+// prodi
+import Prodi from "@/views/dashboard_admin_akademik/akademik/Prodi/Prodi.vue";
+
+//Matakuliah
+import Matakuliah from "@/views/dashboard_admin_akademik/akademik/Matakuliah/Matakuliah.vue";
+
+//Tambah matakuliah
+import Tambah_matakuliah from "@/views/dashboard_admin_akademik/akademik/Matakuliah/Tambah_matakuliah.vue";
+
+//Tambah jurusan
+import Tambah_jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Tambah_jurusan.vue";
 
 import profile from "../views/dashboard_admin_akademik/profile.vue";
 
@@ -122,6 +137,22 @@ const router = createRouter({
         //kurikulum
         { path: "tambah_kurikulum", component: Tambah_kurikulum },
         { path: "profile", component: profile },
+
+        // prodi
+        { path: "prodi", component: Prodi },
+
+        // jurusan
+        { path: "jurusan", component: Jurusan },
+
+        // matakuliah
+        { path: "matakuliah", component: Matakuliah },
+
+        //Tambah matakuliah
+        { path: "tambah_matakuliah", component: Tambah_matakuliah },
+
+        //Tambah jurusan
+        { path: "tambah_jurusan", component: Tambah_jurusan },
+
       ],
     },
   ],

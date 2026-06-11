@@ -291,7 +291,7 @@ onMounted(() => {
   <table class="w-full text-sm">
 
     <thead>
-      <tr class="text-left text-gray-500">
+      <tr class="text-left text-gray-600 border-b border-gray-300">
 
         <th class="px-6 py-5">No</th>
         <th class="px-6 py-5">NIP</th>

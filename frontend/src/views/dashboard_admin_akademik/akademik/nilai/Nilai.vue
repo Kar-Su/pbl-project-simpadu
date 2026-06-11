@@ -228,7 +228,7 @@ onMounted(() => {
 
           <!-- HEADER -->
           <thead>
-            <tr class="text-left text-gray-600">
+            <tr class="text-left text-balck-600 border-b border-gray-300">
               <th class="text-[20px] font-semibold">No</th>
               <th class="text-[20px] font-semibold">Nama Kelas</th>
               <th class="text-[20px] font-semibold">Jurusan</th>

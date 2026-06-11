@@ -3,153 +3,200 @@ import { ref, onMounted, computed, watch } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import Konfirmasi_keluar from "./akademik/konfirmasi_keluar.vue"
 
-const router = useRouter()
-const route = useRoute()
-
-// ================= STATE =================
 // ================= STATE =================
 const showLogoutPopup = ref(false)
 const isSidebarOpen = ref(true)
 
-const akunList = ref<any[]>([])
+const router = useRouter()
+const route = useRoute()
+
 const totalAkun = ref(0)
 const totalRole = ref(0)
 
 const rowsPerPage = ref(10)
 const currentPage = ref(1)
-const totalPages = ref(1)
 
-const user = ref({
-  name: "Admin Akademik"
+const user = ref({ name: "Admin Akademik" })
+
+// Data gabungan
+interface AkunItem {
+    id: string
+    email: string
+    name: string
+    role_name: string
+    source: 'karlearn' | 'external'
+}
+
+const allAkunData = ref<AkunItem[]>([])
+const isLoading = ref(false)
+
+// Pagination frontend
+const totalPages = computed(() =>
+    Math.max(1, Math.ceil(allAkunData.value.length / rowsPerPage.value))
+)
+
+const paginatedData = computed(() => {
+    const start = (currentPage.value - 1) * rowsPerPage.value
+    const end = start + rowsPerPage.value
+    return allAkunData.value.slice(start, end)
 })
-
-
-
-const paginatedData = computed(() => akunList.value)
 
 const visiblePages = computed(() => {
-  const total = totalPages.value
-  const current = currentPage.value
+    const total = totalPages.value
+    const current = currentPage.value
 
-  if (total <= 4) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
+    if (total <= 4) return Array.from({ length: total }, (_, i) => i + 1)
 
-  const pages: (number | string)[] = []
+    const pages: (number | string)[] = [1]
+    const rangeStart = Math.max(2, current - 1)
+    const rangeEnd = Math.min(total - 1, current + 1)
 
-  pages.push(1)
+    if (rangeStart > 2) pages.push('...')
+    for (let i = rangeStart; i <= rangeEnd; i++) pages.push(i)
+    if (rangeEnd < total - 1) pages.push('...')
+    pages.push(total)
 
-  const rangeStart = Math.max(2, current - 1)
-  const rangeEnd = Math.min(total - 1, current + 1)
-
-  if (rangeStart > 2) pages.push('...')
-
-  for (let i = rangeStart; i <= rangeEnd; i++) {
-    pages.push(i)
-  }
-
-  if (rangeEnd < total - 1) pages.push('...')
-
-  pages.push(total)
-
-  return pages
+    return pages
 })
 
-const nextPage = async () => {
-  if (currentPage.value < totalPages.value) {
-    await getAkun(currentPage.value + 1)
-  }
+const goToPage = (page: number) => {
+    if (page < 1 || page > totalPages.value) return
+    currentPage.value = page
 }
 
-const prevPage = async () => {
-  if (currentPage.value > 1) {
-    await getAkun(currentPage.value - 1)
-  }
-}
+const nextPage = () => goToPage(currentPage.value + 1)
+const prevPage = () => goToPage(currentPage.value - 1)
 
 // ================= ACTIVE MENU =================
 const isActive = (path: string) => route.path === path
 
 // ================= API =================
 const getHeaders = () => ({
-  Authorization: `Bearer ${localStorage.getItem("token")}`
+    Authorization: `Bearer ${localStorage.getItem("token")}`,
+    accept: "application/json"
 })
 
+// Ambil semua user Karlearn (loop semua halaman)
+const getAllKarlearnUsers = async (): Promise<AkunItem[]> => {
+    try {
+        const BASE_URL = 'https://be.karlearn.site'
+        let page = 1
+        let lastPage = 1
+        let allItems: AkunItem[] = []
+
+        do {
+            const res = await fetch(
+                `${BASE_URL}/api/users?page=${page}&per_page=100`,
+                { headers: getHeaders() }
+            )
+            const data = await res.json()
+            const items: AkunItem[] = (data.data?.items ?? []).map((item: any) => ({
+                id: String(item.id),
+                email: item.email ?? '-',
+                name: item.name ?? '-',
+                role_name: item.role_name ?? '-',
+                source: 'karlearn'
+            }))
+            allItems = [...allItems, ...items]
+            lastPage = data.data?.pagination?.total_pages ?? 1
+            page++
+        } while (page <= lastPage)
+
+        return allItems
+    } catch (err) {
+        console.error("getAllKarlearnUsers:", err)
+        return []
+    }
+}
+
+// Ambil semua pegawai eksternal (loop semua halaman)
+const getAllPegawaiExternal = async (): Promise<AkunItem[]> => {
+    try {
+        let page = 1
+        let lastPage = 1
+        let allItems: AkunItem[] = []
+
+        do {
+            const res = await fetch(
+                `https://api-pegawai-4a.akufarish.my.id:1234/api/employees?page=${page}`,
+                { headers: getHeaders() }
+            )
+            const data = await res.json()
+            const items: AkunItem[] = (data.data ?? []).map((item: any) => ({
+                id: String(item.id),
+                email: '-',
+                name: item.employee_name ?? '-',
+                role_name: item.study_program_name ?? '-',
+                source: 'external'
+            }))
+            allItems = [...allItems, ...items]
+            lastPage = data.meta?.last_page ?? 1
+            page++
+        } while (page <= lastPage)
+
+        return allItems
+    } catch (err) {
+        console.error("getAllPegawaiExternal:", err)
+        return []
+    }
+}
+
+// Load semua data gabungan
+const loadAllData = async () => {
+    isLoading.value = true
+    try {
+        const [karlearnItems, externalItems] = await Promise.all([
+            getAllKarlearnUsers(),
+            getAllPegawaiExternal()
+        ])
+        allAkunData.value = [...karlearnItems, ...externalItems]
+        currentPage.value = 1
+    } finally {
+        isLoading.value = false
+    }
+}
+
+// Total akun = panjang data gabungan
 const getTotalAkun = async () => {
-  try {
-    const BASE_URL = 'https://be.karlearn.site'
-    const res = await fetch(`${BASE_URL}/api/users/count`, {
-      headers: getHeaders()
-    })
-
-    const data = await res.json()
-
-    totalAkun.value = data.data ?? 0
-  } catch (err) {
-    console.error(err)
-  }
+    try {
+        const BASE_URL = 'https://be.karlearn.site'
+        const [res, externalRes] = await Promise.all([
+            fetch(`${BASE_URL}/api/users/count`, { headers: getHeaders() }),
+            fetch('https://api-pegawai-4a.akufarish.my.id:1234/api/employees?page=1', { headers: getHeaders() })
+        ])
+        const karlearnData = await res.json()
+        const externalData = await externalRes.json()
+        totalAkun.value = (karlearnData.data ?? 0) + (externalData.meta?.total ?? 0)
+    } catch (err) {
+        console.error(err)
+    }
 }
 
 const getTotalRole = async () => {
-  try {
-    const BASE_URL = "https://be.karlearn.site"
-
-    const res = await fetch(`${BASE_URL}/api/roles`, {
-      headers: getHeaders()
-    })
-
-    const data = await res.json()
-
-    totalRole.value = data?.data?.total_items || 0
-
-  } catch (err) {
-    console.error(err)
-  }
+    try {
+        const res = await fetch('https://be.karlearn.site/api/roles', { headers: getHeaders() })
+        const data = await res.json()
+        totalRole.value = data?.data?.total_items || 0
+    } catch (err) {
+        console.error(err)
+    }
 }
 
-const getAkun = async (page = 1) => {
-  try {
-    const BASE_URL = 'https://be.karlearn.site'
-    const res = await fetch(
-      `${BASE_URL}/api/users?page=${page}&per_page=${rowsPerPage.value}`,
-      {
-        headers: {
-          ...getHeaders(),
-          accept: "application/json"
-        }
-      }
-    )
-
-    console.log("REQUEST URL:", res.url)
-
-    const data = await res.json()
-
-    akunList.value = data.data.items || []
-
-    totalPages.value = data.data.pagination.total_pages || 1
-
-    currentPage.value = data.data.pagination.page || 1
-
-  } catch (err) {
-    console.error(err)
-  }
-}
-
+// Reset page saat rowsPerPage berubah
 watch(rowsPerPage, () => {
-  getAkun(1)
+    currentPage.value = 1
 })
-
 
 // ================= LOGOUT =================
 const handleLogout = () => {
-  localStorage.clear()
-  router.push("/")
+    localStorage.clear()
+    router.push("/")
 }
 
 onMounted(() => {
-  getTotalAkun()
-  getTotalRole()
-  getAkun()
+    getTotalAkun()
+    getTotalRole()
+    loadAllData()
 })
 </script>
 
@@ -378,85 +425,85 @@ onMounted(() => {
         </div>
 
         <!-- TABLE -->
-<div v-if="route.path === '/dashboard-superadmin'" class="mt-8 bg-[#f8f3f3] rounded-xl p-5 min-h-125 flex flex-col justify-between border-l-[3px] border-b-[2px] border-[#9db9dc] shadow-sm">
-          <div>
+<!-- TABLE -->
+<div v-if="route.path === '/dashboard-superadmin'"
+    class="mt-8 bg-[#f8f3f3] rounded-xl p-5 min-h-125 flex flex-col justify-between border-l-[3px] border-b-[2px] border-[#9db9dc] shadow-sm">
+    <div>
+        <h2 class="text-[32px] font-semibold mb-8 text-[#000000]">
+            Data Akun
+        </h2>
 
-            <h2 class="text-[32px] font-semibold mb-8 text-[#000000]">
-              Data Akun
-            </h2>
-
-            <table class="w-full">
-
-              <thead>
-                <tr class="text-[#000000] text-[15px]">
-                  <th class="text-left py-3 font-semibold">No</th>
-                  <th class="text-left py-3 font-semibold">Email</th>
-                  <th class="text-left py-3 font-semibold">Nama</th>
-                  <th class="text-left py-3 font-semibold">Jabatan</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                <tr v-for="(item, index) in paginatedData" :key="item.id" class="text-[#000000]">
-                  <td class="py-4">
-                    {{
-                      (currentPage - 1) * rowsPerPage + index + 1
-                    }}
-                  </td>
-
-                  <td>{{ item.email }}</td>
-
-                  <td>{{ item.name }}</td>
-
-                  <td>{{ item.role_name }}</td>
-                </tr>
-              </tbody>
-
-            </table>
-
-          </div>
-
-          <!-- FOOTER -->
-          <div class="flex items-center justify-between mt-10">
-
-            <!-- PAGINATION -->
-             <div class="flex justify-end mt-10"></div>
-<div class="flex items-center gap-2 text-gray-500 text-sm">
-
-  <!-- PREVIOUS -->
-  <button @click="prevPage" :disabled="currentPage === 1"
-    class="flex items-center gap-1 px-2 py-1 rounded hover:text-black disabled:opacity-40">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-    </svg>
-    Previous
-  </button>
-
-  <!-- PAGE NUMBERS -->
-  <template v-for="item in visiblePages" :key="item">
-    <span v-if="item === '...'" class="w-8 h-8 flex items-center justify-center text-gray-400">...</span>
-    <button v-else @click="getAkun(Number(item))" :class="currentPage === Number(item)
-      ? 'bg-[#1c3277] text-white shadow-md scale-105'
-      : 'bg-white text-[#4b4b4b] hover:bg-[#d6ddee]'"
-      class="w-8 h-8 rounded-md text-sm font-medium transition-all duration-200">
-      {{ item }}
-    </button>
-  </template>
-
-  <!-- NEXT -->
-  <button @click="nextPage" :disabled="currentPage === totalPages"
-    class="flex items-center gap-1 px-2 py-1 rounded hover:text-black disabled:opacity-40">
-    Next
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-    </svg>
-  </button>
-
-</div>
-
-          </div>
-
+        <!-- Loading -->
+        <div v-if="isLoading" class="text-center py-10 text-gray-400">
+            Memuat data...
         </div>
+
+        <table v-else class="w-full">
+            <thead>
+                <tr class="text-[#000000] text-[15px]">
+                    <th class="text-left py-3 font-semibold">No</th>
+                    <th class="text-left py-3 font-semibold">Email</th>
+                    <th class="text-left py-3 font-semibold">Nama</th>
+                    <th class="text-left py-3 font-semibold">Jabatan</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-if="paginatedData.length === 0">
+                    <td colspan="4" class="py-6 text-center text-gray-400">Tidak ada data</td>
+                </tr>
+                <tr v-for="(item, index) in paginatedData" :key="item.id + item.source"
+                    class="text-[#000000]">
+                    <td class="py-4">{{ (currentPage - 1) * rowsPerPage + index + 1 }}</td>
+                    <td>{{ item.email }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.role_name }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="flex items-center justify-between mt-10">
+        <div class="text-sm text-gray-400">
+            Total: {{ allAkunData.length }} data
+        </div>
+
+        <div class="flex items-center gap-2 text-gray-500 text-sm">
+            <!-- PREVIOUS -->
+            <button @click="prevPage" :disabled="currentPage === 1"
+                class="flex items-center gap-1 px-2 py-1 rounded hover:text-black disabled:opacity-40">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                Previous
+            </button>
+
+            <!-- PAGE NUMBERS -->
+            <template v-for="item in visiblePages" :key="item">
+                <span v-if="item === '...'"
+                    class="w-8 h-8 flex items-center justify-center text-gray-400">...</span>
+                <button v-else @click="goToPage(Number(item))"
+                    :class="currentPage === Number(item)
+                        ? 'bg-[#1c3277] text-white shadow-md scale-105'
+                        : 'bg-white text-[#4b4b4b] hover:bg-[#d6ddee]'"
+                    class="w-8 h-8 rounded-md text-sm font-medium transition-all duration-200">
+                    {{ item }}
+                </button>
+            </template>
+
+            <!-- NEXT -->
+            <button @click="nextPage" :disabled="currentPage === totalPages"
+                class="flex items-center gap-1 px-2 py-1 rounded hover:text-black disabled:opacity-40">
+                Next
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
 
       </div>
 

@@ -3,6 +3,7 @@ defineProps<{
   email?: string
 }>()
 
+
 const emit = defineEmits(["close", "confirm"])
 
 const BASE_URL = 'https://be.karlearn.site'
