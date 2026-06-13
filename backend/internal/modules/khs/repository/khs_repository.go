@@ -127,10 +127,13 @@ func (r *khsRepository) Create(ctx context.Context, tx *gorm.DB, mahasiswaID uui
 
 		if err := dbTx.Model(&entities.Khs{}).
 			Where("id = ?", khs.ID).
-			Updates(map[string]interface{}{
-				"ips": ips,
-				"ipk": ipk,
-			}).Error; err != nil {
+			Update("ips", ips).Error; err != nil {
+			return err
+		}
+
+		if err := dbTx.Model(&entities.Khs{}).
+			Where("mahasiswa_id = ?", mahasiswaID).
+			Update("ipk", ipk).Error; err != nil {
 			return err
 		}
 
