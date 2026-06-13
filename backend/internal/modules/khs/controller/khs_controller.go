@@ -49,14 +49,14 @@ func (c *khsController) Create(ctx *gin.Context) {
 
 	var req dto.CreateKhsRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		res := utils.BuildResponseFailed("Failed Create KHS/Nilai", err, nil, path)
+		res := utils.BuildResponseFailed("Failed Create KHS/Nilai", err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
 	err := c.khsService.Create(ctx, &req)
 	if err != nil {
-		res := utils.BuildResponseFailed("Failed Create KHS/Nilai", err, nil, path)
+		res := utils.BuildResponseFailed("Failed Create KHS/Nilai", err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
@@ -91,21 +91,21 @@ func (c *khsController) GetKHS(ctx *gin.Context) {
 
 	var filter dto.FilterQuery
 	if err := ctx.ShouldBindQuery(&filter); err != nil {
-		res := utils.BuildResponseFailed("Failed Get KHS/Nilai", err, nil, path)
+		res := utils.BuildResponseFailed("Failed Get KHS/Nilai", err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
 	var paginated utils.PaginationQuery
 	if err := ctx.ShouldBindQuery(&paginated); err != nil {
-		res := utils.BuildResponseFailed("Failed Get KHS/Nilai", err, nil, path)
+		res := utils.BuildResponseFailed("Failed Get KHS/Nilai", err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
 	khs, err := c.khsService.GetKHS(ctx, &filter, paginated.Page)
 	if err != nil {
-		res := utils.BuildResponseFailed("Failed Get KHS/Nilai", err, nil, path)
+		res := utils.BuildResponseFailed("Failed Get KHS/Nilai", err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
