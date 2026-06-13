@@ -113,6 +113,9 @@ func main() {
 	workerAPI.RegisterRoutes(server, injector)
 	khs.RegisterRoutes(server, injector)
 
+	totalRoutes := len(server.Routes())
+	log.Println("Total routes:", totalRoutes)
+
 	worker := do.MustInvoke[workers.Schedule](injector)
 	go worker.StartAll()
 
