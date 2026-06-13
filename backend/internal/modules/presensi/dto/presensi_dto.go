@@ -12,11 +12,13 @@ const (
 	FAILED_CREATE_PRESENSI_PEGAWAI   = "failed to create presensi pegawai"
 	FAILED_UPDATE_DETAIL_PRESENSI    = "failed to update detail presensi"
 	FAILED_GET_PRESENSI              = "failed to get presensi"
+	FAILED_COUNT_PRESENSI            = "failed to count presensi"
 
 	SUCCESS_CREATE_PRESENSI_MAHASISWA = "success to create presensi mahasiswa"
 	SUCCESS_CREATE_PRESENSI_PEGAWAI   = "success to create presensi pegawai"
 	SUCCESS_UPDATE_DETAIL_PRESENSI    = "success to update detail presensi"
 	SUCCESS_GET_PRESENSI              = "success to get presensi"
+	SUCCESS_COUNT_PRESENSI            = "success to count presensi"
 )
 
 type (
@@ -109,5 +111,8 @@ type (
 
 	UpdatePresensiByQRQuery struct {
 		SesiID string `form:"sesi_id" binding:"required" example:"SESI_ID"`
+	}
+	TipePresensiQuery struct {
+		Tipe string `form:"tipe" binding:"required" example:"mahasiswa"`
 	}
 )

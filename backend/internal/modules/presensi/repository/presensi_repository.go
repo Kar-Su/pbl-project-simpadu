@@ -23,6 +23,7 @@ type (
 		GetPresensiMahasiswa(ctx context.Context, tx *gorm.DB, presensiID uuid.UUID) (entities.Presensi, error)
 		GetPresensiPegawai(ctx context.Context, tx *gorm.DB, filter any) (entities.Presensi, error)
 		GetAllPresensiPegawai(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Presensi, int64, error)
+		CountPresensi(ctx context.Context, tx *gorm.DB, tipe *string) (int64, error)
 	}
 
 	presensiRepository struct {
@@ -251,4 +252,17 @@ func (r *presensiRepository) GetAllPresensiPegawai(ctx context.Context, tx *gorm
 	}
 
 	return presensi, total, nil
+}
+
+func (r *presensiRepository) CountPresensi(ctx context.Context, tx *gorm.DB, tipe *string) (int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).Where("tipe = ?", &tipe).Count(&total).Error; err != nil {
+		return 0, err
+	}
+
+	return total, nil
 }

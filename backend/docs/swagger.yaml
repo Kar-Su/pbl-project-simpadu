@@ -4375,6 +4375,47 @@ paths:
       summary: Get Pengampu by kelas id
       tags:
       - pengampu
+  /api/presensi/count:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Menghitung jumlah presensi pegawai berdasarkan tipe presensi
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Tidak ada presensi dengan id tersebut -> `message: "failed to count presensi", error: "presensi not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+      parameters:
+      - example: mahasiswa
+        in: query
+        name: tipe
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+      security:
+      - ApiKeyAuth: []
+      summary: Count Presensi
+      tags:
+      - presensi
   /api/presensi/mahasiswa:
     get:
       consumes:
