@@ -34,6 +34,8 @@ type KHSResponse struct {
 	KelasName     string          `json:"kelas_name"`
 	TahunAkademik uint            `json:"tahun_akademik"`
 	KurikulumName string          `json:"kurikulum_name"`
+	IPS           float32         `json:"ips"`
+	IPK           float32         `json:"ipk"`
 	Nilai         []NilaiResponse `json:"nilai"`
 }
 
@@ -80,6 +82,8 @@ func ToKHSResponse(entity entities.Khs) KHSResponse {
 		KelasName:     kelasName,
 		TahunAkademik: tahunAkademik,
 		KurikulumName: kurikulumName,
+		IPS:           entity.IPS,
+		IPK:           entity.IPK,
 		Nilai:         nilaiResponses,
 	}
 }
