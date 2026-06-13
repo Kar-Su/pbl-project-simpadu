@@ -22,6 +22,7 @@ type (
 		DeleteKelas(ctx *gin.Context)
 		GetKelasByID(ctx *gin.Context)
 		GetKelasByProdiName(ctx *gin.Context)
+		GetAllKelas(ctx *gin.Context)
 	}
 
 	kelasController struct {
@@ -323,3 +324,39 @@ func (c *kelasController) GetKelasByProdiName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetAllKelas godoc
+// @Summary      Get All Kelas (Paginated)
+// @Description  Mengambil semua daftar kelas dengan pagination (10 per halaman).
+// @Description
+// @Description  **Akses:** Semua user yang sudah login.
+// @Tags         kelas
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        page  query  int  false  "Halaman (default 1)"  example(1)
+// @Success      200   {object}  utils.Response[utils.PaginatedData[[]dto.KelasResponse],any]
+// @Failure      401   {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      500   {object}  swagger.ErrGetKelasInternalServer
+// @Router       /api/kelas [get]
+func (c *kelasController) GetAllKelas(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+
+	var pageQuery utils.PaginationQuery
+	if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
+	data, total, err := c.kelasService.GetAllKelas(ctx.Request.Context(), pageQuery.Page)
+	if err != nil {
+		status := http.StatusBadRequest
+		if errors.Is(err, constants.ErrInternalErr) {
+			status = http.StatusInternalServerError
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_KELAS, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(status, res)
+		return
+	}
+
+	paginated := utils.BuildPaginatedResponse(data, pageQuery.Page, total)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_KELAS, paginated, path)
+	ctx.JSON(http.StatusOK, res)
+}

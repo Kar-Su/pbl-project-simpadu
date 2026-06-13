@@ -529,6 +529,50 @@
             }
         },
         "/api/kelas": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil semua daftar kelas dengan pagination (10 per halaman).\n\n**Akses:** Semua user yang sudah login.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Get All Kelas (Paginated)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -4721,6 +4765,12 @@
         "web-hosting_internal_modules_khs_dto.KHSResponse": {
             "type": "object",
             "properties": {
+                "ipk": {
+                    "type": "number"
+                },
+                "ips": {
+                    "type": "number"
+                },
                 "kelas_name": {
                     "type": "string"
                 },

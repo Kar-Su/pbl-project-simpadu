@@ -268,6 +268,10 @@ definitions:
     type: object
   web-hosting_internal_modules_khs_dto.KHSResponse:
     properties:
+      ipk:
+        type: number
+      ips:
+        type: number
       kelas_name:
         type: string
       kurikulum_name:
@@ -2969,6 +2973,37 @@ paths:
       tags:
       - jurusan
   /api/kelas:
+    get:
+      description: |-
+        Mengambil semua daftar kelas dengan pagination (10 per halaman).
+
+        **Akses:** Semua user yang sudah login.
+      parameters:
+      - description: Halaman (default 1)
+        example: 1
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Kelas (Paginated)
+      tags:
+      - kelas
     post:
       consumes:
       - application/json

@@ -19,6 +19,7 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	kelasRoute.Use(middlewares.AuthMiddleware(jwtService))
 	{
 		// CRUD kelas
+		kelasRoute.GET("", middlewares.AuthMiddleware(jwtService), kelasController.GetAllKelas)
 		kelasRoute.POST("", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), kelasController.CreateKelas)
 		kelasRoute.PUT("/:kelas_id", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), kelasController.UpdateKelas)
 		kelasRoute.DELETE("/:kelas_id", middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_AKADEMIK), kelasController.DeleteKelas)
