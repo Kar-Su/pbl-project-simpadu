@@ -1,7 +1,7 @@
-DROP DATABASE IF EXISTS test;
-CREATE DATABASE test
-    DEFAULT CHARACTER SET utf8mb4
-    DEFAULT COLLATE utf8mb4_bin;
+-- DROP DATABASE IF EXISTS test;
+-- CREATE DATABASE test
+--     DEFAULT CHARACTER SET utf8mb4
+--     DEFAULT COLLATE utf8mb4_bin;
 
 use test
 
@@ -165,4 +165,29 @@ CREATE TABLE IF NOT EXISTS presensi_pegawai (
     PRIMARY KEY (presensi_id, pegawai_id),
     CONSTRAINT fk_presensi_pegawai_presensi FOREIGN KEY (presensi_id) REFERENCES presensi(id) ON DELETE CASCADE,
     CONSTRAINT fk_presensi_pegawai_pegawai FOREIGN KEY (pegawai_id) REFERENCES users(detail_id) ON UPDATE CASCADE
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS khs (
+    id char(36) PRIMARY KEY,
+    semester int NOT NULL,
+    ips decimal(3,2) default 0,
+    ipk decimal(3,2) default 0,
+    mahasiswa_id char(36) NOT NULL,
+
+    CONSTRAINT fk_khs_mahasiswa FOREIGN KEY (mahasiswa_id) REFERENCES users(detail_id) ON UPDATE CASCADE,
+
+    UNIQUE INDEX idx_khs_semester_mahasiswa (semester, mahasiswa_id)
+) engine=InnoDB;
+
+CREATE TABLE IF NOT EXISTS nilai_mk (
+    id char(36) PRIMARY KEY,
+    khs_id char(36) NOT NULL,
+    total_nilai decimal(5,2) UNSIGNED CHECK (total_nilai >= 0 AND total_nilai <= 100) DEFAULT 0,
+    grade_nilai enum('A', 'B', 'C', 'D', 'E'),
+    pengampu_id char(36) NOT NULL,
+
+    CONSTRAINT fk_nilai_mk_khs FOREIGN KEY (khs_id) REFERENCES khs(id) ON DELETE CASCADE,
+    CONSTRAINT fk_nilai_mk_pengampu FOREIGN KEY (pengampu_id) REFERENCES pengampu(id) ON UPDATE CASCADE,
+
+    UNIQUE INDEX idx_khs_pengampu (khs_id, pengampu_id)
 ) engine=InnoDB;

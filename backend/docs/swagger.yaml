@@ -248,6 +248,56 @@ definitions:
       tipe_semester:
         type: string
     type: object
+  web-hosting_internal_modules_khs_dto.CreateKhsRequest:
+    properties:
+      mahasiswa_id:
+        example: miaco-3525sdvs-3vfdv
+        type: string
+      pengampu_id:
+        example: miaco-3525sdvs-3vfdv
+        type: string
+      total_nilai:
+        example: 4
+        maximum: 100
+        minimum: 0
+        type: number
+    required:
+    - mahasiswa_id
+    - pengampu_id
+    - total_nilai
+    type: object
+  web-hosting_internal_modules_khs_dto.KHSResponse:
+    properties:
+      kelas_name:
+        type: string
+      kurikulum_name:
+        type: string
+      mahasiswa_name:
+        type: string
+      nilai:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_khs_dto.NilaiResponse'
+        type: array
+      prodi_name:
+        type: string
+      semester:
+        type: integer
+      tahun_akademik:
+        type: integer
+    type: object
+  web-hosting_internal_modules_khs_dto.NilaiResponse:
+    properties:
+      grade:
+        type: string
+      kode_mk:
+        type: string
+      nama_mk:
+        type: string
+      nilai:
+        type: number
+      sks:
+        type: integer
+    type: object
   web-hosting_internal_modules_kurikulum_dto.JurusanResponse:
     properties:
       id:
@@ -2070,6 +2120,15 @@ definitions:
       pagination:
         $ref: '#/definitions/web-hosting_internal_package_utils.PaginationMeta'
     type: object
+  web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_khs_dto.KHSResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/web-hosting_internal_package_utils.PaginationMeta'
+    type: object
   web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse:
     properties:
       items:
@@ -2421,6 +2480,20 @@ definitions:
   : properties:
       data:
         $ref: '#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  ? web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any
+  : properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse'
       error: {}
       message:
         example: Operation successful
@@ -3294,6 +3367,90 @@ paths:
       summary: Get Kelas by Prodi (Paginated)
       tags:
       - kelas
+  /api/khs:
+    get:
+      description: |-
+        Mengambil daftar KHS dengan pagination (10 per halaman).
+        Logged in user.
+
+        **Akses:** Semua user yang sudah login (Authenticated User).
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "bad request", error: "Key: 'KhsId' Error:..."`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+      parameters:
+      - description: Semester
+        example: 1
+        in: query
+        name: semester
+        type: integer
+      - description: Nama Prodi
+        example: '"Teknik Informatika"'
+        in: query
+        name: prodi_name
+        type: string
+      - description: Halaman (default 1, 10 per halaman)
+        example: 1
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+      security:
+      - ApiKeyAuth: []
+      summary: Get khs (Paginated)
+      tags:
+      - khs
+  /api/khs/nilai:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan nilai baru ke sistem
+
+        **Akses:** Admin Akademik, Dosen
+      parameters:
+      - description: nilai Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_khs_dto.CreateKhsRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Nilai Baru
+      tags:
+      - khs
   /api/kurikulum:
     get:
       consumes:

@@ -15,6 +15,9 @@ import (
 	kelasController "web-hosting/internal/modules/kelas/controller"
 	kelasRepository "web-hosting/internal/modules/kelas/repository"
 	kelasService "web-hosting/internal/modules/kelas/service"
+	khsController "web-hosting/internal/modules/khs/controller"
+	khsRepo "web-hosting/internal/modules/khs/repository"
+	khsService "web-hosting/internal/modules/khs/service"
 	kurikulumController "web-hosting/internal/modules/kurikulum/controller"
 	kurikulumRepo "web-hosting/internal/modules/kurikulum/repository"
 	kurikulumService "web-hosting/internal/modules/kurikulum/service"
@@ -83,6 +86,7 @@ func RegisterProviders(injector do.Injector) {
 	kelasPivotRepo := kelasRepository.NewKelasMahasiswaRepository(db)
 	pengampuRepo := pengampuRepo.NewPengampuRepository(db)
 	presensiRepo := presensiRepo.NewPresensiRepository(db)
+	khsRepo := khsRepo.NewKhsRepository(db)
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
@@ -92,6 +96,7 @@ func RegisterProviders(injector do.Injector) {
 	mkService := mkService.NewMkService(mkRepo, db)
 	akademikService := akademikService.NewTahunAkademikService(akademikRepo, db)
 	kService := kurikulumService.NewKurikulumService(kRepo, prodiService, db)
+	khsService := khsService.NewKhsService(khsRepo, db)
 	kPivotService := kurikulumService.NewKurikulumMKService(db, kRepo, kPivotRepo, mkRepo)
 	kelasServiceVar := kelasService.NewKelasService(db, kelasRepo, akademikRepo, prodiRepo, kRepo)
 	kelasPivotService := kelasService.NewKelasMahasiswaService(db, userRepo, kelasRepo, kelasPivotRepo)
@@ -155,5 +160,8 @@ func RegisterProviders(injector do.Injector) {
 	})
 	do.Provide(injector, func(i do.Injector) (workerController.WorkerController, error) {
 		return workerController.NewWorkerController(i), nil
+	})
+	do.Provide(injector, func(i do.Injector) (khsController.KHSController, error) {
+		return khsController.NewKHSController(i, db, khsService), nil
 	})
 }

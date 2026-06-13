@@ -7,6 +7,7 @@ import (
 	"web-hosting/internal/modules/auth"
 	"web-hosting/internal/modules/jurusan"
 	"web-hosting/internal/modules/kelas"
+	"web-hosting/internal/modules/khs"
 	"web-hosting/internal/modules/kurikulum"
 	"web-hosting/internal/modules/mk"
 	"web-hosting/internal/modules/pengampu"
@@ -110,6 +111,7 @@ func main() {
 	pengampu.RegisterRoutes(server, injector)
 	presensi.RegisterRoutes(server, injector)
 	workerAPI.RegisterRoutes(server, injector)
+	khs.RegisterRoutes(server, injector)
 
 	worker := do.MustInvoke[workers.Schedule](injector)
 	go worker.StartAll()

@@ -2,6 +2,8 @@ package dto
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/package/types"
 
@@ -87,7 +89,7 @@ type (
 func ToKelasResponse(entity entities.Kelas) KelasResponse {
 	res := KelasResponse{
 		ID:       entity.ID,
-		Name:     entity.Name,
+		Name:     strings.Replace(entity.Name, "-", fmt.Sprintf("-%d", entity.Semester), 1),
 		Semester: entity.Semester,
 	}
 

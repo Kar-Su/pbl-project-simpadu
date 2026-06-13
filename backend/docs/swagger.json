@@ -1039,6 +1039,117 @@
                 }
             }
         },
+        "/api/khs": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil daftar KHS dengan pagination (10 per halaman).\nLogged in user.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- `400` Parameter URI tidak valid -\u003e `message: \"bad request\", error: \"Key: 'KhsId' Error:...\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "khs"
+                ],
+                "summary": "Get khs (Paginated)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Semester",
+                        "name": "semester",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"Teknik Informatika\"",
+                        "description": "Nama Prodi",
+                        "name": "prodi_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1, 10 per halaman)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/khs/nilai": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan nilai baru ke sistem\n\n**Akses:** Admin Akademik, Dosen",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "khs"
+                ],
+                "summary": "Create Nilai Baru",
+                "parameters": [
+                    {
+                        "description": "nilai Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_khs_dto.CreateKhsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            }
+        },
         "/api/kurikulum": {
             "get": {
                 "security": [
@@ -4583,6 +4694,79 @@
                 }
             }
         },
+        "web-hosting_internal_modules_khs_dto.CreateKhsRequest": {
+            "type": "object",
+            "required": [
+                "mahasiswa_id",
+                "pengampu_id",
+                "total_nilai"
+            ],
+            "properties": {
+                "mahasiswa_id": {
+                    "type": "string",
+                    "example": "miaco-3525sdvs-3vfdv"
+                },
+                "pengampu_id": {
+                    "type": "string",
+                    "example": "miaco-3525sdvs-3vfdv"
+                },
+                "total_nilai": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 4
+                }
+            }
+        },
+        "web-hosting_internal_modules_khs_dto.KHSResponse": {
+            "type": "object",
+            "properties": {
+                "kelas_name": {
+                    "type": "string"
+                },
+                "kurikulum_name": {
+                    "type": "string"
+                },
+                "mahasiswa_name": {
+                    "type": "string"
+                },
+                "nilai": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_khs_dto.NilaiResponse"
+                    }
+                },
+                "prodi_name": {
+                    "type": "string"
+                },
+                "semester": {
+                    "type": "integer"
+                },
+                "tahun_akademik": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web-hosting_internal_modules_khs_dto.NilaiResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "type": "string"
+                },
+                "kode_mk": {
+                    "type": "string"
+                },
+                "nama_mk": {
+                    "type": "string"
+                },
+                "nilai": {
+                    "type": "number"
+                },
+                "sks": {
+                    "type": "integer"
+                }
+            }
+        },
         "web-hosting_internal_modules_kurikulum_dto.JurusanResponse": {
             "type": "object",
             "properties": {
@@ -7134,6 +7318,20 @@
                 }
             }
         },
+        "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_khs_dto.KHSResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginationMeta"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kurikulum_dto_KurikulumResponse": {
             "type": "object",
             "properties": {
@@ -7638,6 +7836,26 @@
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse"
                 },
                 "error": {},
                 "message": {
