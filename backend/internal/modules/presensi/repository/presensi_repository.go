@@ -276,6 +276,7 @@ func (r *presensiRepository) GetStatusPresensiPegawaiMe(ctx context.Context, tx 
 	var status string
 	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).
 		Select("presensi_pegawai.status").
+		Where("tipe = ?", "pegawai").
 		Joins("JOIN presensi_pegawai ON presensi_pegawai.presensi_id = presensi.id").
 		Where("presensi_pegawai.pegawai_id = ?", pegawaiID).
 		Order("created_at desc").
