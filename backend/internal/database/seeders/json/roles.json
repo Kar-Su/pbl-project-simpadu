@@ -1,26 +1,34 @@
 [
   {
+    "id": "1",
     "role_name": "super-admin"
   },
   {
+    "id": "2",
     "role_name": "admin-akademik"
   },
   {
+    "id": "3",
     "role_name": "admin-pegawai"
   },
   {
+    "id": "4",
     "role_name": "admin-mahasiswa"
   },
   {
+    "id": "5",
     "role_name": "admin-keuangan"
   },
   {
+    "id": "6",
     "role_name": "dosen"
   },
   {
+    "id": "7",
     "role_name": "mahasiswa"
   },
   {
+    "id": "8",
     "role_name": "dummy"
   }
 ]

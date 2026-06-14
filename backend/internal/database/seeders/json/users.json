@@ -30,171 +30,1053 @@
     "role_name": "admin-keuangan"
   },
   {
-    "name": "dummy dosen",
-    "email": "dummydosen@user.com",
-    "password": "pass#dosen",
-    "role_name": "dosen",
-    "detail_id": "67a5ee4d-c6a9-4293-af43-a4c673522cd8"
-  },
-  {
-    "name": "Farish",
-    "email": "398503152010211215@dosen.com",
-    "password": "398503152010211215",
-    "role_name": "dosen",
-    "detail_id": "019e4305-f045-71c9-a823-7e07b160d9c0"
-  },
-  {
-    "name": "dummy mahasiswa",
-    "email": "dummymahasiswa@user.com",
-    "password": "pass#mahasiswa",
+    "name": "Andi Pratama",
+    "email": "andi@user.com",
+    "password": "pass#andi",
     "role_name": "mahasiswa",
-    "detail_id": "73adba7e-e0e0-44db-814c-04c10083fa18"
+    "detail_id": "339648cc-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "tumbal",
-    "email": "tumbal@user.com",
-    "password": "pass#tumbal",
+    "name": "Siti Nurhaliza",
+    "email": "siti@user.com",
+    "password": "pass#siti",
     "role_name": "mahasiswa",
-    "detail_id": "5dce9234-4326-40f1-a07e-f3113eec5412"
+    "detail_id": "33987deb-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Budi Santoso",
-    "email": "budisantoso@user.com",
-    "password": "pass#budi123",
+    "name": "Rizky Saputra",
+    "email": "rizky@user.com",
+    "password": "pass#rizky",
     "role_name": "mahasiswa",
-    "detail_id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+    "detail_id": "33989796-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Ani Wijaya",
-    "email": "aniwijaya@user.com",
-    "password": "pass#ani456",
+    "name": "Maya Lestari",
+    "email": "maya@user.com",
+    "password": "pass#maya",
     "role_name": "mahasiswa",
-    "detail_id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+    "detail_id": "33989f5e-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Rizky Pratama",
-    "email": "rizkypratama@user.com",
-    "password": "pass#rizky789",
+    "name": "Fajar Ramadhan",
+    "email": "fajar@user.com",
+    "password": "pass#fajar",
     "role_name": "mahasiswa",
-    "detail_id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+    "detail_id": "3398a605-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Putri Utami",
-    "email": "putriutami@user.com",
-    "password": "pass#putri012",
+    "name": "Nadia Putri",
+    "email": "nadia@user.com",
+    "password": "pass#nadia",
     "role_name": "mahasiswa",
-    "detail_id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"
+    "detail_id": "3398ae0f-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Fajar Nugroho",
-    "email": "fajarnugroho@user.com",
-    "password": "pass#fajar345",
+    "name": "Bagas Nugroho",
+    "email": "bagas@user.com",
+    "password": "pass#bagas",
     "role_name": "mahasiswa",
-    "detail_id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"
+    "detail_id": "3398cc44-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Lestari Wahyuni",
-    "email": "lestariwahyuni@user.com",
-    "password": "pass#lestari678",
+    "name": "Dewi Anggraini",
+    "email": "dewi@user.com",
+    "password": "pass#dewi",
     "role_name": "mahasiswa",
-    "detail_id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"
+    "detail_id": "3398d4cf-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Aditya Putera",
-    "email": "adityaputera@user.com",
-    "password": "pass#aditya901",
+    "name": "Ilham Maulana",
+    "email": "ilham@user.com",
+    "password": "pass#ilham",
     "role_name": "mahasiswa",
-    "detail_id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"
+    "detail_id": "3398df08-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Mega Sulistiorini",
-    "email": "megasulistiorini@user.com",
-    "password": "pass#mega234",
+    "name": "Aulia Rahmawati",
+    "email": "aulia@user.com",
+    "password": "pass#aulia",
     "role_name": "mahasiswa",
-    "detail_id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+    "detail_id": "3398e8c9-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Yoga Firmansyah",
+    "email": "yoga@user.com",
+    "password": "pass#yoga",
+    "role_name": "mahasiswa",
+    "detail_id": "33991425-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Putri Amalia",
+    "email": "putri@user.com",
+    "password": "pass#putri",
+    "role_name": "mahasiswa",
+    "detail_id": "33996dae-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Dimas Arya",
+    "email": "dimas@user.com",
+    "password": "pass#dimas",
+    "role_name": "mahasiswa",
+    "detail_id": "3399b3ae-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Laras Permata",
+    "email": "laras@user.com",
+    "password": "pass#laras",
+    "role_name": "mahasiswa",
+    "detail_id": "3399f8a8-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Rafi Kurniawan",
+    "email": "rafi@user.com",
+    "password": "pass#rafi",
+    "role_name": "mahasiswa",
+    "detail_id": "339a0882-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Nabila Zahra",
+    "email": "nabila@user.com",
+    "password": "pass#nabila",
+    "role_name": "mahasiswa",
+    "detail_id": "339a379b-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Reza Alfarizi",
+    "email": "reza@user.com",
+    "password": "pass#reza",
+    "role_name": "mahasiswa",
+    "detail_id": "339a425c-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Intan Puspita",
+    "email": "intan@user.com",
+    "password": "pass#intan",
+    "role_name": "mahasiswa",
+    "detail_id": "339a56b0-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Arif Setiawan",
+    "email": "arif@user.com",
+    "password": "pass#arif",
+    "role_name": "mahasiswa",
+    "detail_id": "339a66a5-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Melati Safitri",
+    "email": "melati@user.com",
+    "password": "pass#melati",
+    "role_name": "mahasiswa",
+    "detail_id": "339a7e54-608d-11f1-8fad-e6bab20372e0"
   },
   {
     "name": "Hendra Wijaya",
-    "email": "hendrawijaya@user.com",
-    "password": "pass#hendra567",
+    "email": "hendra@user.com",
+    "password": "pass#hendra",
     "role_name": "mahasiswa",
-    "detail_id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f"
+    "detail_id": "339b46c0-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Yulia Fitriani",
-    "email": "yuliafitriani@user.com",
-    "password": "pass#yulia890",
+    "name": "Citra Maharani",
+    "email": "citra@user.com",
+    "password": "pass#citra",
     "role_name": "mahasiswa",
-    "detail_id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"
+    "detail_id": "339bbd15-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Dimas Saputra",
-    "email": "dimassaputra@user.com",
-    "password": "pass#dimas123",
+    "name": "Kevin Ardiansyah",
+    "email": "kevin@user.com",
+    "password": "pass#kevin",
     "role_name": "mahasiswa",
-    "detail_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+    "detail_id": "339ccb13-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Indah Permatasari",
-    "email": "indahpermatasari@user.com",
-    "password": "pass#indah456",
+    "name": "Salma Fitriani",
+    "email": "salma@user.com",
+    "password": "pass#salma",
     "role_name": "mahasiswa",
-    "detail_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+    "detail_id": "339d4da8-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Bagus Setiawan",
-    "email": "bagussetiawan@user.com",
-    "password": "pass#bagus789",
+    "name": "Gilang Ramadhan",
+    "email": "gilang@user.com",
+    "password": "pass#gilang",
     "role_name": "mahasiswa",
-    "detail_id": "a3b4c5d6-e7f8-4a9b-0c1d-2e3f4a5b6c7d"
+    "detail_id": "339da2c4-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Citra Kirana",
-    "email": "citrakirana@user.com",
-    "password": "pass#citra012",
+    "name": "Anisa Maulida",
+    "email": "anisa@user.com",
+    "password": "pass#anisa",
     "role_name": "mahasiswa",
-    "detail_id": "b4c5d6e7-f8a9-4b0c-1d2e-3f4a5b6c7d8e"
+    "detail_id": "339dc784-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Kevin Sanjaya",
-    "email": "kevinsanjaya@user.com",
-    "password": "pass#kevin345",
+    "name": "Farhan Hakim",
+    "email": "farhan@user.com",
+    "password": "pass#farhan",
     "role_name": "mahasiswa",
-    "detail_id": "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f"
+    "detail_id": "339de7d8-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Nabila Syakieb",
-    "email": "nabilasyakieb@user.com",
-    "password": "pass#nabila678",
+    "name": "Vina Oktaviani",
+    "email": "vina@user.com",
+    "password": "pass#vina",
     "role_name": "mahasiswa",
-    "detail_id": "d6e7f8a9-b0c1-4d2e-3f4a-5b6c7d8e9f0a"
+    "detail_id": "339def22-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Gede Ananda",
-    "email": "gedeananda@user.com",
-    "password": "pass#gede901",
+    "name": "Ridho Prakoso",
+    "email": "ridho@user.com",
+    "password": "pass#ridho",
     "role_name": "mahasiswa",
-    "detail_id": "e7f8a9b0-c1d2-4e3f-4a5b-6c7d8e9f0a1b"
+    "detail_id": "339df47d-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Ni Made Ayu",
-    "email": "nimadeayu@user.com",
-    "password": "pass#made234",
+    "name": "Indah Sari",
+    "email": "indah@user.com",
+    "password": "pass#indah",
     "role_name": "mahasiswa",
-    "detail_id": "f8a9b0c1-d2e3-4f4a-5b6c-7d8e9f0a1b2c"
+    "detail_id": "339e486a-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Taufik Hidayat",
-    "email": "taufikhidayat@user.com",
-    "password": "pass#taufik567",
+    "name": "Agus Santoso",
+    "email": "agus@user.com",
+    "password": "pass#agus",
     "role_name": "mahasiswa",
-    "detail_id": "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3d"
+    "detail_id": "339e534b-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "name": "Sri Wahyuni",
-    "email": "sriwahyuni@user.com",
-    "password": "pass#sri890",
+    "name": "Rani Wulandari",
+    "email": "rani@user.com",
+    "password": "pass#rani",
     "role_name": "mahasiswa",
-    "detail_id": "b0c1d2e3-f4a5-4b6c-7d8e-9f0a1b2c3d4e"
+    "detail_id": "339e5a28-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bima Febrianto",
+    "email": "bima@user.com",
+    "password": "pass#bima",
+    "role_name": "mahasiswa",
+    "detail_id": "339e605c-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Tiara Kusuma",
+    "email": "tiara@user.com",
+    "password": "pass#tiara",
+    "role_name": "mahasiswa",
+    "detail_id": "339ebde8-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Doni Saputra",
+    "email": "doni@user.com",
+    "password": "pass#doni",
+    "role_name": "mahasiswa",
+    "detail_id": "339ef9b3-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Nisa Aprilia",
+    "email": "nisa@user.com",
+    "password": "pass#nisa",
+    "role_name": "mahasiswa",
+    "detail_id": "339f0544-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Iqbal Maulana",
+    "email": "iqbal@user.com",
+    "password": "pass#iqbal",
+    "role_name": "mahasiswa",
+    "detail_id": "339f0b04-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Fira Natasya",
+    "email": "fira@user.com",
+    "password": "pass#fira",
+    "role_name": "mahasiswa",
+    "detail_id": "339f12cc-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Aldi Pranata",
+    "email": "aldi@user.com",
+    "password": "pass#aldi",
+    "role_name": "mahasiswa",
+    "detail_id": "339f1907-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Yuni Kartika",
+    "email": "yuni@user.com",
+    "password": "pass#yuni",
+    "role_name": "mahasiswa",
+    "detail_id": "339f1ed2-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Wahyu Hidayat",
+    "email": "wahyu@user.com",
+    "password": "pass#wahyu",
+    "role_name": "mahasiswa",
+    "detail_id": "c3366196-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Eko Prasetyo",
+    "email": "eko@user.com",
+    "password": "pass#eko",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368038-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bambang Sujatmiko",
+    "email": "bambang@user.com",
+    "password": "pass#bambang",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368247-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Hadi Susilo",
+    "email": "hadi@user.com",
+    "password": "pass#hadi",
+    "role_name": "mahasiswa",
+    "detail_id": "c336834f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Joko Santoso",
+    "email": "joko@user.com",
+    "password": "pass#joko",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368434-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Faisal Rahman",
+    "email": "faisal@user.com",
+    "password": "pass#faisal",
+    "role_name": "mahasiswa",
+    "detail_id": "c33685ae-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Lutfi Hakim",
+    "email": "lutfi@user.com",
+    "password": "pass#lutfi",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368cd5-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bagus Pradipta",
+    "email": "bagus@user.com",
+    "password": "pass#bagus",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368dcf-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Surya Dharma",
+    "email": "surya@user.com",
+    "password": "pass#surya",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368e96-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Taufan Nugraha",
+    "email": "taufan@user.com",
+    "password": "pass#taufan",
+    "role_name": "mahasiswa",
+    "detail_id": "c3368f6d-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Rivan Maulana",
+    "email": "rivan@user.com",
+    "password": "pass#rivan",
+    "role_name": "mahasiswa",
+    "detail_id": "c336905c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Aditya Permana",
+    "email": "aditya@user.com",
+    "password": "pass#aditya",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369128-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Galih Wicaksono",
+    "email": "galih@user.com",
+    "password": "pass#galih",
+    "role_name": "mahasiswa",
+    "detail_id": "c33691df-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Hafiz Albani",
+    "email": "hafiz@user.com",
+    "password": "pass#hafiz",
+    "role_name": "mahasiswa",
+    "detail_id": "c33693ef-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Irfan Habibi",
+    "email": "irfan@user.com",
+    "password": "pass#irfan",
+    "role_name": "mahasiswa",
+    "detail_id": "c33694bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Julian Pratama",
+    "email": "julian@user.com",
+    "password": "pass#julian",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369579-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Kevin Darmawan",
+    "email": "kevin2@user.com",
+    "password": "pass#kevin",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369637-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Lukman Hakim",
+    "email": "lukman@user.com",
+    "password": "pass#lukman",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369701-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Mochammad Rizal",
+    "email": "mochammad@user.com",
+    "password": "pass#mochammad",
+    "role_name": "mahasiswa",
+    "detail_id": "c33697bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Niko Saputra",
+    "email": "niko@user.com",
+    "password": "pass#niko",
+    "role_name": "mahasiswa",
+    "detail_id": "c336987f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Oscar Firmansyah",
+    "email": "oscar@user.com",
+    "password": "pass#oscar",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369964-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Pandu Wicaksono",
+    "email": "pandu@user.com",
+    "password": "pass#pandu",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369a2f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Raihan Fauzi",
+    "email": "raihan@user.com",
+    "password": "pass#raihan",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369aea-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Satrio Budi",
+    "email": "satrio@user.com",
+    "password": "pass#satrio",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369c8b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Tegar Prasetya",
+    "email": "tegar@user.com",
+    "password": "pass#tegar",
+    "role_name": "mahasiswa",
+    "detail_id": "c3369d61-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Umar Faruk",
+    "email": "umar@user.com",
+    "password": "pass#umar",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a0a2-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Vito Ariansyah",
+    "email": "vito@user.com",
+    "password": "pass#vito",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a15c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Wahid Fauzan",
+    "email": "wahid@user.com",
+    "password": "pass#wahid",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a222-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Yansen Oktavian",
+    "email": "yansen@user.com",
+    "password": "pass#yansen",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a2d8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Zaki Mubarak",
+    "email": "zaki@user.com",
+    "password": "pass#zaki",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a38b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Alfian Hidayat",
+    "email": "alfian@user.com",
+    "password": "pass#alfian",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a44c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bintang Erlangga",
+    "email": "bintang@user.com",
+    "password": "pass#bintang",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a50b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Catur Prasetyo",
+    "email": "catur@user.com",
+    "password": "pass#catur",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a5d2-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "David Kusuma",
+    "email": "david@user.com",
+    "password": "pass#david",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a79f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Edwin Hartanto",
+    "email": "edwin@user.com",
+    "password": "pass#edwin",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a863-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Fery Purnomo",
+    "email": "fery@user.com",
+    "password": "pass#fery",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a924-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Guntur Setiawan",
+    "email": "guntur@user.com",
+    "password": "pass#guntur",
+    "role_name": "mahasiswa",
+    "detail_id": "c336a9e4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Hafidz Nasrullah",
+    "email": "hafidz@user.com",
+    "password": "pass#hafidz",
+    "role_name": "mahasiswa",
+    "detail_id": "c336ab65-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ivan Permana",
+    "email": "ivan@user.com",
+    "password": "pass#ivan",
+    "role_name": "mahasiswa",
+    "detail_id": "c336ac32-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Jefri Andriansah",
+    "email": "jefri@user.com",
+    "password": "pass#jefri",
+    "role_name": "mahasiswa",
+    "detail_id": "c336acfe-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Khairul Anwar",
+    "email": "khairul@user.com",
+    "password": "pass#khairul",
+    "role_name": "mahasiswa",
+    "detail_id": "c336ade5-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Leo Kurniawan",
+    "email": "leo@user.com",
+    "password": "pass#leo",
+    "role_name": "mahasiswa",
+    "detail_id": "c336aea5-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Marcelino Putra",
+    "email": "marcelino@user.com",
+    "password": "pass#marcelino",
+    "role_name": "mahasiswa",
+    "detail_id": "c336af66-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Naufal Zikri",
+    "email": "naufal@user.com",
+    "password": "pass#naufal",
+    "role_name": "mahasiswa",
+    "detail_id": "c336b031-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Oki Ramdani",
+    "email": "oki@user.com",
+    "password": "pass#oki",
+    "role_name": "mahasiswa",
+    "detail_id": "c336b0f3-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Prio Handoko",
+    "email": "prio@user.com",
+    "password": "pass#prio",
+    "role_name": "mahasiswa",
+    "detail_id": "c336b1bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Rendra Kurniawan",
+    "email": "rendra@user.com",
+    "password": "pass#rendra",
+    "role_name": "mahasiswa",
+    "detail_id": "c336b277-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Syahrul Ramadhan",
+    "email": "syahrul@user.com",
+    "password": "pass#syahrul",
+    "role_name": "mahasiswa",
+    "detail_id": "c336b33c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Tri Widodo",
+    "email": "tri@user.com",
+    "password": "pass#tri",
+    "role_name": "mahasiswa",
+    "detail_id": "c336cc05-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Usman Harun",
+    "email": "usman@user.com",
+    "password": "pass#usman",
+    "role_name": "mahasiswa",
+    "detail_id": "c336ccd7-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Valentino Sanjaya",
+    "email": "valentino@user.com",
+    "password": "pass#valentino",
+    "role_name": "mahasiswa",
+    "detail_id": "c336ce3a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Wahyu Nugroho",
+    "email": "wahyu2@user.com",
+    "password": "pass#wahyu",
+    "role_name": "mahasiswa",
+    "detail_id": "c336cf94-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Yogi Pratama",
+    "email": "yogi@user.com",
+    "password": "pass#yogi",
+    "role_name": "mahasiswa",
+    "detail_id": "c336d034-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Zul Fahmi",
+    "email": "zul@user.com",
+    "password": "pass#zul",
+    "role_name": "mahasiswa",
+    "detail_id": "c336d0d8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ayu Rahayu",
+    "email": "ayu@user.com",
+    "password": "pass#ayu",
+    "role_name": "mahasiswa",
+    "detail_id": "c336d17e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bella Safitri",
+    "email": "bella@user.com",
+    "password": "pass#bella",
+    "role_name": "mahasiswa",
+    "detail_id": "c336d20f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Cut Meutia",
+    "email": "cut@user.com",
+    "password": "pass#cut",
+    "role_name": "mahasiswa",
+    "detail_id": "c336d2ac-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Dilla Apriani",
+    "email": "dilla@user.com",
+    "password": "pass#dilla",
+    "role_name": "mahasiswa",
+    "detail_id": "c336d344-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Erna Wulandari",
+    "email": "erna@user.com",
+    "password": "pass#erna",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e33d-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Fitria Handayani",
+    "email": "fitria@user.com",
+    "password": "pass#fitria",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e40c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Gita Maharani",
+    "email": "gita@user.com",
+    "password": "pass#gita",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e4bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Hana Lestari",
+    "email": "hana@user.com",
+    "password": "pass#hana",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e558-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ika Setianingsih",
+    "email": "ika@user.com",
+    "password": "pass#ika",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e6cb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Jihan Aulia",
+    "email": "jihan@user.com",
+    "password": "pass#jihan",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e769-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Kiki Anggraini",
+    "email": "kiki@user.com",
+    "password": "pass#kiki",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e800-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Laila Nurhayati",
+    "email": "laila@user.com",
+    "password": "pass#laila",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e89f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Mira Susanti",
+    "email": "mira@user.com",
+    "password": "pass#mira",
+    "role_name": "mahasiswa",
+    "detail_id": "c336e946-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Nining Rahayu",
+    "email": "nining@user.com",
+    "password": "pass#nining",
+    "role_name": "mahasiswa",
+    "detail_id": "c336eab2-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Okti Puspita",
+    "email": "okti@user.com",
+    "password": "pass#okti",
+    "role_name": "mahasiswa",
+    "detail_id": "c336eb5e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Prita Dewi",
+    "email": "prita@user.com",
+    "password": "pass#prita",
+    "role_name": "mahasiswa",
+    "detail_id": "c336ebf9-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Risa Amelia",
+    "email": "risa@user.com",
+    "password": "pass#risa",
+    "role_name": "mahasiswa",
+    "detail_id": "c336eea6-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Sinta Permata",
+    "email": "sinta@user.com",
+    "password": "pass#sinta",
+    "role_name": "mahasiswa",
+    "detail_id": "c336f09c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Tika Nurlita",
+    "email": "tika@user.com",
+    "password": "pass#tika",
+    "role_name": "mahasiswa",
+    "detail_id": "c336f2b4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ulfa Rahmawati",
+    "email": "ulfa@user.com",
+    "password": "pass#ulfa",
+    "role_name": "mahasiswa",
+    "detail_id": "c336f479-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Vera Oktaviani",
+    "email": "vera@user.com",
+    "password": "pass#vera",
+    "role_name": "mahasiswa",
+    "detail_id": "c336f939-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Widya Astuti",
+    "email": "widya@user.com",
+    "password": "pass#widya",
+    "role_name": "mahasiswa",
+    "detail_id": "c336faed-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Yola Septiani",
+    "email": "yola@user.com",
+    "password": "pass#yola",
+    "role_name": "mahasiswa",
+    "detail_id": "c336fc90-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Zara Adelina",
+    "email": "zara@user.com",
+    "password": "pass#zara",
+    "role_name": "mahasiswa",
+    "detail_id": "c336fe5e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Amelia Putri",
+    "email": "amelia@user.com",
+    "password": "pass#amelia",
+    "role_name": "mahasiswa",
+    "detail_id": "c337000b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bunga Citra",
+    "email": "bunga@user.com",
+    "password": "pass#bunga",
+    "role_name": "mahasiswa",
+    "detail_id": "c337e84a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Cindy Oktavia",
+    "email": "cindy@user.com",
+    "password": "pass#cindy",
+    "role_name": "mahasiswa",
+    "detail_id": "c337f173-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Dini Rahmawati",
+    "email": "dini@user.com",
+    "password": "pass#dini",
+    "role_name": "mahasiswa",
+    "detail_id": "c337f374-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Elsa Permata",
+    "email": "elsa@user.com",
+    "password": "pass#elsa",
+    "role_name": "mahasiswa",
+    "detail_id": "c337f4c6-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Fauziah Nuraini",
+    "email": "fauziah@user.com",
+    "password": "pass#fauziah",
+    "role_name": "mahasiswa",
+    "detail_id": "c337f5fb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Gracella Tiara",
+    "email": "gracella@user.com",
+    "password": "pass#gracella",
+    "role_name": "mahasiswa",
+    "detail_id": "c33807fc-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Hilda Saraswati",
+    "email": "hilda@user.com",
+    "password": "pass#hilda",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380a6b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ismi Fadilah",
+    "email": "ismi@user.com",
+    "password": "pass#ismi",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380b4e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Julia Maharani",
+    "email": "julia@user.com",
+    "password": "pass#julia",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380c1a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Kartika Sari",
+    "email": "kartika@user.com",
+    "password": "pass#kartika",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380cf8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Lidia Ambar",
+    "email": "lidia@user.com",
+    "password": "pass#lidia",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380dc3-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Melly Suryani",
+    "email": "melly@user.com",
+    "password": "pass#melly",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380e85-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Nanda Pradita",
+    "email": "nanda@user.com",
+    "password": "pass#nanda",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380f3b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Olivia Septiani",
+    "email": "olivia@user.com",
+    "password": "pass#olivia",
+    "role_name": "mahasiswa",
+    "detail_id": "c3380ff0-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Puspita Dewi",
+    "email": "puspita@user.com",
+    "password": "pass#puspita",
+    "role_name": "mahasiswa",
+    "detail_id": "c338109c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Rita Apriani",
+    "email": "rita@user.com",
+    "password": "pass#rita",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381149-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Sherly Anggraini",
+    "email": "sherly@user.com",
+    "password": "pass#sherly",
+    "role_name": "mahasiswa",
+    "detail_id": "c33811fc-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Tuti Rahayu",
+    "email": "tuti@user.com",
+    "password": "pass#tuti",
+    "role_name": "mahasiswa",
+    "detail_id": "c33812b1-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ulfah Khoiriyah",
+    "email": "ulfah@user.com",
+    "password": "pass#ulfah",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381420-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Vivi Nurmala",
+    "email": "vivi@user.com",
+    "password": "pass#vivi",
+    "role_name": "mahasiswa",
+    "detail_id": "c33814e8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Windy Safitri",
+    "email": "windy@user.com",
+    "password": "pass#windy",
+    "role_name": "mahasiswa",
+    "detail_id": "c33815ad-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Yessi Anggraini",
+    "email": "yessi@user.com",
+    "password": "pass#yessi",
+    "role_name": "mahasiswa",
+    "detail_id": "c338166b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Zahra Nabila",
+    "email": "zahra@user.com",
+    "password": "pass#zahra",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381711-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Bayu Santoso",
+    "email": "bayu@user.com",
+    "password": "pass#bayu",
+    "role_name": "mahasiswa",
+    "detail_id": "c33817c3-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Dian Permana",
+    "email": "dian@user.com",
+    "password": "pass#dian",
+    "role_name": "mahasiswa",
+    "detail_id": "c338186a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Ferdi Kusuma",
+    "email": "ferdi@user.com",
+    "password": "pass#ferdi",
+    "role_name": "mahasiswa",
+    "detail_id": "c338190d-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Gilang Nugraha",
+    "email": "gilang2@user.com",
+    "password": "pass#gilang",
+    "role_name": "mahasiswa",
+    "detail_id": "c33819b4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Haris Setiawan",
+    "email": "haris@user.com",
+    "password": "pass#haris",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381a48-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Imam Baihaqi",
+    "email": "imam@user.com",
+    "password": "pass#imam",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381ae4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Jaya Putra",
+    "email": "jaya@user.com",
+    "password": "pass#jaya",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381b7e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "name": "Krisna Wardana",
+    "email": "krisna@user.com",
+    "password": "pass#krisna",
+    "role_name": "mahasiswa",
+    "detail_id": "c3381cbc-66d0-11f1-8fad-e6bab20372e0"
   }
 ]
