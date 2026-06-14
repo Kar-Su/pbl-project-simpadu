@@ -226,7 +226,12 @@ const tambahData = () => {
 }
 
 const editData = (item: any) => {
-  console.log("EDIT:", item)
+  sessionStorage.setItem(
+    "selectedKelas",
+    JSON.stringify(item.rawData)
+  )
+
+  router.push(`/dashboard-admin/edit_kelas/${item.id}`)
 }
 
 const hapusData = (item: any) => {

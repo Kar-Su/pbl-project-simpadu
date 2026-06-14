@@ -125,6 +125,17 @@ const getAllUsers = async (): Promise<any[]> => {
     }
 };
 
+const changePerPage = (): void => {
+    currentPage.value = 1
+
+    totalItems.value = allMahasiswa.value.length
+
+    akunList.value = allMahasiswa.value.slice(
+        0,
+        perPage.value
+    )
+}
+
 const getTotalPegawaiExternal = async (): Promise<number> => {
     try {
         const res = await fetch(
@@ -216,6 +227,7 @@ interface MahasiswaItem {
 const akunList = ref<MahasiswaItem[]>([]);
 const currentPage = ref<number>(1);
 const perPage = ref<number>(10);
+const perPageOptions = [5, 10, 20]
 const totalItems = ref<number>(0);
 const allMahasiswa = ref<MahasiswaItem[]>([]);
 
@@ -263,40 +275,74 @@ const nextPage = (): void => goToPage(currentPage.value + 1);
 // ON MOUNTED
 // ─────────────────────────────────────────────
 onMounted(async (): Promise<void> => {
-    // Refresh nama dari localStorage dulu (hasil simpan di profile)
     refreshUserInfo()
-
-    // Lalu fetch ulang dari API untuk data terbaru
     getProfile()
 
-    const [users, externalPegawaiTotal, mahasiswaRaw] = await Promise.all([
+    const [users, externalPegawaiTotal] = await Promise.all([
         getAllUsers(),
         getTotalPegawaiExternal(),
-        getMahasiswaExternal(),
-    ]);
+    ])
+console.log("USERS", users)
+    // =========================
+    // TOTAL MAHASISWA
+    // =========================
+    const mahasiswaUsers = users.filter((item: any) => {
+        const role = item.role_name?.toLowerCase()?.trim()
+        return role === "mahasiswa"
+    })
 
-    totalMahasiswa.value = mahasiswaRaw.length;
+    totalMahasiswa.value = mahasiswaUsers.length
 
+    // =========================
+    // TOTAL PEGAWAI
+    // =========================
     const karlearnPegawai = users.filter((item: any) => {
-        const role = item.role_name?.toLowerCase()?.trim();
-        return role !== "mahasiswa";
-    }).length;
-    totalPegawai.value = karlearnPegawai + externalPegawaiTotal;
+        const role = item.role_name?.toLowerCase()?.trim()
 
-    const dosenKarlearn = users.filter((item: any) => {
-        const role = item.role_name?.toLowerCase()?.trim();
-        return role === "dosen";
-    }).length;
+        return (
+            role !== "mahasiswa"
+        )
+    }).length
 
-    totalDosen.value = dosenKarlearn;
+    totalPegawai.value =
+        karlearnPegawai +
+        externalPegawaiTotal
 
-    allMahasiswa.value = mapMahasiswa(mahasiswaRaw);
-    totalItems.value = allMahasiswa.value.length;
-    akunList.value = allMahasiswa.value.slice(0, perPage.value);
+    // =========================
+    // TOTAL DOSEN
+    // =========================
+    totalDosen.value = users.filter((item: any) => {
+        const role = item.role_name?.toLowerCase()?.trim()
 
-    getTahunAkademik();
-    getKurikulum();
-});
+        return role === "dosen"
+    }).length
+
+    // =========================
+    // DATA TABEL MAHASISWA
+    // =========================
+    allMahasiswa.value = mahasiswaUsers.map(
+        (item: any) => ({
+            id: item.id ?? "-",
+            nim: item.nim ?? "-",
+            name: item.name ?? "-",
+            kelas: item.kelas_name ?? "-",
+            prodi: item.prodi_name ?? "-",
+            angkatan: item.angkatan ?? "-",
+        })
+    )
+
+    totalItems.value =
+        allMahasiswa.value.length
+
+    akunList.value =
+        allMahasiswa.value.slice(
+            0,
+            perPage.value
+        )
+
+    getTahunAkademik()
+    getKurikulum()
+})
 </script>
 
 <template>
@@ -674,27 +720,70 @@ onMounted(async (): Promise<void> => {
                         </table>
 
                         <!-- PAGINATION -->
-                        <div class="flex justify-end mt-5 pt-4">
-                            <div class="flex items-center gap-2">
-                                <button @click="prevPage" :disabled="currentPage === 1"
-                                    class="px-3 py-1 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-50 text-sm">
-                                    Previous
-                                </button>
+<div class="flex justify-between items-center mt-5 pt-4">
+    
+    <!-- Filter jumlah baris -->
+    <div class="flex items-center gap-2">
+        <span class="text-sm text-gray-600">Tampilkan</span>
 
-                                <template v-for="p in pages" :key="p">
-                                    <span v-if="p === '...'" class="px-1 text-gray-400">...</span>
-                                    <button v-else @click="goToPage(p as number)" class="w-8 h-8 rounded-lg text-sm"
-                                        :class="currentPage === p ? 'bg-blue-500 text-white' : 'bg-gray-100 hover:bg-gray-200'">
-                                        {{ p }}
-                                    </button>
-                                </template>
+        <select
+            v-model="perPage"
+            @change="changePerPage"
+            class="border rounded-lg px-3 py-1 bg-white text-sm"
+        >
+            <option
+                v-for="option in perPageOptions"
+                :key="option"
+                :value="option"
+            >
+                {{ option }}
+            </option>
+        </select>
 
-                                <button @click="nextPage" :disabled="currentPage === totalPages"
-                                    class="px-3 py-1 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-50 text-sm">
-                                    Next
-                                </button>
-                            </div>
-                        </div>
+        <span class="text-sm text-gray-600">baris</span>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center gap-2">
+        <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-50 text-sm"
+        >
+            Previous
+        </button>
+
+        <template v-for="p in pages" :key="p">
+            <span
+                v-if="p === '...'"
+                class="px-1 text-gray-400"
+            >
+                ...
+            </span>
+
+            <button
+                v-else
+                @click="goToPage(p as number)"
+                class="w-8 h-8 rounded-lg text-sm"
+                :class="
+                    currentPage === p
+                        ? 'bg-blue-500 text-white'
+                        : 'bg-gray-100 hover:bg-gray-200'
+                "
+            >
+                {{ p }}
+            </button>
+        </template>
+
+        <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-1 border rounded-lg bg-white hover:bg-gray-100 disabled:opacity-50 text-sm"
+        >
+            Next
+        </button>
+    </div>
+</div>
                     </div>
 
                     <!-- SIDE PANEL -->

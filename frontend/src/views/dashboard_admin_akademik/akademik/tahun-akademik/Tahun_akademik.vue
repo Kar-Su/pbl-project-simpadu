@@ -7,7 +7,7 @@ const router = useRouter()
 // ================= TYPE =================
 interface AkademikItem {
   id: number
-  tipeeSemester: string
+  tipeSemester: string
   tahunAwal: string
   tahunAkhir: string
   status?: string
@@ -29,7 +29,7 @@ const filteredData = ref<AkademikItem[]>([])
 const editingItem = ref<AkademikItem | null>(null)
 
 const editForm = ref({
-  tipeeSemester: '',
+  tipeSemester: '',
   tahunAwal: '',
   tahunAkhir: '',
   status: '',
@@ -70,10 +70,10 @@ const getTahunAkademik = async (): Promise<void> => {
 
     allData.value = raw.map((item: any) => ({
       id: item.id,
-      tipeeSemester:
-        item.tipee_semester === 'ganjil'
+      tipeSemester:
+        item.tipe_semester === 'ganjil'
           ? 'Ganjil'
-          : item.tipee_semester === 'genap'
+          : item.tipe_semester === 'genap'
             ? 'Genap'
             : '-',
 
@@ -107,7 +107,7 @@ onMounted(() => {
 const applyFilter = () => {
   filteredData.value = allData.value.filter((item) => {
     const semesterMatch = filterSemester.value
-      ? item.tipeeSemester === filterSemester.value
+      ? item.tipeSemester === filterSemester.value
       : true
 
     const tahunMatch = filterTahun.value
@@ -159,8 +159,8 @@ const isDuplicateData = computed(() => {
   return allData.value.some((item) => {
     return (
       item.id !== editingItem.value?.id &&
-      item.tipeeSemester.toLowerCase() ===
-      editForm.value.tipeeSemester.toLowerCase() &&
+      item.tipeSemester.toLowerCase() ===
+      editForm.value.tipeSemester.toLowerCase() &&
       item.tahunAwal === editForm.value.tahunAwal
     )
   })
@@ -178,7 +178,7 @@ const editItem = (item: AkademikItem) => {
   editingItem.value = item
 
   editForm.value = {
-    tipeeSemester: item.tipeeSemester,
+    tipeSemester: item.tipeSemester,
     tahunAwal: item.tahunAwal,
     tahunAkhir: item.tahunAkhir,
     status: item.status ?? '',
@@ -212,7 +212,7 @@ const saveEdit = async () => {
           : 'nonaktif',
       tahun_awal: `${editForm.value.tahunAwal}-01-01`,
       tahun_akhir: `${editForm.value.tahunAkhir}-01-01`,
-      tipe_semester: editForm.value.tipeeSemester.toLowerCase(),
+      tipe_semester: editForm.value.tipeSemester.toLowerCase(),
     }
 
     console.log('PAYLOAD:', payload)
@@ -255,7 +255,7 @@ const toggleStatus = async (item: AkademikItem) => {
       tahun_akhir: `${item.tahunAkhir}-01-01`,
       tipe_semester:
         item.rawTipeSemester ??
-        item.tipeeSemester.toLowerCase(),
+        item.tipeSemester.toLowerCase(),
     }
 
     const res = await fetch(
@@ -338,9 +338,9 @@ const toggleStatus = async (item: AkademikItem) => {
                 No
               </th>
 
-              <th class="text-left py-3 px-4 font-semibold text-slate-600">
+              <!-- <th class="text-left py-3 px-4 font-semibold text-slate-600">
                 Semester
-              </th>
+              </th> -->
 
               <th class="text-left py-3 px-4 font-semibold text-slate-600">
                 Tahun Awal
@@ -379,9 +379,9 @@ const toggleStatus = async (item: AkademikItem) => {
                 {{ index + 1 }}
               </td>
 
-              <td class="py-4 px-4 font-medium text-slate-700">
-                {{ item.tipeeSemester }}
-              </td>
+              <!-- <td class="py-4 px-4 font-medium text-slate-700">
+                {{ item.tipeSemester }}
+              </td> -->
 
               <td class="py-4 px-4">
                 {{ item.tahunAwal }}
@@ -488,7 +488,7 @@ const toggleStatus = async (item: AkademikItem) => {
             <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
               Tipe Semester
             </label>
-            <select v-model="editForm.tipeeSemester"
+            <select v-model="editForm.tipeSemester"
               class="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400">
               <option value="" disabled>Pilih Semester</option>
               <option>Ganjil</option>
