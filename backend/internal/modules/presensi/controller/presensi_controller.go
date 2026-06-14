@@ -487,6 +487,6 @@ func (c *presensiController) GetStatusPresensiPegawaiMe(ctx *gin.Context) {
 		return
 	}
 
-	res := utils.BuildResponseSuccess(dto.FAILED_GET_PRESENSI, status, path)
+	res := utils.BuildResponseSuccess(dto.SUCCESS_GET_PRESENSI, status, path)
 	ctx.JSON(http.StatusOK, res)
 }
