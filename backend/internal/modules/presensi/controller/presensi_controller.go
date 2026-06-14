@@ -480,13 +480,13 @@ func (c *presensiController) GetStatusPresensiPegawaiMe(ctx *gin.Context) {
 	}
 
 	detailID := ctx.MustGet("detail_id").(uuid.UUID)
-	status, err := c.presensiService.GetStatusPresensiPegawaiMe(ctx.Request.Context(), c.db, detailID)
+	data, err := c.presensiService.GetStatusPresensiPegawaiMe(ctx.Request.Context(), c.db, detailID)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
 		return
 	}
 
-	res := utils.BuildResponseSuccess(dto.SUCCESS_GET_PRESENSI, status, path)
+	res := utils.BuildResponseSuccess(dto.SUCCESS_GET_PRESENSI, data, path)
 	ctx.JSON(http.StatusOK, res)
 }

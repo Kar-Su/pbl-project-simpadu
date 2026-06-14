@@ -62,6 +62,11 @@ type (
 		Email  string    `json:"email"`
 		Status string    `json:"status"`
 	}
+
+	PresensiPegawaiMeResponse struct {
+		Status    string `json:"status"`
+		CreatedAt string `json:"created_at"`
+	}
 )
 
 func ToPresensiResponse(tipePresensi string, entity entities.Presensi) any {

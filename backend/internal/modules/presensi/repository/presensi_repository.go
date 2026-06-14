@@ -24,7 +24,7 @@ type (
 		GetPresensiPegawai(ctx context.Context, tx *gorm.DB, filter any) (entities.Presensi, error)
 		GetAllPresensiPegawai(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Presensi, int64, error)
 		CountPresensi(ctx context.Context, tx *gorm.DB, tipe *string) (int64, error)
-		GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (string, error)
+		GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (*dto.PresensiPegawaiMeResponse, error)
 	}
 
 	presensiRepository struct {
@@ -268,22 +268,23 @@ func (r *presensiRepository) CountPresensi(ctx context.Context, tx *gorm.DB, tip
 	return total, nil
 }
 
-func (r *presensiRepository) GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (string, error) {
+func (r *presensiRepository) GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (*dto.PresensiPegawaiMeResponse, error) {
 	if tx == nil {
 		tx = r.db
 	}
 
-	var status string
+	var data dto.PresensiPegawaiMeResponse
+
 	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).
-		Select("presensi_pegawai.status").
+		Select("presensi_pegawai.status, presensi.created_at").
 		Where("tipe = ?", "pegawai").
 		Joins("JOIN presensi_pegawai ON presensi_pegawai.presensi_id = presensi.id").
 		Where("presensi_pegawai.pegawai_id = ?", pegawaiID).
-		Order("created_at desc").
+		Order("presensi.created_at desc").
 		Row().
-		Scan(&status); err != nil {
-		return "", err
+		Scan(&data.Status, &data.CreatedAt); err != nil {
+		return nil, err
 	}
 
-	return status, nil
+	return &data, nil
 }
