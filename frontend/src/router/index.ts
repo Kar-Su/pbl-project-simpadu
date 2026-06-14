@@ -20,7 +20,7 @@ import Kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulum/Kurik
 import Tambah_kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulum/Tambah_kurikulum.vue";
 
 // mahasiswa
-import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Tambah_kelas.vue";
+import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/Kelas/Tambah_kelas.vue";
 
 // kelas
 import Kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Kelas.vue";
@@ -56,8 +56,6 @@ import profile from "../views/dashboard_admin_akademik/profile.vue";
 import Detail_khs from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs.vue";
 
 import Edit_pesertakelas from "../views/dashboard_admin_akademik/akademik/Peserta-kelas/Edit_pesertakelas.vue";
-
-
 
 const router = createRouter({
   history: createWebHistory(),
@@ -105,7 +103,6 @@ const router = createRouter({
           component: () =>
             import("@/views/dashboard_super_admin/akademik/role/Edit_role.vue"),
         },
-        
       ],
     },
 
@@ -135,12 +132,12 @@ const router = createRouter({
 
         // kelas
         { path: "kelas", component: Kelas },
-        { path: "edit_kelas/:id", component: Edit_kelas},
+        { path: "edit_kelas/:id", component: Edit_kelas },
 
         // peserta kelas
         { path: "peserta_kelas", component: Peserta_kelas },
         { path: "tambah_pesertakelas", component: Tambah_pesertakelas },
-        { path: "edit_pesertakelas/:id", component: Edit_pesertakelas},
+        { path: "edit_pesertakelas/:id", component: Edit_pesertakelas },
 
         // pegawai
         { path: "dosen", component: Dosen },
@@ -151,7 +148,7 @@ const router = createRouter({
 
         // prodi
         { path: "prodi", component: Prodi },
-        { path: "tambah_prodi", component: Tambah_prodi},
+        { path: "tambah_prodi", component: Tambah_prodi },
 
         // jurusan
         { path: "jurusan", component: Jurusan },
@@ -164,10 +161,9 @@ const router = createRouter({
 
         //Tambah jurusan
         { path: "tambah_jurusan", component: Tambah_jurusan },
-  
+
         //Detail khs
         { path: "detail_khs/:id", component: Detail_khs },
-
       ],
     },
   ],
