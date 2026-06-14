@@ -3,8 +3,6 @@ import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 import DeleteConfirmModal from "./konfirmasi_hapus.vue"
 
-
-
 // ================= TYPE =================
 interface User {
   id: string
@@ -22,7 +20,7 @@ const API = {
 
 // ================= STATE =================
 const search = ref("")
-const perPage = ref(10)
+const perPage = ref<number>(10)
 const currentPage = ref(1)
 
 const Konfirmasi_hapus = ref(false)
@@ -45,35 +43,29 @@ const visiblePages = computed(() => {
   }
 
   const pages: (number | string)[] = []
-
   pages.push(1)
 
   const rangeStart = Math.max(2, current - 1)
   const rangeEnd = Math.min(total - 1, current + 1)
 
   if (rangeStart > 2) pages.push('...')
-
-  for (let i = rangeStart; i <= rangeEnd; i++) {
-    pages.push(i)
-  }
-
+  for (let i = rangeStart; i <= rangeEnd; i++) pages.push(i)
   if (rangeEnd < total - 1) pages.push('...')
 
   pages.push(total)
-
   return pages
 })
 
 // ================= HEADERS =================
 const getHeaders = () => {
   const token = localStorage.getItem("token")
-
   return {
     Authorization: `Bearer ${token}`,
     accept: "application/json",
   }
 }
 
+// ================= GET ALL USERS (untuk search) =================
 const allUsersLoaded = ref(false)
 const getAllUsers = async () => {
   try {
@@ -117,7 +109,6 @@ const getUsers = async () => {
     )
 
     const data = await response.json()
-
     console.log("USERS:", data)
 
     if (!response.ok) {
@@ -126,9 +117,7 @@ const getUsers = async () => {
     }
 
     users.value = data.data.items || []
-
-    totalPages.value =
-      data.data.pagination?.total_pages || 1
+    totalPages.value = data.data.pagination?.total_pages || 1
 
   } catch (err) {
     console.error("GET USERS ERROR:", err)
@@ -139,12 +128,9 @@ const getUsers = async () => {
 const filteredUsers = computed(() => {
   const keyword = search.value.toLowerCase().trim()
 
-  if (!keyword) {
-    return users.value
-  }
+  if (!keyword) return users.value
 
   const source = allUsersLoaded.value ? allUsers.value : users.value
-
   return source.filter((item) =>
     item.name?.toLowerCase().includes(keyword)
   )
@@ -193,6 +179,13 @@ const confirmDelete = async () => {
   }
 }
 
+// ================= WATCH =================
+watch(perPage, async (newVal, oldVal) => {
+  if (newVal === oldVal) return
+  currentPage.value = 1
+  await getUsers()
+}, { immediate: false })
+
 watch(search, () => {
   currentPage.value = 1
 })
@@ -226,19 +219,16 @@ onMounted(() => {
 
       <!-- SEARCH -->
       <div class="relative">
-
         <input v-model="search" type="text" placeholder="Cari Akun..."
           class="w-64 rounded-lg border border-gray-200 bg-white py-2 pl-4 pr-10 text-sm outline-none focus:border-blue-500" />
-
         <svg xmlns="http://www.w3.org/2000/svg" class="absolute right-3 top-2.5 h-4 w-4 text-gray-400" fill="none"
           viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-
       </div>
 
-      <!-- BUTTON -->
+      <!-- BUTTON TAMBAH -->
       <button @click="router.push('/dashboard-superadmin/tambah_akun')"
         class="rounded-lg bg-[#2f4a8a] px-4 py-2 text-sm font-medium text-white hover:bg-[#37bd1d]">
         + Tambah Akun
@@ -247,39 +237,29 @@ onMounted(() => {
     </div>
 
     <!-- TABLE -->
-    <div class="bg-[#ececec] rounded-xl shadow-sm
-border-l-[4px] border-b-[3px] border-[#9db9dc]">
+    <div class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
 
-      <!-- TABLE HEADER -->
-      <div class="border-b border-gray-100 px-5 py-4">
-
-        <h2 class="text-xl font-semibold text-black-800">
-          Data Akun
-        </h2>
-
+      <!-- TABLE HEADER (biru) -->
+      <div class="bg-[#243e90] px-5 py-4">
+        <h2 class="text-white text-2xl font-bold">Data Akun</h2>
+        <p class="text-white text-sm mt-1">Kelola data akun pengguna</p>
       </div>
 
       <!-- TABLE CONTENT -->
       <div class="overflow-x-auto">
-
         <table class="w-full text-sm">
 
           <thead>
-
-            <tr class="text-left text-black-800">
-
+            <tr class="text-left text-black-800 border-b border-gray-200">
               <th class="px-5 py-4">No</th>
               <th class="px-5 py-4">Email</th>
               <th class="px-5 py-4">Nama</th>
               <th class="px-5 py-4">Role</th>
               <th class="px-5 py-4">Aksi</th>
-
             </tr>
-
           </thead>
 
           <tbody>
-
             <tr v-for="(item, index) in filteredUsers" :key="item.id" class="border-t border-gray-100">
 
               <td class="px-5 py-4">
@@ -290,20 +270,13 @@ border-l-[4px] border-b-[3px] border-[#9db9dc]">
                 }}
               </td>
 
-              <td class="px-5 py-4">
-                {{ item.email }}
-              </td>
+              <td class="px-5 py-4">{{ item.email }}</td>
+
+              <td class="px-5 py-4">{{ item.name }}</td>
+
+              <td class="px-5 py-4">{{ item.role_name }}</td>
 
               <td class="px-5 py-4">
-                {{ item.name }}
-              </td>
-
-              <td class="px-5 py-4">
-                {{ item.role_name }}
-              </td>
-
-              <td class="px-5 py-4">
-
                 <div class="flex gap-2">
 
                   <!-- EDIT -->
@@ -312,30 +285,51 @@ border-l-[4px] border-b-[3px] border-[#9db9dc]">
                     ✏ Edit
                   </button>
 
+                  <!-- RESET PASSWORD -->
+
+
                   <!-- DELETE -->
                   <button @click="openDeleteModal(item.id, item.email)"
                     class="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-900">
                     🗑 Hapus
                   </button>
-
+                  <button @click="router.push(`/dashboard-superadmin/reset_password/${encodeURIComponent(item.email)}`)"
+                    class="rounded-md bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-900">
+                    🔑 Reset Password
+                  </button>
                 </div>
-
               </td>
 
+            </tr>
+
+            <!-- EMPTY STATE -->
+            <tr v-if="filteredUsers.length === 0">
+              <td colspan="5" class="px-5 py-8 text-center text-gray-400">
+                Tidak ada data akun
+              </td>
             </tr>
 
           </tbody>
 
         </table>
-
       </div>
 
-      <!-- FOOTER -->
+      <!-- FOOTER PAGINATION -->
       <div class="flex items-center justify-between border-t border-gray-100 px-5 py-4">
 
+        <!-- KIRI: Tampilkan per halaman -->
+        <div class="flex items-center gap-2">
+          <span class="text-sm text-gray-600">Tampilkan</span>
+          <select v-model.number="perPage"
+            class="rounded border border-gray-300 bg-white px-2 py-1 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
+            <option :value="5">5</option>
+            <option :value="10">10</option>
+            <option :value="20">20</option>
+          </select>
+          <span class="text-sm text-gray-600">akun per halaman</span>
+        </div>
 
-        <!-- PAGINATION -->
-        <div class="flex justify-end mt-10"></div>
+        <!-- KANAN: Navigasi halaman -->
         <div class="flex items-center gap-2 text-gray-500 text-sm">
 
           <button @click="prevPage" :disabled="currentPage === 1"
@@ -372,7 +366,7 @@ border-l-[4px] border-b-[3px] border-[#9db9dc]">
 
     </div>
 
-    <!-- MODAL -->
+    <!-- MODAL HAPUS -->
     <DeleteConfirmModal v-if="Konfirmasi_hapus" :email="selectedEmail" @close="Konfirmasi_hapus = false"
       @confirm="confirmDelete" />
 

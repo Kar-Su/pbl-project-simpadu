@@ -24,10 +24,11 @@ import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Tambah
 
 // kelas
 import Kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Kelas.vue";
+import Edit_kelas from "../views/dashboard_admin_akademik/akademik/Kelas/Edit_kelas.vue";
 
 // peserta kelas
 import Peserta_kelas from "@/views/dashboard_admin_akademik/akademik/Peserta-kelas/Peserta_kelas.vue";
-import Detail_pesertakelas from "@/views/dashboard_admin_akademik/akademik/Peserta-kelas/Detail_pesertakelas.vue";
+import Tambah_pesertakelas from "@/views/dashboard_admin_akademik/akademik/Peserta-kelas/Tambah_pesertakelas.vue";
 
 // pegawai
 import Dosen from "@/views/dashboard_admin_akademik/akademik/Dosen/Dosen.vue";
@@ -39,6 +40,7 @@ import Jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Jurusan.v
 
 // prodi
 import Prodi from "@/views/dashboard_admin_akademik/akademik/Prodi/Prodi.vue";
+import Tambah_prodi from "../views/dashboard_admin_akademik/akademik/Prodi/Tambah_prodi.vue";
 
 //Matakuliah
 import Matakuliah from "@/views/dashboard_admin_akademik/akademik/Matakuliah/Matakuliah.vue";
@@ -50,6 +52,12 @@ import Tambah_matakuliah from "@/views/dashboard_admin_akademik/akademik/Matakul
 import Tambah_jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Tambah_jurusan.vue";
 
 import profile from "../views/dashboard_admin_akademik/profile.vue";
+
+import Detail_khs from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs.vue";
+
+import Edit_pesertakelas from "../views/dashboard_admin_akademik/akademik/Peserta-kelas/Edit_pesertakelas.vue";
+
+
 
 const router = createRouter({
   history: createWebHistory(),
@@ -63,9 +71,9 @@ const router = createRouter({
         // akun
 
         {
-          path: "reset_password",
+          path: "reset_password/:email?",
           component: () =>
-            import("@/views/dashboard_super_admin/akademik/password/Reset_password.vue"),
+            import("@/views/dashboard_super_admin/akademik/akun/Reset_password.vue"),
         },
         {
           path: "akun",
@@ -97,6 +105,7 @@ const router = createRouter({
           component: () =>
             import("@/views/dashboard_super_admin/akademik/role/Edit_role.vue"),
         },
+        
       ],
     },
 
@@ -126,10 +135,12 @@ const router = createRouter({
 
         // kelas
         { path: "kelas", component: Kelas },
+        { path: "edit_kelas/:id", component: Edit_kelas},
 
         // peserta kelas
         { path: "peserta_kelas", component: Peserta_kelas },
-        { path: "detail_pesertakelas", component: Detail_pesertakelas },
+        { path: "tambah_pesertakelas", component: Tambah_pesertakelas },
+        { path: "edit_pesertakelas/:id", component: Edit_pesertakelas},
 
         // pegawai
         { path: "dosen", component: Dosen },
@@ -140,6 +151,7 @@ const router = createRouter({
 
         // prodi
         { path: "prodi", component: Prodi },
+        { path: "tambah_prodi", component: Tambah_prodi},
 
         // jurusan
         { path: "jurusan", component: Jurusan },
@@ -152,6 +164,9 @@ const router = createRouter({
 
         //Tambah jurusan
         { path: "tambah_jurusan", component: Tambah_jurusan },
+  
+        //Detail khs
+        { path: "detail_khs/:id", component: Detail_khs },
 
       ],
     },

@@ -96,13 +96,18 @@ const handleLogin = async (): Promise<void> => {
     <div class="bg-white rounded-2xl shadow-2xl overflow-hidden flex w-160">
 
       <!-- KIRI: Gambar Kampus -->
-      <div class="relative w-70 shrink-0 bg-[#2a5a8a]">
+      <div class="relative w-80 shrink-0 bg-[#2a5a8a]">
         <img
-          src="@/assets/images/image.png"
+          src="@/assets/images/bg-poliban.png"
           alt="Kampus SIMPADU"
           class="w-full h-full object-cover block"
         />
+
         <div class="absolute inset-0 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
+        <!-- <p class="absolute bottom-14 left-3 text-white text-[11px] font-bold tracking-[0.15em] uppercase">
+          SIMPADU
+        </p> -->
+       
         <p class="absolute bottom-3 left-3 text-white text-[11px] font-bold tracking-[0.15em] uppercase">
           SIMPADU
         </p>

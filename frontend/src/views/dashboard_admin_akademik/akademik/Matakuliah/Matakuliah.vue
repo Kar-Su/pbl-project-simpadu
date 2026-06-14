@@ -158,7 +158,49 @@ const submitEdit = async () => {
     editLoading.value = false
   }
 }
+const hapusData = async (item: any) => {
+  const konfirmasi = confirm(
+    `Yakin ingin menghapus mata kuliah "${item.nama}"?`
+  )
 
+  if (!konfirmasi) return
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/mata-kuliah/${item.kode}`,
+      {
+        method: "DELETE",
+        headers: getHeaders(),
+      }
+    )
+
+    let result: any = {}
+
+    try {
+      result = await res.json()
+    } catch {
+      result = {}
+    }
+
+    console.log("DELETE RESPONSE:", result)
+
+    if (!res.ok) {
+      alert(
+        result?.message ||
+        result?.error ||
+        "Gagal menghapus mata kuliah"
+      )
+      return
+    }
+
+    alert("Mata kuliah berhasil dihapus")
+
+    await getMataKuliah()
+  } catch (err) {
+    console.error("DELETE ERROR:", err)
+    alert("Terjadi kesalahan saat menghapus data")
+  }
+}
 const editData = (item: any) => {
   editForm.value = {
     kodeLama: item.kode,
@@ -193,15 +235,18 @@ onMounted(() => {
       Pengelolaan Data Mata Kuliah
     </p>
 
-    <!-- Card -->
-    <div class="bg-white rounded-2xl shadow-lg border border-slate-200">
+<div class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
 
-      <!-- Header -->
-      <div class="px-6 pt-5">
-        <h2 class="text-2xl font-semibold text-[#505050]">
-          Data Mata Kuliah
-        </h2>
-      </div>
+  <!-- HEADER BIRU -->
+  <div class="bg-[#243e90] px-5 py-4">
+    <h2 class="text-white text-2xl font-bold">
+      Data Mata Kuliah
+    </h2>
+
+    <p class="text-white text-sm mt-1">
+      Kumpulan data matakuliah beserta SKS
+    </p>
+  </div>
 
       <!-- Search -->
       <div class="px-6 py-5 flex justify-between items-center">
@@ -227,7 +272,7 @@ onMounted(() => {
 
         <table class="w-full">
 
-          <thead class="bg-slate-100">
+          <thead class="">
 
             <tr class="text-left text-black-600 border-b border-gray-300">
               <th class="text-left py-4 px-4">No</th>
@@ -262,16 +307,25 @@ onMounted(() => {
                 {{ item.sks }}
               </td>
 
-              <td class="px-4 py-4 text-center">
+<td class="px-4 py-4 text-center">
+  <div class="flex justify-center gap-2">
 
-                <button
-                  @click="editData(item)"
-                  class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm"
-                >
-                  Edit
-                </button>
+    <button
+      @click="editData(item)"
+      class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm"
+    >
+      Edit
+    </button>
 
-              </td>
+    <button
+      @click="hapusData(item)"
+      class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm"
+    >
+      Hapus
+    </button>
+
+  </div>
+</td>
             </tr>
 
             <tr v-if="filteredData.length === 0">

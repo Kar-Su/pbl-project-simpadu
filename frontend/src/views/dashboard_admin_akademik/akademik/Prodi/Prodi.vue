@@ -306,12 +306,18 @@ onMounted(async () => {
     <p class="text-gray-500 text-sm mt-2 mb-6">Pengelolaan Data</p>
 
     <!-- CARD -->
-    <div class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]">
+ <div class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
 
-      <!-- HEADER -->
-      <div class="px-5 pt-4">
-        <h2 class="text-[36px] font-semibold text-[#505050]">Prodi</h2>
-      </div>
+  <!-- HEADER BIRU -->
+  <div class="bg-[#243e90] px-5 py-4">
+    <h2 class="text-white text-2xl font-bold">
+      Data Prodi
+    </h2>
+
+    <p class="text-white text-sm mt-1">
+      Data program studi yang telah dibuat
+    </p>
+  </div>
 
       <!-- FILTER -->
       <div class="px-5 pt-5 flex items-center gap-4 flex-wrap">

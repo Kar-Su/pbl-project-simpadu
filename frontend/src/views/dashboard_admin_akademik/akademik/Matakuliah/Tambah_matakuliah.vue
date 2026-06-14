@@ -27,22 +27,25 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
 })
 
-const handleSksInput = () => {
-  if (form.value.sks === null) return
+const handleSksInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
 
-  const value = String(form.value.sks)
-
-  if (value.length > 1) {
-    form.value.sks = Number(value.slice(0, 1))
+  if (target.value === "") {
+    form.value.sks = null
+    return
   }
 
-  if (Number(form.value.sks) > 9) {
-    form.value.sks = 9
+  let value = Number(target.value)
+
+  if (isNaN(value)) {
+    form.value.sks = null
+    return
   }
 
-  if (Number(form.value.sks) < 1) {
-    form.value.sks = 1
-  }
+  if (value > 3) value = 3
+  if (value < 1) value = 1
+
+  form.value.sks = value
 }
 
 const simpanMataKuliah = async () => {
@@ -61,10 +64,10 @@ const simpanMataKuliah = async () => {
 
   if (
     form.value.sks === null ||
-    Number(form.value.sks) < 1 ||
-    Number(form.value.sks) > 9
+    form.value.sks < 1 ||
+    form.value.sks > 3
   ) {
-    errorMessage.value = "SKS hanya boleh 1-9"
+    errorMessage.value = "SKS hanya boleh 1 sampai 3"
     return
   }
 
@@ -80,8 +83,8 @@ const simpanMataKuliah = async () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          kode: form.value.kode,
-          name: form.value.name,
+          kode: form.value.kode.trim(),
+          name: form.value.name.trim(),
           sks: Number(form.value.sks),
         }),
       }
@@ -99,9 +102,15 @@ const simpanMataKuliah = async () => {
 
     successMessage.value = "Berhasil menambahkan mata kuliah"
 
+    form.value = {
+      kode: "",
+      name: "",
+      sks: null,
+    }
+
     setTimeout(() => {
-      router.push("/dashboard-admin/mata_kuliah")
-    }, 1000)
+      router.push("/dashboard-admin/matakuliah")
+    }, 800)
 
   } catch (error) {
     console.error("SIMPAN ERROR:", error)
