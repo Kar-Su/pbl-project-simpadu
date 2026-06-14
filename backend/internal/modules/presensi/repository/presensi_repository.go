@@ -158,7 +158,7 @@ func (r *presensiRepository) UpdatePresensi(ctx context.Context, tx *gorm.DB, re
 	switch v := req.(type) {
 	case dto.PresensiPegawaiUpdateRequest:
 		var entity entities.Presensi
-		if err := tx.WithContext(ctx).Select("id").Where("created_at = ?", v.Date).First(&entity).Error; err != nil {
+		if err := tx.WithContext(ctx).Select("id").Where("created_at = ? AND tipe = ?", v.Date, "pegawai").First(&entity).Error; err != nil {
 			return err
 		}
 		queryBatch := make([]entities.PresensiPegawai, len(v.Detail))
@@ -222,9 +222,9 @@ func (r *presensiRepository) GetPresensiPegawai(ctx context.Context, tx *gorm.DB
 
 	switch v := filter.(type) {
 	case uuid.UUID:
-		query.Where("id = ?", v)
+		query = query.Where("id = ?", v)
 	case types.DateOnly:
-		query.Where("created_at = ?", v)
+		query = query.Where("created_at = ?", v)
 	default:
 		return entities.Presensi{}, fmt.Errorf("Filter by ID presensi or created_at")
 	}
