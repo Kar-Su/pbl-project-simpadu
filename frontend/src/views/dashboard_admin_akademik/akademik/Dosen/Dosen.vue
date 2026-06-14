@@ -9,6 +9,7 @@ const getHeaders = (): Record<string, string> => ({
   accept: "application/json",
   Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
 })
+
 // ─────────────────────────────────────────────
 // DATA DOSEN
 // ─────────────────────────────────────────────
@@ -60,14 +61,11 @@ const pages = computed<(number | string)[]>(() => {
   return [...new Set(result)]
 })
 
-
 // ─────────────────────────────────────────────
-// GET DOSEN DARI USERS
-// FILTER ROLE DOSEN
+// GET DOSEN
 // ─────────────────────────────────────────────
 const getDosen = async (): Promise<void> => {
   try {
-
     let page = 1
     let lastPage = 1
     let allUsers: any[] = []
@@ -87,16 +85,13 @@ const getDosen = async (): Promise<void> => {
       lastPage = data.data.pagination?.total_pages ?? 1
 
       page++
-
     } while (page <= lastPage)
 
-    // FILTER DOSEN
     const dosenOnly = allUsers.filter((item: any) => {
       const role = item.role_name?.toLowerCase()?.trim()
       return role?.includes("dosen")
     })
 
-    // MAP DATA
     allDosen.value = dosenOnly.map((item: any) => ({
       id: item.id,
       nip: item.detail?.nip ?? "-",
@@ -104,20 +99,16 @@ const getDosen = async (): Promise<void> => {
       jurusan: item.detail?.jurusan ?? "-",
     }))
 
-    // TOTAL DATA
     totalItems.value = allDosen.value.length
 
-    // PAGINATION FRONTEND
     const start = (currentPage.value - 1) * perPage.value
     const end = start + perPage.value
 
     dosenList.value = allDosen.value.slice(start, end)
-
   } catch (err) {
     console.error("getDosen:", err)
   }
 }
-
 
 // ─────────────────────────────────────────────
 // PAGINATION
@@ -136,8 +127,6 @@ const prevPage = (): void => {
 const nextPage = (): void => {
   goToPage(currentPage.value + 1)
 }
-
-
 
 // ─────────────────────────────────────────────
 // ON MOUNTED
@@ -162,25 +151,29 @@ onMounted((): void => {
       Dosen
     </h1>
 
-    <p class="mt-3 text-gray-500">
+    <p class="mt-3 mb-5 text-gray-500">
       Data Dosen yang aktif
     </p>
 
     <!-- CARD -->
-<div
-  class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] px-8 py-5"
->
+    <div
+      class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden"
+    >
 
-      <!-- HEADER -->
-      <h2 class="mb-10 text-[32px] font-bold text-[#444]">
-        Data Dosen
-      </h2>
+      <!-- HEADER BIRU -->
+      <div class="bg-[#243e90] px-5 py-4">
+        <h2 class="text-white text-2xl font-bold">
+          Data Dosen
+        </h2>
+        <p class="text-white text-sm mt-1">
+          Data dosen yang aktif
+        </p>
+      </div>
 
       <!-- TABLE -->
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto px-8 pt-6">
         <table class="w-full">
 
-          <!-- HEAD -->
           <thead>
             <tr class="text-left text-[15px] font-semibold text-[#555]">
               <th class="pb-4">No</th>
@@ -190,20 +183,14 @@ onMounted((): void => {
             </tr>
           </thead>
 
-          <!-- BODY -->
           <tbody>
 
-            <!-- EMPTY -->
             <tr v-if="dosenList.length === 0">
-              <td
-                colspan="4"
-                class="py-12 text-center text-gray-400"
-              >
+              <td colspan="4" class="py-12 text-center text-gray-400">
                 Tidak ada data
               </td>
             </tr>
 
-            <!-- DATA -->
             <tr
               v-for="(item, index) in dosenList"
               :key="item.id"
@@ -212,41 +199,19 @@ onMounted((): void => {
               <td class="py-4">
                 {{ (currentPage - 1) * perPage + index + 1 }}
               </td>
-
-              <td class="py-4 font-medium">
-                {{ item.nip }}
-              </td>
-
-              <td class="py-4 font-semibold">
-                {{ item.nama_dosen }}
-              </td>
-
-              <td class="py-4 font-medium">
-                {{ item.jurusan }}
-              </td>
+              <td class="py-4 font-medium">{{ item.nip }}</td>
+              <td class="py-4 font-semibold">{{ item.nama_dosen }}</td>
+              <td class="py-4 font-medium">{{ item.jurusan }}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- PAGINATION -->
-      <div class="mt-52 flex items-center justify-between">
+      <div class="mt-52 flex items-center justify-between px-8 pb-5">
 
-        <!-- SELECT -->
-        <!-- <select
-          v-model.number="perPage"
-          @change="() => { currentPage = 1; getDosen() }"
-          class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 outline-none"
-        >
-          <option :value="5">5 Baris</option>
-          <option :value="10">10 Baris</option>
-          <option :value="25">25 Baris</option>
-        </select> -->
-
-        <!-- PAGINATION -->
         <div class="flex items-center gap-2">
 
-          <!-- PREV -->
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
@@ -255,32 +220,19 @@ onMounted((): void => {
             ← Previous
           </button>
 
-          <!-- PAGE -->
           <template v-for="p in pages" :key="p">
-
-            <span
-              v-if="p === '...'"
-              class="px-2 text-gray-400"
-            >
-              ...
-            </span>
+            <span v-if="p === '...'" class="px-2 text-gray-400">...</span>
 
             <button
               v-else
               @click="goToPage(p as number)"
               class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium"
-              :class="
-                currentPage === p
-                  ? 'bg-[#2447a8] text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              "
+              :class="currentPage === p ? 'bg-[#2447a8] text-white' : 'text-gray-600 hover:bg-gray-100'"
             >
               {{ p }}
             </button>
-
           </template>
 
-          <!-- NEXT -->
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages"

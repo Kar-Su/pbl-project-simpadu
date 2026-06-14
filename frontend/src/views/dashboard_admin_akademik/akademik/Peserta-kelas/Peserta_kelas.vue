@@ -96,11 +96,9 @@ const pages = computed<(number | string)[]>(() => {
 
 // ─────────────────────────────────────────────
 // HIT API JURUSAN
-// Endpoint : GET /api/jurusan
 // ─────────────────────────────────────────────
 const getJurusan = async (): Promise<void> => {
   try {
-    const BASE_URL = 'https://be.karlearn.site'
     const res = await fetch("/api/jurusan", {
       headers: getHeaders(),
     })
@@ -115,7 +113,6 @@ const getJurusan = async (): Promise<void> => {
 
 // ─────────────────────────────────────────────
 // HIT API PRODI
-// Endpoint : GET /api/prodi
 // ─────────────────────────────────────────────
 const getProdi = async (): Promise<void> => {
   try {
@@ -133,7 +130,6 @@ const getProdi = async (): Promise<void> => {
 
 // ─────────────────────────────────────────────
 // HIT API TAHUN AKADEMIK
-// Endpoint : GET /api/tahun-akademik
 // ─────────────────────────────────────────────
 const getTahunAkademik = async (): Promise<void> => {
   try {
@@ -151,29 +147,14 @@ const getTahunAkademik = async (): Promise<void> => {
 
 // ─────────────────────────────────────────────
 // HIT API KELAS
-// Endpoint :
-// GET /api/kelas?page=1&per_page=5
-//
-// OPTIONAL FILTER:
-// &jurusan_id=
-// &prodi_id=
-// &tahun_akademik_id=
 // ─────────────────────────────────────────────
 const getKelas = async (): Promise<void> => {
   try {
     let url = `/api/kelas?page=${currentPage.value}&per_page=${perPage.value}`
 
-    if (selectedJurusan.value) {
-      url += `&jurusan_id=${selectedJurusan.value}`
-    }
-
-    if (selectedProdi.value) {
-      url += `&prodi_id=${selectedProdi.value}`
-    }
-
-    if (selectedTahun.value) {
-      url += `&tahun_akademik_id=${selectedTahun.value}`
-    }
+    if (selectedJurusan.value) url += `&jurusan_id=${selectedJurusan.value}`
+    if (selectedProdi.value) url += `&prodi_id=${selectedProdi.value}`
+    if (selectedTahun.value) url += `&tahun_akademik_id=${selectedTahun.value}`
 
     const res = await fetch(url, {
       headers: getHeaders(),
@@ -255,22 +236,27 @@ onMounted((): void => {
       Peserta Kelas
     </h1>
 
-    <p class="mt-3 text-gray-500">
+    <p class="mt-3 mb-5 text-gray-500">
       Kelola data mahasiswa dan dosen di dalam kelas
     </p>
 
     <!-- CARD -->
-   <div
-  class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
->
+    <div
+      class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden"
+    >
 
-      <!-- HEADER -->
-      <h2 class="mb-8 text-[32px] font-bold text-[#444]">
-        Data Kelas
-      </h2>
+      <!-- HEADER BIRU -->
+      <div class="bg-[#243e90] px-5 py-4">
+        <h2 class="text-white text-2xl font-bold">
+          Data Kelas
+        </h2>
+        <p class="text-white text-sm mt-1">
+          Kelola data mahasiswa dan dosen di dalam kelas
+        </p>
+      </div>
 
       <!-- FILTER -->
-      <div class="mb-8 flex flex-wrap items-center gap-5">
+      <div class="px-5 pt-6 mb-8 flex flex-wrap items-center gap-5">
 
         <!-- Jurusan -->
         <div class="relative w-[240px]">
@@ -297,11 +283,7 @@ onMounted((): void => {
             stroke="currentColor"
             class="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-gray-500"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m19.5 8.25-7.5 7.5-7.5-7.5"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
         </div>
 
@@ -330,11 +312,7 @@ onMounted((): void => {
             stroke="currentColor"
             class="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-gray-500"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m19.5 8.25-7.5 7.5-7.5-7.5"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
         </div>
 
@@ -363,11 +341,7 @@ onMounted((): void => {
             stroke="currentColor"
             class="pointer-events-none absolute right-4 top-1/2 size-4 -translate-y-1/2 text-gray-500"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="m19.5 8.25-7.5 7.5-7.5-7.5"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
           </svg>
         </div>
 
@@ -384,13 +358,8 @@ onMounted((): void => {
             stroke="currentColor"
             class="size-5"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M3 4.5h18m-15 6h12m-9 6h6"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 4.5h18m-15 6h12m-9 6h6" />
           </svg>
-
           Pilih
         </button>
 
@@ -407,22 +376,17 @@ onMounted((): void => {
             stroke="currentColor"
             class="size-5"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m7.5-7.5h-15"
-            />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-
           Tambah
         </button>
+
       </div>
 
       <!-- TABLE -->
-      <div class="overflow-x-auto">
+      <div class="overflow-x-auto px-5">
         <table class="w-full">
 
-          <!-- HEAD -->
           <thead>
             <tr class="text-left text-black-600 border-b border-gray-300">
               <th class="pb-4">No</th>
@@ -434,20 +398,14 @@ onMounted((): void => {
             </tr>
           </thead>
 
-          <!-- BODY -->
           <tbody>
 
-            <!-- EMPTY -->
             <tr v-if="kelasList.length === 0">
-              <td
-                colspan="6"
-                class="py-12 text-center text-gray-400"
-              >
+              <td colspan="6" class="py-12 text-center text-gray-400">
                 Tidak ada data
               </td>
             </tr>
 
-            <!-- DATA -->
             <tr
               v-for="(item, index) in kelasList"
               :key="item.id"
@@ -457,69 +415,31 @@ onMounted((): void => {
                 {{ (currentPage - 1) * perPage + index + 1 }}
               </td>
 
-              <td class="py-4 font-semibold">
-                {{ item.nama_kelas }}
-              </td>
+              <td class="py-4 font-semibold">{{ item.nama_kelas }}</td>
+              <td class="py-4 font-medium">{{ item.jurusan }}</td>
+              <td class="py-4 font-medium">{{ item.prodi }}</td>
+              <td class="py-4 font-medium">{{ item.tahun_akademik }}</td>
 
-              <td class="py-4 font-medium">
-                {{ item.jurusan }}
-              </td>
-
-              <td class="py-4 font-medium">
-                {{ item.prodi }}
-              </td>
-
-              <td class="py-4 font-medium">
-                {{ item.tahun_akademik }}
-              </td>
-
-              <!-- ACTION -->
               <td class="py-4">
                 <div class="flex items-center justify-center gap-2">
 
-                  <!-- EDIT -->
                   <button
                     @click="handleEdit(item.id)"
                     class="flex items-center gap-1 rounded-lg bg-[#f6a313] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      class="size-4"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m16.862 4.487 1.687-1.688a2.25 2.25 0 1 1 3.182 3.182L10.582 17.13a4.5 4.5 0 0 1-1.897 1.13L6 19l.74-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z"
-                      />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a2.25 2.25 0 1 1 3.182 3.182L10.582 17.13a4.5 4.5 0 0 1-1.897 1.13L6 19l.74-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Z" />
                     </svg>
-
                     Edit
                   </button>
 
-                  <!-- DELETE -->
                   <button
                     @click="handleDelete(item.id)"
                     class="flex items-center gap-1 rounded-lg bg-[#ef4b3f] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke-width="2"
-                      stroke="currentColor"
-                      class="size-4"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673A2.25 2.25 0 0 1 15.916 21H8.084a2.25 2.25 0 0 1-2.245-1.327L4.772 5.79m14.456 0A48.108 48.108 0 0 0 15.75 5.25m-6.75 0a48.11 48.11 0 0 1 3.478-.459m0 0a48.11 48.11 0 0 1 3.478.459m-3.478 0V4.5a2.25 2.25 0 0 1 2.25-2.25h1.5A2.25 2.25 0 0 1 18.75 4.5v.75"
-                      />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673A2.25 2.25 0 0 1 15.916 21H8.084a2.25 2.25 0 0 1-2.245-1.327L4.772 5.79m14.456 0A48.108 48.108 0 0 0 15.75 5.25m-6.75 0a48.11 48.11 0 0 1 3.478-.459m0 0a48.11 48.11 0 0 1 3.478.459m-3.478 0V4.5a2.25 2.25 0 0 1 2.25-2.25h1.5A2.25 2.25 0 0 1 18.75 4.5v.75" />
                     </svg>
-
                     Hapus
                   </button>
 
@@ -531,9 +451,8 @@ onMounted((): void => {
       </div>
 
       <!-- PAGINATION -->
-      <div class="mt-52 flex items-center justify-between">
+      <div class="mt-52 flex items-center justify-between px-5 pb-5">
 
-        <!-- SELECT -->
         <select
           v-model.number="perPage"
           @change="() => { currentPage = 1; getKelas() }"
@@ -544,10 +463,8 @@ onMounted((): void => {
           <option :value="25">25 Baris</option>
         </select>
 
-        <!-- PAGINATION -->
         <div class="flex items-center gap-2">
 
-          <!-- PREV -->
           <button
             @click="prevPage"
             :disabled="currentPage === 1"
@@ -556,32 +473,19 @@ onMounted((): void => {
             ← Previous
           </button>
 
-          <!-- PAGE -->
           <template v-for="p in pages" :key="p">
-
-            <span
-              v-if="p === '...'"
-              class="px-2 text-gray-400"
-            >
-              ...
-            </span>
+            <span v-if="p === '...'" class="px-2 text-gray-400">...</span>
 
             <button
               v-else
               @click="goToPage(p as number)"
               class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium"
-              :class="
-                currentPage === p
-                  ? 'bg-[#2447a8] text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              "
+              :class="currentPage === p ? 'bg-[#2447a8] text-white' : 'text-gray-600 hover:bg-gray-100'"
             >
               {{ p }}
             </button>
-
           </template>
 
-          <!-- NEXT -->
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages"
@@ -589,7 +493,6 @@ onMounted((): void => {
           >
             Next →
           </button>
-          
 
         </div>
       </div>

@@ -241,6 +241,8 @@ const saveEdit = async () => {
     console.error('UPDATE ERROR:', err)
   }
 }
+
+
 // ================= TOGGLE STATUS =================
 const toggleStatus = async (item: AkademikItem) => {
   try {
@@ -303,12 +305,21 @@ const toggleStatus = async (item: AkademikItem) => {
     </p>
 
     <!-- Card -->
-    <div class="col-span-3 bg-[#ececec] rounded-xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]">
+<div class="col-span-3 bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
 
-      <!-- Tabel -->
-      <div class="overflow-x-auto">
+  <!-- HEADER BIRU -->
+  <div class="bg-[#243e90] px-5 py-4">
+    <h2 class="text-white text-2xl font-bold">
+      Tahun Akademik
+    </h2>
+    <p class="text-white text-sm mt-1">
+      Kelola data tahun akademik
+    </p>
+  </div>
 
-        <table class="w-full text-sm">
+  <!-- ISI -->
+  <div class="p-5 overflow-x-auto">
+    <table class="w-full text-sm">
 
           <!-- Header -->
           <thead>

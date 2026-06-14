@@ -193,15 +193,18 @@ onMounted(() => {
       Pengelolaan Data Mata Kuliah
     </p>
 
-    <!-- Card -->
-    <div class="bg-white rounded-2xl shadow-lg border border-slate-200">
+<div class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
 
-      <!-- Header -->
-      <div class="px-6 pt-5">
-        <h2 class="text-2xl font-semibold text-[#505050]">
-          Data Mata Kuliah
-        </h2>
-      </div>
+  <!-- HEADER BIRU -->
+  <div class="bg-[#243e90] px-5 py-4">
+    <h2 class="text-white text-2xl font-bold">
+      Data Mata Kuliah
+    </h2>
+
+    <p class="text-white text-sm mt-1">
+      Kumpulan data matakuliah beserta SKS
+    </p>
+  </div>
 
       <!-- Search -->
       <div class="px-6 py-5 flex justify-between items-center">

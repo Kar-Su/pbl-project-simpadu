@@ -135,14 +135,21 @@ onMounted(() => {
 
     <!-- FILTER CARD -->
     <div
-      class="bg-[#ececec] border-[#8eb3e0] rounded-2xl p-5 shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] mb-4"
+      class="bg-[#ececec] rounded-2xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] mb-4 overflow-hidden"
     >
 
-      <h2 class="text-[28px] font-semibold text-[#202020] mb-5">
-        Pilih Matakuliah
-      </h2>
+      <!-- HEADER BIRU -->
+      <div class="bg-[#243e90] px-5 py-4">
+        <h2 class="text-white text-2xl font-bold">
+          Pilih Matakuliah
+        </h2>
+        <p class="text-white text-sm mt-1">
+          Filter data nilai berdasarkan matakuliah
+        </p>
+      </div>
 
-      <div class="flex items-center gap-5 flex-wrap">
+      <!-- ISI FILTER -->
+      <div class="flex items-center gap-5 flex-wrap p-5">
 
         <!-- KURIKULUM -->
         <select
@@ -210,15 +217,18 @@ onMounted(() => {
     </div>
 
     <!-- TABLE CARD -->
-      <div
-  class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
->
+    <div
+      class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden"
+    >
 
-      <!-- HEADER -->
-      <div class="px-5 pt-4">
-        <h2 class="text-[36px] font-semibold text-[#202020]">
+      <!-- HEADER BIRU -->
+      <div class="bg-[#243e90] px-5 py-4">
+        <h2 class="text-white text-2xl font-bold">
           Data Nilai
         </h2>
+        <p class="text-white text-sm mt-1">
+          Data nilai tiap kelas
+        </p>
       </div>
 
       <!-- TABLE -->
@@ -228,7 +238,7 @@ onMounted(() => {
 
           <!-- HEADER -->
           <thead>
-            <tr class="text-left text-balck-600 border-b border-gray-300">
+            <tr class="text-left text-black-600 border-b border-gray-300">
               <th class="text-[20px] font-semibold">No</th>
               <th class="text-[20px] font-semibold">Nama Kelas</th>
               <th class="text-[20px] font-semibold">Jurusan</th>

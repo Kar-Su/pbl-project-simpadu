@@ -3,17 +3,12 @@ defineProps<{
   email?: string
 }>()
 
-const BASE_URL = 'https://be.karlearn.site'
 const emit = defineEmits(["close", "confirm"])
 </script>
 
 <template>
-  <div
-    class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-  >
-    <div
-      class="bg-white rounded-2xl shadow-lg px-8 py-8 w-72 flex flex-col items-center text-center"
-    >
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div class="bg-white rounded-2xl shadow-lg px-8 py-8 w-72 flex flex-col items-center text-center">
 
       <div class="mb-4 text-red-500 text-6xl">
         ⚠

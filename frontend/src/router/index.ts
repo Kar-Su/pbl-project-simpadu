@@ -51,6 +51,11 @@ import Tambah_jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Ta
 
 import profile from "../views/dashboard_admin_akademik/profile.vue";
 
+import Detail_khs_mahasiswa from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs_mahasiswa.vue";
+import Detail_khs from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs.vue";
+
+
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -63,9 +68,9 @@ const router = createRouter({
         // akun
 
         {
-          path: "reset_password",
+          path: "reset_password/:email?",
           component: () =>
-            import("@/views/dashboard_super_admin/akademik/password/Reset_password.vue"),
+            import("@/views/dashboard_super_admin/akademik/akun/Reset_password.vue"),
         },
         {
           path: "akun",
@@ -152,6 +157,12 @@ const router = createRouter({
 
         //Tambah jurusan
         { path: "tambah_jurusan", component: Tambah_jurusan },
+
+        //Detail khs mahasiswa
+        { path: "detail_khs_mahasiswa", component: Detail_khs_mahasiswa },
+
+        //Detail khs
+        { path: "detail_khs", component: Detail_khs },
 
       ],
     },

@@ -1,272 +1,185 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue"
+import { useRouter, useRoute } from "vue-router"
 
-// ─────────────────────────────────────────────
-// HELPER HEADER
-// ─────────────────────────────────────────────
-const getHeaders = (): Record<string, string> => ({
-  "Content-Type": "application/json",
-  accept: "application/json",
-  Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
-})
+const router = useRouter()
+const route = useRoute()
 
-// ─────────────────────────────────────────────
-// DATA KHS
-// ─────────────────────────────────────────────
-interface KhsItem {
-  id: number
+const BASE_URL = "https://be.karlearn.site"
+
+// Ambil kelas_id dari params route: /dashboard-admin/detail_khs/:id
+const kelasId = route.params.id as string
+
+interface Mahasiswa {
   nim: string
-  nama_mahasiswa: string
-  sks: number
-  ips: number
-  ipk: number
+  nama: string
+  prodi: string
 }
 
-const khsList = ref<KhsItem[]>([])
+interface KelasInfo {
+  nama: string
+}
 
-// ─────────────────────────────────────────────
-// PAGINATION
-// ─────────────────────────────────────────────
-const currentPage = ref<number>(1)
-const perPage = ref<number>(5)
-const totalItems = ref<number>(0)
+const search = ref("")
+const mahasiswa = ref<Mahasiswa[]>([])
+const kelasInfo = ref<KelasInfo>({ nama: "" })
+const loading = ref(false)
+const error = ref("")
 
-  const BASE_URL = "https://be.karlearn.site"
+const currentPage = ref(1)
+const perPage = ref(10)
 
-const totalPages = computed<number>(() =>
-  Math.max(1, Math.ceil(totalItems.value / perPage.value))
-)
-
-const pages = computed<(number | string)[]>(() => {
-  const total = totalPages.value
-  const cur = currentPage.value
-
-  if (total <= 7) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-
-  const result: (number | string)[] = [1, 2]
-
-  if (cur > 4) result.push("...")
-
-  for (
-    let i = Math.max(3, cur - 1);
-    i <= Math.min(total - 2, cur + 1);
-    i++
-  ) {
-    result.push(i)
-  }
-
-  if (cur < total - 3) result.push("...")
-
-  result.push(total - 1, total)
-
-  return [...new Set(result)]
-})
-
-// ─────────────────────────────────────────────
-// HIT API KHS
-// Endpoint :
-// GET /api/khs?page=1&per_page=5
-// ─────────────────────────────────────────────
-const getKhs = async (): Promise<void> => {
+const fetchMahasiswa = async () => {
+  loading.value = true
+  error.value = ""
   try {
+    const token = localStorage.getItem("token")
     const res = await fetch(
-      `/api/khs?page=${currentPage.value}&per_page=${perPage.value}`,
+      `${BASE_URL}/api/khs/mahasiswa?kelas_id=${kelasId}`,
       {
-        headers: getHeaders(),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       }
     )
-
-    const data = await res.json()
-
-    khsList.value = data.data ?? []
-    totalItems.value = data.meta?.total ?? data.total ?? 0
-  } catch (err) {
-    console.error("getKhs:", err)
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json = await res.json()
+    // Sesuaikan field mapping dengan response API
+    mahasiswa.value = (json.data ?? json) as Mahasiswa[]
+    kelasInfo.value = { nama: json.kelas ?? kelasId }
+  } catch (e: any) {
+    error.value = "Gagal memuat data mahasiswa."
+    console.error(e)
+  } finally {
+    loading.value = false
   }
 }
 
-// ─────────────────────────────────────────────
-// PAGINATION
-// ─────────────────────────────────────────────
-const goToPage = (page: number): void => {
-  if (page < 1 || page > totalPages.value) return
+onMounted(fetchMahasiswa)
 
-  currentPage.value = page
-  getKhs()
-}
+const filteredData = computed(() =>
+  mahasiswa.value.filter(
+    (item) =>
+      item.nama.toLowerCase().includes(search.value.toLowerCase()) ||
+      item.nim.toLowerCase().includes(search.value.toLowerCase())
+  )
+)
 
-const prevPage = (): void => {
-  goToPage(currentPage.value - 1)
-}
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredData.value.length / perPage.value))
+)
 
-const nextPage = (): void => {
-  goToPage(currentPage.value + 1)
-}
-
-// ─────────────────────────────────────────────
-// ON MOUNTED
-// ─────────────────────────────────────────────
-onMounted((): void => {
-  getKhs()
+const paginatedData = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value
+  return filteredData.value.slice(start, start + perPage.value)
 })
+
+const lihatDetail = (nim: string) => {
+  router.push(`/dashboard-admin/detail_khs_mahasiswa/${nim}`)
+}
+
+const prevPage = () => { if (currentPage.value > 1) currentPage.value-- }
+const nextPage = () => { if (currentPage.value < totalPages.value) currentPage.value++ }
 </script>
 
 <template>
-  <div class="min-h-screen bg-[#eef3fb] p-6">
+  <div class="p-4">
 
     <!-- BREADCRUMB -->
-    <div class="mb-2 flex items-center gap-1 text-sm text-gray-500">
-      <span>KHS</span>
-      <span>›</span>
-      <span class="text-gray-700">Detail KHS</span>
+    <div class="mb-5">
+      <p class="text-sm text-gray-500">
+        Akademik › KHS › {{ kelasInfo.nama || kelasId }}
+      </p>
+      <h1 class="text-4xl font-bold text-gray-700">Kartu Hasil Studi</h1>
+      <p class="text-gray-500">Data hasil studi mahasiswa</p>
     </div>
 
-    <!-- TITLE -->
-    <h1 class="text-[42px] font-bold leading-none text-[#333]">
-      Kartu Hasil Studi
-    </h1>
-
-    <p class="mt-3 text-gray-500">
-      Data hasil studi mahasiswa
-    </p>
-
     <!-- CARD -->
-    <div
-      class="mt-8 rounded-2xl border border-[#d8e1f0] bg-white p-5 shadow-sm"
-    >
+    <div class="bg-white rounded-xl shadow overflow-hidden">
 
       <!-- HEADER -->
-      <h2 class="mb-10 text-[32px] font-bold text-[#444]">
-        Data KHS
-      </h2>
+      <div class="bg-[#1f3c93] text-white px-5 py-4">
+        <h2 class="text-2xl font-bold">Data Kartu Hasil Studi</h2>
+        <p>Kelas {{ kelasInfo.nama || kelasId }}</p>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="p-4">
+        <input
+          v-model="search"
+          type="text"
+          placeholder="Cari mahasiswa berdasarkan NIM atau Nama"
+          class="w-full border rounded-lg px-4 py-3"
+        />
+      </div>
+
+      <!-- LOADING / ERROR -->
+      <div v-if="loading" class="text-center py-10 text-gray-500">
+        Memuat data...
+      </div>
+
+      <div v-else-if="error" class="text-center py-10 text-red-500">
+        {{ error }}
+        <button @click="fetchMahasiswa" class="ml-2 underline text-blue-600">Coba lagi</button>
+      </div>
 
       <!-- TABLE -->
-      <div class="overflow-x-auto">
-        <table class="w-full">
+      <table v-else class="w-full">
+        <thead>
+          <tr class="text-left text-gray-700">
+            <th class="px-6 py-4">No</th>
+            <th>NIM</th>
+            <th>Nama Mahasiswa</th>
+            <th>Prodi</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
 
-          <!-- HEAD -->
-          <thead>
-            <tr class="text-left text-[15px] font-semibold text-[#555]">
-              <th class="pb-4">No</th>
-              <th class="pb-4">NIM</th>
-              <th class="pb-4">Nama Mahasiswa</th>
-              <th class="pb-4">SKS</th>
-              <th class="pb-4">IPS</th>
-              <th class="pb-4">IPK</th>
-            </tr>
-          </thead>
-
-          <!-- BODY -->
-          <tbody>
-
-            <!-- EMPTY -->
-            <tr v-if="khsList.length === 0">
-              <td
-                colspan="6"
-                class="py-12 text-center text-gray-400"
+        <tbody>
+          <tr
+            v-for="(item, index) in paginatedData"
+            :key="item.nim"
+          >
+            <td class="px-6 py-4">
+              {{ (currentPage - 1) * perPage + index + 1 }}
+            </td>
+            <td>{{ item.nim }}</td>
+            <td>{{ item.nama }}</td>
+            <td>{{ item.prodi }}</td>
+            <td>
+              <button
+                @click="lihatDetail(item.nim)"
+                class="bg-[#1f3c93] text-white px-4 py-2 rounded-lg hover:opacity-90"
               >
-                Tidak ada data
-              </td>
-            </tr>
+                Lihat
+              </button>
+            </td>
+          </tr>
 
-            <!-- DATA -->
-            <tr
-              v-for="(item, index) in khsList"
-              :key="item.id"
-              class="text-[15px] text-[#444]"
-            >
-              <td class="py-4">
-                {{ (currentPage - 1) * perPage + index + 1 }}
-              </td>
+          <tr v-if="paginatedData.length === 0">
+            <td colspan="5" class="text-center py-10 text-gray-500">
+              Data mahasiswa tidak ditemukan
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
-              <td class="py-4 font-medium">
-                {{ item.nim }}
-              </td>
-
-              <td class="py-4 font-medium">
-                {{ item.nama_mahasiswa }}
-              </td>
-
-              <td class="py-4 font-semibold">
-                {{ item.sks }}
-              </td>
-
-              <td class="py-4 font-semibold">
-                {{ item.ips }}
-              </td>
-
-              <td class="py-4 font-semibold">
-                {{ item.ipk }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- PAGINATION -->
-      <div class="mt-72 flex items-center justify-between">
-
-        <!-- SELECT -->
-        <select
-          v-model.number="perPage"
-          @change="() => { currentPage = 1; getKhs() }"
-          class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 outline-none"
-        >
-          <option :value="5">5 Baris</option>
+      <!-- FOOTER -->
+      <div class="flex justify-between items-center p-5 mt-24">
+        <select v-model="perPage" class="border rounded-lg px-3 py-2">
           <option :value="10">10 Baris</option>
           <option :value="25">25 Baris</option>
+          <option :value="50">50 Baris</option>
         </select>
 
-        <!-- PAGINATION -->
-        <div class="flex items-center gap-2">
-
-          <!-- PREV -->
-          <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="text-sm text-gray-400"
-          >
-            ← Previous
-          </button>
-
-          <!-- PAGE -->
-          <template v-for="p in pages" :key="p">
-
-            <span
-              v-if="p === '...'"
-              class="px-2 text-gray-400"
-            >
-              ...
-            </span>
-
-            <button
-              v-else
-              @click="goToPage(p as number)"
-              class="flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium"
-              :class="
-                currentPage === p
-                  ? 'bg-[#2447a8] text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              "
-            >
-              {{ p }}
-            </button>
-
-          </template>
-
-          <!-- NEXT -->
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="text-sm text-gray-600"
-          >
-            Next →
-          </button>
-
+        <div class="flex items-center gap-4 text-gray-500">
+          <button @click="prevPage" :disabled="currentPage === 1">← Previous</button>
+          <button class="w-8 h-8 rounded bg-[#1f3c93] text-white">{{ currentPage }}</button>
+          <button @click="nextPage" :disabled="currentPage === totalPages">Next →</button>
         </div>
       </div>
+
     </div>
   </div>
 </template>

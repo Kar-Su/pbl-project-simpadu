@@ -276,15 +276,18 @@ onMounted(async () => {
     </p>
 
     <!-- CARD -->
-      <div
-  class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc]"
->
-      <!-- HEADER -->
-      <div class="px-5 pt-4">
-        <h2 class="text-[36px] font-semibold text-[#505050]">
-          Data Kelas
-        </h2>
-      </div>
+<div class="bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
+
+  <!-- HEADER BIRU -->
+  <div class="bg-[#243e90] px-5 py-4">
+    <h2 class="text-white text-2xl font-bold">
+      Data Kelas
+    </h2>
+
+    <p class="text-white text-sm mt-1">
+      Kumpulan data keals yang tersimpan
+    </p>
+  </div>
 
       <!-- FILTER -->
       <div class="px-5 pt-5 flex items-center gap-4 flex-wrap">
