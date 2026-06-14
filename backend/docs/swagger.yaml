@@ -235,6 +235,14 @@ definitions:
       name:
         type: string
     type: object
+  web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest:
+    properties:
+      new_semester:
+        example: 5
+        type: integer
+    required:
+    - new_semester
+    type: object
   web-hosting_internal_modules_kelas_dto.TahunAkademikResponse:
     properties:
       id:
@@ -3398,6 +3406,64 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get Kelas by Prodi (Paginated)
+      tags:
+      - kelas
+  /api/kelas/semester:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengupdate semester kelas yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'Kelas' Error:..."`
+        - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to update kelas", error: "kelas not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` role user tidak memiliki akses -> `message: "role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
+      parameters:
+      - example: 20241
+        in: query
+        name: ta_id
+        required: true
+        type: integer
+      - description: New Semester Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Semester
       tags:
       - kelas
   /api/khs:

@@ -21,6 +21,7 @@ type (
 	KelasService interface {
 		CreateKelas(ctx context.Context, req dto.KelasCreateRequest) error
 		UpdateKelas(ctx context.Context, id uuid.UUID, req dto.KelasUpdateRequest) (dto.KelasResponse, error)
+		UpdateSemesterByTahunAkademikID(ctx context.Context, tahunAkademikID uint, semester uint) error
 		DeleteKelas(ctx context.Context, id uuid.UUID) error
 		GetKelasByID(ctx context.Context, id uuid.UUID) (dto.KelasResponse, error)
 		GetKelasByProdiName(ctx context.Context, prodiName string) ([]dto.KelasResponse, error)
@@ -45,6 +46,10 @@ func NewKelasService(db *gorm.DB, kelasRepo kelasRepo.KelasRepository, akademikR
 		prodiRepo:     prodiRepo,
 		kurikulumRepo: kurikulumRepo,
 	}
+}
+
+func (s *kelasService) UpdateSemesterByTahunAkademikID(ctx context.Context, tahunAkademikID uint, semester uint) error {
+	return s.kelasRepo.UpdateSemesterByTahunAkademikID(ctx, s.db, tahunAkademikID, semester)
 }
 
 func (s *kelasService) CreateKelas(ctx context.Context, req dto.KelasCreateRequest) error {

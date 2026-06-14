@@ -13,6 +13,7 @@ type (
 	KelasRepository interface {
 		Create(ctx context.Context, tx *gorm.DB, entity entities.Kelas) error
 		Update(ctx context.Context, tx *gorm.DB, id uuid.UUID, entity entities.Kelas) error
+		UpdateSemesterByTahunAkademikID(ctx context.Context, tx *gorm.DB, tahunAkademikID uint, semester uint) error
 		Delete(ctx context.Context, tx *gorm.DB, id uuid.UUID) error
 		GetByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Kelas, error)
 		GetByProdiID(ctx context.Context, tx *gorm.DB, prodiID uint) ([]entities.Kelas, error)
@@ -28,6 +29,17 @@ type (
 
 func NewKelasRepository(db *gorm.DB) KelasRepository {
 	return &kelasRepository{db: db}
+}
+
+func (r *kelasRepository) UpdateSemesterByTahunAkademikID(ctx context.Context, tx *gorm.DB, tahunAkademikID uint, semester uint) error {
+	if tx == nil {
+		tx = r.db
+	}
+
+	if err := tx.WithContext(ctx).Model(&entities.Kelas{}).Where(entities.Kelas{TahunAkademikID: tahunAkademikID}).Update("semester", semester).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *kelasRepository) Create(ctx context.Context, tx *gorm.DB, entity entities.Kelas) error {

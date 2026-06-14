@@ -704,6 +704,76 @@
                 }
             }
         },
+        "/api/kelas/semester": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate semester kelas yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- `400` Parameter tidak valid -\u003e `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"`\n- `400` Body tidak valid / field wajib kosong -\u003e `message: \"failed to get request\", error: \"Key: 'Kelas' Error:...\"`\n- `400` kelas dengan id tersebut tidak ditemukan -\u003e `message: \"failed to update kelas\", error: \"kelas not found\"`\n- `401` Authorization header tidak ada -\u003e `message: \"failed_auth\", error: \"Authorization header missing\"`\n- `401` Format header salah (bukan \"Bearer ...\") -\u003e `message: \"failed_auth\", error: \"invalid authentication header\"`\n- `401` Token JWT tidak valid atau kedaluwarsa -\u003e `message: \"failed_auth\", error: \"invalid token\"`\n- `403` role user tidak memiliki akses -\u003e `message: \"role anda tidak diizinkan\", error: \"Forbidden\"`\n- `500` Kesalahan internal server -\u003e `message: \"failed to update role\", error: \"Internal Error\"`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Update Semester",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 20241,
+                        "name": "ta_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "New Semester Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
         "/api/kelas/{kelas_id}": {
             "get": {
                 "security": [
@@ -4764,6 +4834,18 @@
                 },
                 "name": {
                     "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest": {
+            "type": "object",
+            "required": [
+                "new_semester"
+            ],
+            "properties": {
+                "new_semester": {
+                    "type": "integer",
+                    "example": 5
                 }
             }
         },
