@@ -479,7 +479,7 @@ func (c *presensiController) GetStatusPresensiPegawaiMe(ctx *gin.Context) {
 		return
 	}
 
-	detailID := uuid.MustParse(ctx.MustGet("detail_id").(string))
+	detailID := ctx.MustGet("detail_id").(uuid.UUID)
 	status, err := c.presensiService.GetStatusPresensiPegawaiMe(ctx.Request.Context(), c.db, detailID)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, err.Error(), nil, path)
