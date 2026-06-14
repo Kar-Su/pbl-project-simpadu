@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 	"web-hosting/internal/database/entities"
@@ -191,7 +192,8 @@ func (r *presensiRepository) UpdatePresensi(ctx context.Context, tx *gorm.DB, re
 		}).Create(&queryBatch).Error; err != nil {
 			return err
 		}
-
+	default:
+		return errors.New("invalid request type")
 	}
 	return nil
 }
