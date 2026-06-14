@@ -6,6 +6,7 @@ import (
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/modules/khs/dto"
 	"web-hosting/internal/modules/khs/repository"
+	"web-hosting/internal/package/helpers"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -50,6 +51,7 @@ func (s *khsService) Create(ctx context.Context, nilai *dto.CreateKhsRequest) er
 }
 
 func (s *khsService) GetKHS(ctx context.Context, filter *dto.FilterQuery, page int) ([]dto.KHSResponse, error) {
+	filter.ProdiName = helpers.NormalizeString(filter.ProdiName)
 	offset := (page - 1) * 10
 	khs, err := s.khsRepo.GetKHS(ctx, s.db, filter, offset, 10)
 	if err != nil {
