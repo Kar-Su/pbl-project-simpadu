@@ -17,6 +17,6 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 	khsRoute := router.Group("/api/khs")
 	{
 		khsRoute.POST("/nilai", middlewares.AuthMiddleware(jwtService), middlewares.RoleMiddleware(constants.ROLE_SUPER_ADMIN, constants.ROLE_ADMIN_PEGAWAI, constants.ROLE_DOSEN), khsController.Create)
-		khsRoute.GET("/", middlewares.AuthMiddleware(jwtService), khsController.GetKHS)
+		khsRoute.GET("", middlewares.AuthMiddleware(jwtService), khsController.GetKHS)
 	}
 }
