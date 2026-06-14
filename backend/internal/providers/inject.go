@@ -66,9 +66,9 @@ func RegisterProviders(injector do.Injector) {
 	})
 
 	InitDatabases(injector)
-	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
-	// InitTestDatabases(injector)
-	// db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB_TEST)
+	// db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
+	InitTestDatabases(injector)
+	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB_TEST)
 
 	db.SetupJoinTable(&entities.Kurikulum{}, "MataKuliah", &entities.KurikulumMK{})
 	db.SetupJoinTable(&entities.Kelas{}, "Mahasiswa", &entities.KelasMahasiswa{})
