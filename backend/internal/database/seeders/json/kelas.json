@@ -4,13 +4,13 @@
     "name": "TI-A",
     "tahun_akademik_id": 20251,
     "kurikulum_kode": "kur-mer-TI",
-    "prodi_id": 1
+    "prodi_id": 12
   },
   {
     "id": "019e40b3-8067-71f0-99f0-1a4b1e9fda03",
     "name": "SIKC-A",
     "tahun_akademik_id": 20251,
     "kurikulum_kode": "kur-mer-SIKC",
-    "prodi_id": 1
+    "prodi_id": 13
   }
 ]
