@@ -4,6 +4,8 @@ import { useRouter } from "vue-router"
 
 const router = useRouter()
 
+const BASE_URL = "https://be.karlearn.site"
+
 // ─────────────────────────────────────────────
 // HELPER HEADER
 // ─────────────────────────────────────────────
@@ -16,25 +18,25 @@ const getHeaders = (): Record<string, string> => ({
 // ─────────────────────────────────────────────
 // FILTER STATE
 // ─────────────────────────────────────────────
-const selectedJurusan = ref("")
-const selectedProdi = ref("")
-const selectedTahun = ref("")
+const selectedJurusan = ref<string>("")
+const selectedProdi = ref<string>("")
+const selectedTahun = ref<string>("")
 
 // ─────────────────────────────────────────────
 // MASTER DATA
 // ─────────────────────────────────────────────
 interface Jurusan {
-  id: number
+  id: string
   nama: string
 }
 
 interface Prodi {
-  id: number
+  id: string
   nama: string
 }
 
 interface TahunAkademik {
-  id: number
+  id: string
   tahun_awal: string
   tahun_akhir: string
 }
@@ -47,7 +49,7 @@ const tahunAkademikList = ref<TahunAkademik[]>([])
 // DATA KELAS
 // ─────────────────────────────────────────────
 interface KelasItem {
-  id: number
+  id: string
   nama_kelas: string
   jurusan: string
   prodi: string
@@ -99,15 +101,21 @@ const pages = computed<(number | string)[]>(() => {
 // ─────────────────────────────────────────────
 const getJurusan = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/jurusan", {
+    const res = await fetch(`${BASE_URL}/api/jurusan`, {
       headers: getHeaders(),
     })
 
-    const data = await res.json()
+    if (!res.ok) {
+      console.error("getJurusan HTTP error:", res.status)
+      jurusanList.value = []
+      return
+    }
 
+    const data = await res.json()
     jurusanList.value = data.data ?? []
   } catch (err) {
     console.error("getJurusan:", err)
+    jurusanList.value = []
   }
 }
 
@@ -116,15 +124,21 @@ const getJurusan = async (): Promise<void> => {
 // ─────────────────────────────────────────────
 const getProdi = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/prodi", {
+    const res = await fetch(`${BASE_URL}/api/prodi`, {
       headers: getHeaders(),
     })
 
-    const data = await res.json()
+    if (!res.ok) {
+      console.error("getProdi HTTP error:", res.status)
+      prodiList.value = []
+      return
+    }
 
+    const data = await res.json()
     prodiList.value = data.data ?? []
   } catch (err) {
     console.error("getProdi:", err)
+    prodiList.value = []
   }
 }
 
@@ -133,15 +147,21 @@ const getProdi = async (): Promise<void> => {
 // ─────────────────────────────────────────────
 const getTahunAkademik = async (): Promise<void> => {
   try {
-    const res = await fetch("/api/tahun-akademik", {
+    const res = await fetch(`${BASE_URL}/api/tahun-akademik`, {
       headers: getHeaders(),
     })
 
-    const data = await res.json()
+    if (!res.ok) {
+      console.error("getTahunAkademik HTTP error:", res.status)
+      tahunAkademikList.value = []
+      return
+    }
 
+    const data = await res.json()
     tahunAkademikList.value = data.data ?? []
   } catch (err) {
     console.error("getTahunAkademik:", err)
+    tahunAkademikList.value = []
   }
 }
 
@@ -150,22 +170,41 @@ const getTahunAkademik = async (): Promise<void> => {
 // ─────────────────────────────────────────────
 const getKelas = async (): Promise<void> => {
   try {
-    let url = `/api/kelas?page=${currentPage.value}&per_page=${perPage.value}`
+    let url = `${BASE_URL}/api/kelas?page=${currentPage.value}&per_page=${perPage.value}`
 
     if (selectedJurusan.value) url += `&jurusan_id=${selectedJurusan.value}`
     if (selectedProdi.value) url += `&prodi_id=${selectedProdi.value}`
     if (selectedTahun.value) url += `&tahun_akademik_id=${selectedTahun.value}`
 
-    const res = await fetch(url, {
-      headers: getHeaders(),
-    })
+    const res = await fetch(url, { headers: getHeaders() })
+
+    if (!res.ok) {
+      console.error("getKelas HTTP error:", res.status, await res.text())
+      kelasList.value = []
+      totalItems.value = 0
+      return
+    }
 
     const data = await res.json()
+    console.log("getKelas response:", data)
 
-    kelasList.value = data.data ?? []
-    totalItems.value = data.meta?.total ?? data.total ?? 0
+    const payload = data.data ?? {}
+
+    // handle baik kalau data.data array langsung, maupun { items, pagination }
+    kelasList.value = Array.isArray(payload)
+      ? payload
+      : (payload.items ?? [])
+
+    totalItems.value =
+      payload.pagination?.total ??
+      payload.pagination?.total_items ??
+      data.meta?.total ??
+      data.total ??
+      kelasList.value.length
   } catch (err) {
-    console.error("getKelas:", err)
+    console.error("getKelas error:", err)
+    kelasList.value = []
+    totalItems.value = 0
   }
 }
 
@@ -180,15 +219,22 @@ const handleFilter = (): void => {
 // ─────────────────────────────────────────────
 // ACTION BUTTON
 // ─────────────────────────────────────────────
+
+// Tambah peserta kelas baru (tanpa kelas terpilih)
 const handleTambah = (): void => {
   router.push("/dashboard-admin/detail_pesertakelas")
 }
 
-const handleEdit = (id: number): void => {
+// Detail / kelola peserta kelas tertentu
+const handleDetail = (id: string): void => {
+  router.push(`/dashboard-admin/detail_pesertakelas/${id}`)
+}
+
+const handleEdit = (id: string): void => {
   console.log("Edit:", id)
 }
 
-const handleDelete = (id: number): void => {
+const handleDelete = (id: string): void => {
   console.log("Delete:", id)
 }
 
@@ -422,6 +468,17 @@ onMounted((): void => {
 
               <td class="py-4">
                 <div class="flex items-center justify-center gap-2">
+
+                  <button
+                    @click="handleDetail(item.id)"
+                    class="flex items-center gap-1 rounded-lg bg-[#243e90] px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-4">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    Detail
+                  </button>
 
                   <button
                     @click="handleEdit(item.id)"

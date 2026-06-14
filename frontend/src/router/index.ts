@@ -39,6 +39,7 @@ import Jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Jurusan.v
 
 // prodi
 import Prodi from "@/views/dashboard_admin_akademik/akademik/Prodi/Prodi.vue";
+import Tambah_prodi from "../views/dashboard_admin_akademik/akademik/Prodi/Tambah_prodi.vue";
 
 //Matakuliah
 import Matakuliah from "@/views/dashboard_admin_akademik/akademik/Matakuliah/Matakuliah.vue";
@@ -51,7 +52,6 @@ import Tambah_jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Ta
 
 import profile from "../views/dashboard_admin_akademik/profile.vue";
 
-import Detail_khs_mahasiswa from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs_mahasiswa.vue";
 import Detail_khs from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs.vue";
 
 
@@ -102,6 +102,7 @@ const router = createRouter({
           component: () =>
             import("@/views/dashboard_super_admin/akademik/role/Edit_role.vue"),
         },
+        
       ],
     },
 
@@ -145,6 +146,7 @@ const router = createRouter({
 
         // prodi
         { path: "prodi", component: Prodi },
+        { path: "tambah_prodi", component: Tambah_prodi},
 
         // jurusan
         { path: "jurusan", component: Jurusan },
@@ -158,11 +160,9 @@ const router = createRouter({
         //Tambah jurusan
         { path: "tambah_jurusan", component: Tambah_jurusan },
 
-        //Detail khs mahasiswa
-        { path: "detail_khs_mahasiswa", component: Detail_khs_mahasiswa },
-
+  
         //Detail khs
-        { path: "detail_khs", component: Detail_khs },
+        { path: "detail_khs/:id", component: Detail_khs },
 
       ],
     },
