@@ -55,19 +55,21 @@ func InitDatabases(injector do.Injector) {
 }
 
 func InitTestDatabases(injector do.Injector) {
-	do.ProvideNamed[*gorm.DB](injector, "db_test", func(i do.Injector) (*gorm.DB, error) {
+	do.ProvideNamed[*gorm.DB](injector, constants.DB_TEST, func(i do.Injector) (*gorm.DB, error) {
 		return configs.SetUpDatabaseTestConnection(), nil
 	})
 }
 
 func RegisterProviders(injector do.Injector) {
-	// InitDatabases(injector)
-	InitTestDatabases(injector)
 	do.ProvideNamed[authService.JwtService](injector, constants.JWTService, func(i do.Injector) (authService.JwtService, error) {
 		return authService.NewJwtService(), nil
 	})
 
-	db := do.MustInvokeNamed[*gorm.DB](injector, "db_test")
+	InitDatabases(injector)
+	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
+	// InitTestDatabases(injector)
+	// db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB_TEST)
+
 	db.SetupJoinTable(&entities.Kurikulum{}, "MataKuliah", &entities.KurikulumMK{})
 	db.SetupJoinTable(&entities.Kelas{}, "Mahasiswa", &entities.KelasMahasiswa{})
 

@@ -10,8 +10,8 @@ import (
 )
 
 func SetUpDatabaseConnection() *gorm.DB {
-	dbUser := env.GetWithDefault[string]("DB_USERNAME", "root")
-	dbPass := env.GetWithDefault[string]("DB_PASSWORD", "root")
+	dbUser := env.GetWithDefault[string]("GO_DB_USERNAME", "system")
+	dbPass := env.GetWithDefault[string]("GO_DB_PASSWORD", "system123")
 	dbHost := env.GetWithDefault[string]("DB_HOST", "db")
 	dbName := env.GetWithDefault[string]("GO_DB", "main")
 	dbPort := env.GetWithDefault[int]("DB_PORT", 3306)
