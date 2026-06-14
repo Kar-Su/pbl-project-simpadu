@@ -24,6 +24,7 @@ type (
 		GetPresensiPegawai(ctx context.Context, tx *gorm.DB, filter any) (entities.Presensi, error)
 		GetAllPresensiPegawai(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Presensi, int64, error)
 		CountPresensi(ctx context.Context, tx *gorm.DB, tipe *string) (int64, error)
+		GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (string, error)
 	}
 
 	presensiRepository struct {
@@ -265,4 +266,23 @@ func (r *presensiRepository) CountPresensi(ctx context.Context, tx *gorm.DB, tip
 	}
 
 	return total, nil
+}
+
+func (r *presensiRepository) GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (string, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var status string
+	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).
+		Select("presensi_pegawai.status").
+		Joins("JOIN presensi_pegawai ON presensi_pegawai.presensi_id = presensi.id").
+		Where("presensi_pegawai.pegawai_id = ?", pegawaiID).
+		Order("created_at desc").
+		Row().
+		Scan(&status); err != nil {
+		return "", err
+	}
+
+	return status, nil
 }

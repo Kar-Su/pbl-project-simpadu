@@ -27,6 +27,6 @@ func RegisterRoutes(router *gin.Engine, injector do.Injector) {
 		routePresensi.GET("/pegawai", middlewares.AuthMiddleware(jwtService), presensiController.GetPresensiPegawai)
 
 		routePresensi.GET("/count", middlewares.AuthMiddleware(jwtService), presensiController.CountPresensi)
-
+		routePresensi.GET("/pegawai/me", middlewares.AuthMiddleware(jwtService), presensiController.GetStatusPresensiPegawaiMe)
 	}
 }
