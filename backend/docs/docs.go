@@ -2840,7 +2840,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any"
                         }
                     },
                     "401": {
@@ -5301,6 +5301,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sesi_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -7982,6 +7993,26 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiMahasiswaResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse"
                 },
                 "error": {},
                 "message": {

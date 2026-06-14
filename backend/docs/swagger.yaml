@@ -528,6 +528,13 @@ definitions:
       sesi_id:
         type: string
     type: object
+  web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse:
+    properties:
+      created_at:
+        type: string
+      status:
+        type: string
+    type: object
   web-hosting_internal_modules_presensi_dto.UserResponse:
     properties:
       detail_id:
@@ -2434,6 +2441,20 @@ definitions:
     properties:
       data:
         $ref: '#/definitions/web-hosting_internal_modules_presensi_dto.PresensiMahasiswaResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse'
       error: {}
       message:
         example: Operation successful
@@ -4791,7 +4812,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any'
         "401":
           description: Unauthorized
           schema:

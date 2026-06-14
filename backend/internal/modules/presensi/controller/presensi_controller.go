@@ -456,7 +456,7 @@ func (c *presensiController) CountPresensi(ctx *gin.Context) {
 // @Accept json
 // @Produce json
 // @Security ApiKeyAuth
-// @Success      200      {object}  utils.Response[any,any]
+// @Success      200      {object}  utils.Response[dto.PresensiPegawaiMeResponse,any]
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Router /api/presensi/pegawai/me [get]

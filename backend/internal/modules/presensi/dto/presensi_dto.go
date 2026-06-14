@@ -64,8 +64,8 @@ type (
 	}
 
 	PresensiPegawaiMeResponse struct {
-		Status    string `json:"status"`
-		CreatedAt string `json:"created_at"`
+		Status    string         `json:"status"`
+		CreatedAt types.DateOnly `json:"created_at"`
 	}
 )
 
