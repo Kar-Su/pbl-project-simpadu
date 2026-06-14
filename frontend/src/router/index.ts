@@ -20,11 +20,11 @@ import Kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulum/Kurik
 import Tambah_kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulum/Tambah_kurikulum.vue";
 
 // mahasiswa
-import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/Kelas/Tambah_kelas.vue";
+import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Tambah_kelas.vue";
 
 // kelas
 import Kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Kelas.vue";
-import Edit_kelas from "../views/dashboard_admin_akademik/akademik/Kelas/Edit_kelas.vue";
+import Edit_kelas from "../views/dashboard_admin_akademik/akademik/kelas/Edit_kelas.vue";
 
 // peserta kelas
 import Peserta_kelas from "@/views/dashboard_admin_akademik/akademik/Peserta-kelas/Peserta_kelas.vue";
@@ -53,7 +53,7 @@ import Tambah_jurusan from "@/views/dashboard_admin_akademik/akademik/Jurusan/Ta
 
 import profile from "../views/dashboard_admin_akademik/profile.vue";
 
-import Detail_khs from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_khs.vue";
+import Detail_khs from "@/views/dashboard_admin_akademik/akademik/KHS/Detail_KHS.vue";
 
 import Edit_pesertakelas from "../views/dashboard_admin_akademik/akademik/Peserta-kelas/Edit_pesertakelas.vue";
 
