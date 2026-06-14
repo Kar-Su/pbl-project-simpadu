@@ -1,22 +1,47 @@
 [
   {
-    "name": "dasar-pemrograman",
-    "kode": "mk-dp-001",
+    "name": "Algoritma Pemrograman",
+    "kode": "C0320102",
+    "sks": 3
+  },
+  {
+    "name": "Aljabar Linear",
+    "kode": "C0320101",
+    "sks": 3
+  },
+  {
+    "name": "Keterampilan Komputer",
+    "kode": "C03240104",
+    "sks": 3
+  },
+  {
+    "name": "Bahasa Ingris 1",
+    "kode": "MKWI2001",
     "sks": 2
   },
   {
-    "name": "data-struktur-algoritma",
-    "kode": "mk-dsa-001",
+    "name": "Pancasila",
+    "kode": "MKWU2002",
+    "sks": 2
+  },
+  {
+    "name": "Elektronika",
+    "kode": "C03240103",
     "sks": 3
   },
   {
-    "name": "iot",
-    "kode": "mk-iot-001",
-    "sks": 3
+    "name": "Etika Profesi",
+    "kode": "MKWI2003",
+    "sks": 2
   },
   {
-    "name": "fisika-dasar",
-    "kode": "mk-fd-001",
-    "sks": 3
+    "name": "Bahasa Indonesia",
+    "kode": "MKWU2004",
+    "sks": 2
+  },
+  {
+    "name": "Konsep Teknologi Informasi",
+    "kode": "C03240105",
+    "sks": 2
   }
 ]

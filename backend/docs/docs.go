@@ -7202,13 +7202,11 @@ const docTemplate = `{
                 "mahasiswa_id"
             ],
             "properties": {
-                "kelas_id": {
-                    "type": "string",
-                    "example": "01965a1d-7777-7777-7777-777777777777"
-                },
                 "mahasiswa_id": {
-                    "type": "string",
-                    "example": "01965a1d-7777-7777-7777-777777777777"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

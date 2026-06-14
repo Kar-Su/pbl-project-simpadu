@@ -1,57 +1,80 @@
 [
   {
+    "id": 1,
     "name": "teknik-listrik",
     "jenjang": "D3",
     "jurusan_id": 1
   },
   {
+    "id": 2,
     "name": "teknik-elektronika",
     "jenjang": "D3",
     "jurusan_id": 1
   },
   {
+    "id": 3,
     "name": "teknologi-rekayasa-pembangkit-energi",
     "jenjang": "D4",
     "jurusan_id": 1
   },
   {
+    "id": 4,
     "name": "teknik-otomotif",
     "jenjang": "D3",
     "jurusan_id": 2
   },
   {
+    "id": 5,
     "name": "teknologi-rekayasa-konstruksi-pesawat-udara",
     "jenjang": "D4",
     "jurusan_id": 2
   },
   {
+    "id": 6,
     "name": "teknik-sipil",
     "jenjang": "D3",
     "jurusan_id": 3
   },
   {
+    "id": 7,
     "name": "teknologi-rekayasa-konstruksi-jalan-dan-jembatan",
     "jenjang": "D4",
     "jurusan_id": 3
   },
   {
+    "id": 8,
     "name": "administrasi-bisnis",
     "jenjang": "D3",
     "jurusan_id": 4
   },
   {
+    "id": 9,
     "name": "manajemen-pemasaran",
     "jenjang": "D3",
     "jurusan_id": 4
   },
   {
+    "id": 10,
     "name": "akuntansi",
     "jenjang": "D3",
     "jurusan_id": 4
   },
   {
+    "id": 11,
     "name": "bisnis-digital",
     "jenjang": "D4",
     "jurusan_id": 4
+  },
+  {
+    "id": 12,
+    "name": "Teknik Informatika",
+    "jenjang": "D3",
+    "jurusan_id": 1
+  },
+  {
+    "id": 13,
+    "name": "Sistem Informasi Kota Cerdas",
+    "jenjang": "D4",
+    "jurusan_id": 1
   }
 ]

@@ -59,8 +59,7 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 
 type (
 	KelasMahasiswaCreateRequest struct {
-		KelasID     uuid.UUID `json:"kelas_id"`
-		MahasiswaID uuid.UUID `json:"mahasiswa_id" binding:"required"`
+		MahasiswaID []uuid.UUID `json:"mahasiswa_id" binding:"required"`
 	}
 
 	KelasMahasiswaCreateByEmailRequest struct {

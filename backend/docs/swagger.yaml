@@ -1960,12 +1960,10 @@ definitions:
     type: object
   web-hosting_internal_package_swagger.KelasMahasiswaCreateRequest:
     properties:
-      kelas_id:
-        example: 01965a1d-7777-7777-7777-777777777777
-        type: string
       mahasiswa_id:
-        example: 01965a1d-7777-7777-7777-777777777777
-        type: string
+        items:
+          type: string
+        type: array
     required:
     - mahasiswa_id
     type: object

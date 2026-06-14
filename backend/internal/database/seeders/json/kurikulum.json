@@ -1,12 +1,12 @@
 [
   {
-    "kode": "mbg-01",
-    "name": "MY BINI GWEH HUTAO",
+    "kode": "kur-mer-TI",
+    "name": "Kurikulum Merdeka Teknik Informatika",
     "prodi_id": 1
   },
   {
-    "kode": "mbg-02",
-    "name": "MY BINI GWEH HUTAO 2",
-    "prodi_id": 2
+    "kode": "kur-mer-SIKC",
+    "name": "Kurikulum Merdeka Sistem Informasi Kota Cerdas",
+    "prodi_id": 1
   }
 ]

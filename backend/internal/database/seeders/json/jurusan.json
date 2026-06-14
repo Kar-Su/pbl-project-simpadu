@@ -1,14 +1,18 @@
 [
   {
+    "id": 1,
     "name": "teknik-elektro"
   },
   {
+    "id": 2,
     "name": "teknik-mesin"
   },
   {
+    "id": 3,
     "name": "teknik-sipil"
   },
   {
+    "id": 4,
     "name": "administrasi-bisnis"
   }
 ]

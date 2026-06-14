@@ -52,8 +52,7 @@ type (
 
 	// KELAS MAHASISWA
 	KelasMahasiswaCreateRequest struct {
-		KelasID     string `json:"kelas_id" example:"01965a1d-7777-7777-7777-777777777777"`
-		MahasiswaID string `json:"mahasiswa_id" binding:"required" example:"01965a1d-7777-7777-7777-777777777777"`
+		MahasiswaID []string `json:"mahasiswa_id" binding:"required"`
 	}
 
 	// PENGAMPU

@@ -76,10 +76,7 @@ func (c *kelasMahasiswaController) AssignMahasiswaToKelas(ctx *gin.Context) {
 		return
 	}
 
-	// Override kelas_id dari path param (lebih RESTful)
-	req.KelasID = kelasID
-
-	if err := c.pivotService.Create(ctx.Request.Context(), req); err != nil {
+	if err := c.pivotService.Create(ctx.Request.Context(), kelasID, req); err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
