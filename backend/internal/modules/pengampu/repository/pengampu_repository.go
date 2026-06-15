@@ -11,7 +11,7 @@ import (
 
 type (
 	PengampuRepository interface {
-		Create(ctx context.Context, tx *gorm.DB, entity entities.Pengampu) error
+		Create(ctx context.Context, tx *gorm.DB, entity entities.Pengampu) (entities.Pengampu, error)
 		UpdateByID(ctx context.Context, tx *gorm.DB, id uuid.UUID, entity entities.Pengampu) (entities.Pengampu, error)
 		DeleteByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) error
 		GetByID(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entities.Pengampu, error)
@@ -28,16 +28,20 @@ func NewPengampuRepository(db *gorm.DB) PengampuRepository {
 	return &pengampuRepository{db: db}
 }
 
-func (r *pengampuRepository) Create(ctx context.Context, tx *gorm.DB, entity entities.Pengampu) error {
+func (r *pengampuRepository) Create(ctx context.Context, tx *gorm.DB, entity entities.Pengampu) (entities.Pengampu, error) {
 	if tx == nil {
 		tx = r.db
 	}
 
 	if err := tx.WithContext(ctx).Create(&entity).Error; err != nil {
-		return err
+		return entities.Pengampu{}, err
 	}
 
-	return nil
+	var data entities.Pengampu
+	if err := tx.WithContext(ctx).Preload("MataKuliah").Preload("Dosen", helpers.SelectFields("detail_id, name, email")).Where("dosen_id = ? AND mk_kode = ?", entity.DosenID, entity.MKKode).First(&data).Error; err != nil {
+		return entities.Pengampu{}, err
+	}
+	return data, nil
 }
 
 func (r *pengampuRepository) UpdateByID(ctx context.Context, tx *gorm.DB, id uuid.UUID, entity entities.Pengampu) (entities.Pengampu, error) {
