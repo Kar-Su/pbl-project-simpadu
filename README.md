@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # pbl-project-simpadu
 
 Repository proyek PBL (Project Based Learning) - Sistem Informasi Manajemen Padu (SIMPADU).
