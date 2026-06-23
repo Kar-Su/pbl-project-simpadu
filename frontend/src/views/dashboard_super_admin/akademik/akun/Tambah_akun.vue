@@ -11,6 +11,12 @@ const password = ref("")
 
 
 const errorMsg = ref("")
+const errors = ref({
+  email: "",
+  nama: "",
+  password: "",
+  jabatan: ""
+})
 // const passwordError = ref("")
 const loading = ref(false)
 const roleOptions = ref<string[]>([])
@@ -45,7 +51,48 @@ const handleSimpan = async () => {
   //   errorMsg.value = "Semua field wajib diisi"
   //   return
   // }
+errors.value = {
+  email: "",
+  nama: "",
+  password: "",
+  jabatan: ""
+}
 
+let isValid = true
+
+if (!email.value.trim()) {
+  errors.value.email = "Email wajib diisi"
+  isValid = false
+}
+
+if (!nama.value.trim()) {
+  errors.value.nama = "Nama wajib diisi"
+  isValid = false
+}
+
+if (!password.value.trim()) {
+  errors.value.password = "Password wajib diisi"
+  isValid = false
+}
+
+if (!jabatan.value.trim()) {
+  errors.value.jabatan = "Role wajib dipilih"
+  isValid = false
+}
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+if (email.value && !emailRegex.test(email.value)) {
+  errors.value.email = "Format email tidak valid"
+  isValid = false
+}
+
+if (password.value && password.value.length < 8) {
+  errors.value.password = "Password minimal 8 karakter"
+  isValid = false
+}
+
+if (!isValid) return
   if (jabatan.value === "super-admin") {
     errorMsg.value = "Tidak boleh membuat super-admin baru"
     return
@@ -98,14 +145,26 @@ const handleSimpan = async () => {
       role_name: jabatan.value
     })
 
-    if (!response.ok) {
-      console.error("ERROR RESPONSE:", data)
-      throw new Error(
-        data?.error ||
-        data?.message ||
-        JSON.stringify(data)
-      )
-    }
+if (!response.ok) {
+  console.error("ERROR RESPONSE:", data)
+
+  const message =
+    data?.error ||
+    data?.message ||
+    ""
+
+  if (
+    message.toLowerCase().includes("email") ||
+    message.toLowerCase().includes("already") ||
+    message.toLowerCase().includes("exists")
+  ) {
+    errors.value.email = "Email sudah digunakan"
+    return
+  }
+
+  errorMsg.value = message || "Gagal menambahkan akun"
+  return
+}
 
     router.push("/dashboard-superadmin/akun")
   } catch (err: any) {
@@ -174,51 +233,148 @@ onMounted(() => {
     </p>
 
     <!-- FORM -->
-    <div class="w-full max-w-xl">
+<div class="w-full max-w-xl">
 
-      <!-- EMAIL -->
-      <div class="mb-6">
-        <label class="block text-sm text-gray-700 mb-2">Email</label>
-        <input v-model="email" type="email" placeholder="Isi Email..."
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
-      </div>
+  <!-- EMAIL -->
+  <div class="mb-6">
+    <label class="block text-sm text-gray-700 mb-2">
+      Email
+    </label>
 
-      <!-- NAMA -->
-      <div class="mb-6">
-        <label class="block text-sm text-gray-700 mb-2">Nama</label>
-        <input v-model="nama" type="text" placeholder="Isi Nama..."
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
-      </div>
+    <input
+      v-model="email"
+      type="email"
+      placeholder="Isi Email..."
+      :class="[
+        'w-full rounded-xl px-4 py-3 text-sm focus:outline-none',
+        errors.email
+          ? 'border border-red-500'
+          : 'border border-gray-400 focus:border-blue-500'
+      ]"
+    />
 
-      <!-- PASSWORD -->
-      <div class="mb-6">
-        <label class="block text-sm text-gray-700 mb-2">
-          Password
-        </label>
+    <p
+      v-if="errors.email"
+      class="text-red-500 text-sm mt-1"
+    >
+      {{ errors.email }}
+    </p>
+  </div>
 
-        <input v-model="password" type="text" placeholder="Isi Password..."
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500" />
-      </div>
+  <!-- NAMA -->
+  <div class="mb-6">
+    <label class="block text-sm text-gray-700 mb-2">
+      Nama
+    </label>
 
-      <!-- JABATAN -->
-      <div class="mb-8">
-        <label class="block text-sm text-gray-700 mb-2">Jabatan</label>
+    <input
+      v-model="nama"
+      type="text"
+      placeholder="Isi Nama..."
+      :class="[
+        'w-full rounded-xl px-4 py-3 text-sm focus:outline-none',
+        errors.nama
+          ? 'border border-red-500'
+          : 'border border-gray-400 focus:border-blue-500'
+      ]"
+    />
 
-        <select v-model="jabatan"
-          class="w-full rounded-xl border border-gray-400 px-4 py-3 text-sm focus:outline-none focus:border-blue-500">
-          <option v-for="role in roleOptions" :key="role" :value="role">
-            {{ role }}
-          </option>
-        </select>
-      </div>
+    <p
+      v-if="errors.nama"
+      class="text-red-500 text-sm mt-1"
+    >
+      {{ errors.nama }}
+    </p>
+  </div>
 
-      <!-- BUTTON -->
-      <button @click="handleSimpan"
-        class="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-xl text-sm font-semibold">
-        Simpan
-      </button>
+  <!-- PASSWORD -->
+  <div class="mb-6">
+    <label class="block text-sm text-gray-700 mb-2">
+      Password
+    </label>
 
-    </div>
+    <input
+      v-model="password"
+      type="text"
+      placeholder="Isi Password..."
+      :class="[
+        'w-full rounded-xl px-4 py-3 text-sm focus:outline-none',
+        errors.password
+          ? 'border border-red-500'
+          : 'border border-gray-400 focus:border-blue-500'
+      ]"
+    />
+
+    <p
+      v-if="errors.password"
+      class="text-red-500 text-sm mt-1"
+    >
+      {{ errors.password }}
+    </p>
+  </div>
+
+  <!-- JABATAN -->
+  <div class="mb-8">
+    <label class="block text-sm text-gray-700 mb-2">
+      Jabatan
+    </label>
+
+    <select
+      v-model="jabatan"
+      :class="[
+        'w-full rounded-xl px-4 py-3 text-sm focus:outline-none',
+        errors.jabatan
+          ? 'border border-red-500'
+          : 'border border-gray-400 focus:border-blue-500'
+      ]"
+    >
+      <option
+        disabled
+        value=""
+      >
+        Pilih Role
+      </option>
+
+      <option
+        v-for="role in roleOptions"
+        :key="role"
+        :value="role"
+      >
+        {{ role }}
+      </option>
+    </select>
+
+    <p
+      v-if="errors.jabatan"
+      class="text-red-500 text-sm mt-1"
+    >
+      {{ errors.jabatan }}
+    </p>
+  </div>
+
+  <!-- BUTTON -->
+<!-- BUTTON -->
+<div class="flex items-center gap-3">
+
+  <button
+    @click="handleSimpan"
+    :disabled="loading"
+    class="flex items-center gap-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-5 py-3 rounded-xl text-sm font-semibold"
+  >
+    {{ loading ? "Menyimpan..." : "Simpan" }}
+  </button>
+
+  <button
+    type="button"
+    @click="router.push('/dashboard-superadmin/akun')"
+    class="flex items-center gap-2 bg-gray-300 hover:bg-gray-400 text-gray-800 px-5 py-3 rounded-xl text-sm font-semibold"
+  >
+    Kembali
+  </button>
+
+</div>
+
+</div>
 
   </div>
 </template>

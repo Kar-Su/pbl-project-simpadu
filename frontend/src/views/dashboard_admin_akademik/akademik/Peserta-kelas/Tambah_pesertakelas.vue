@@ -22,7 +22,7 @@ interface Kelas {
 interface Mahasiswa {
   id: string
   nama: string
-  nim?: string
+  nim: string
   email?: string
 }
 
@@ -53,15 +53,42 @@ const getKelasData = async () => {
   }
 }
 
-// Fetching data mahasiswa untuk dropdown list checkbox
+// Fetching data mahasiswa via /api/users, hanya ambil yang role_name === "mahasiswa"
+// Endpoint ini paginated, jadi kita ambil page pertama dulu untuk tahu total_pages,
+// baru fetch sisanya secara paralel via Promise.all
 const getMahasiswaData = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/api/mahasiswa`, { headers: getHeaders() })
-    const data = await res.json()
-    const payload = data.data ?? []
-    mahasiswaList.value = Array.isArray(payload) ? payload : (payload.items ?? [])
+    const firstRes = await fetch(`${BASE_URL}/api/users?page=1`, { headers: getHeaders() })
+    const firstJson = await firstRes.json()
+    const totalPages = firstJson.data?.pagination?.total_pages ?? 1
+
+    let allUsers: any[] = firstJson.data?.items ?? []
+
+    if (totalPages > 1) {
+      const pagePromises = []
+      for (let page = 2; page <= totalPages; page++) {
+        pagePromises.push(
+          fetch(`${BASE_URL}/api/users?page=${page}`, { headers: getHeaders() }).then((res) =>
+            res.json()
+          )
+        )
+      }
+      const otherPagesResults = await Promise.all(pagePromises)
+      otherPagesResults.forEach((pageJson) => {
+        allUsers = allUsers.concat(pageJson.data?.items ?? [])
+      })
+    }
+
+    mahasiswaList.value = allUsers
+      .filter((user: any) => user.role_name === "mahasiswa")
+      .map((user: any) => ({
+        id: String(user.detail_id), // detail_id = id data mahasiswa, bukan id akun user
+        nama: user.name,
+        nim: user.email, // endpoint /api/users tidak menyediakan field nim, dipakai email sebagai pengganti tampilan
+        email: user.email,
+      }))
   } catch (err) {
-    console.error(err)
+    console.error("getMahasiswaData:", err)
   }
 }
 
@@ -127,13 +154,15 @@ const handleSimpan = async () => {
       body: JSON.stringify(payload),
     })
 
-    const data = await res.json()
-    if (res.ok) {
-      alert("Berhasil menyimpan data peserta kelas")
-      router.push("/dashboard-admin/peserta_kelas")
-    } else {
-      alert(data.message || "Gagal menyimpan")
+    if (!res.ok) {
+      const errText = await res.text()
+      console.error("Server response:", errText)
+      alert(`Gagal menyimpan (status ${res.status})`)
+      return
     }
+
+    alert("Berhasil menyimpan data peserta kelas")
+    router.push("/dashboard-admin/peserta_kelas")
   } catch (err) {
     console.error(err)
     alert("Terjadi kesalahan sistem")
@@ -220,20 +249,23 @@ onMounted(async () => {
             v-if="isDropdownMahasiswaOpen" 
             class="absolute z-50 left-0 right-0 mt-1 max-h-60 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl py-1 divide-y divide-gray-50"
           >
-            <div 
-              v-for="mhs in mahasiswaList" 
-              :key="mhs.id"
-              @click="toggleMahasiswa(mhs)"
-              class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer select-none text-sm text-gray-700"
-            >
-              <input 
-                type="checkbox" 
-                :checked="isChecked(mhs.id)"
-                @click.stop="toggleMahasiswa(mhs)"
-                class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-              />
-              <span>{{ mhs.nama }} / {{ mhs.nim || mhs.email || '-' }}</span>
-            </div>
+           <div
+  v-for="mhs in mahasiswaList"
+  :key="mhs.id"
+  @click="toggleMahasiswa(mhs)"
+  class="flex items-center gap-3 px-4 py-3 hover:bg-slate-50 cursor-pointer select-none text-sm text-gray-700"
+>
+  <input
+    type="checkbox"
+    :checked="isChecked(mhs.id)"
+    @click.stop="toggleMahasiswa(mhs)"
+    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+  />
+
+  <span>
+    {{ mhs.nama }} / {{ mhs.nim }}
+  </span>
+</div>
             <div v-if="mahasiswaList.length === 0" class="p-3 text-center text-xs text-gray-400">
               Tidak ada data mahasiswa tersedia.
             </div>

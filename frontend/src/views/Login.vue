@@ -43,6 +43,7 @@ const handleLogin = async (): Promise<void> => {
 
     if (!res.ok) {
       errorMsg.value = data.message || 'Login gagal'
+      errorMsg.value = "Username atau Kata Sandi salah"
       return
     }
 

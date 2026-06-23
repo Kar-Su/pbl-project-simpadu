@@ -16,7 +16,7 @@ const totalRole = ref(0)
 const rowsPerPage = ref(10)
 const currentPage = ref(1)
 
-const user = ref({ name: "Admin Akademik" })
+const user = ref({ name: "Super Admin" })
 
 // ================= TYPE =================
 interface AkunItem {

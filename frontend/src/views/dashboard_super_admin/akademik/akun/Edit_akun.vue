@@ -10,11 +10,22 @@ const email = ref("")
 const nama = ref("")
 const jabatan = ref("")
 const detailId = ref("")
+const originalData = ref({
+  email: "",
+  nama: "",
+  jabatan: "",
+  detailId: ""
+})
 console.log("ROUTE:", route.fullPath)
 console.log("PARAMS:", route.params)
 console.log("ID:", route.params.id)
 
 const loading = ref(false)
+const errors = ref({
+  email: "",
+  nama: "",
+  jabatan: ""
+})
 
 // ================= ROLE OPTION =================
 const roleOptions = ref<string[]>([])
@@ -47,6 +58,15 @@ detailId.value = data?.data?.detail_id || ""
 email.value = data?.data?.email || ""
 nama.value = data?.data?.name || ""
 jabatan.value = data?.data?.role_name || ""
+
+originalData.value = {
+  detailId: detailId.value,
+  email: email.value,
+  nama: nama.value,
+  jabatan: jabatan.value
+}
+
+console.log("ORIGINAL DATA:", originalData.value)
 
     console.log("ROLE USER:", data?.data?.role)
 
@@ -101,7 +121,44 @@ console.log("roleOptions =", roleOptions.value)
 const handleSimpan = async () => {
   try {
     loading.value = true
+const isChanged =
+  email.value !== originalData.value.email ||
+  nama.value !== originalData.value.nama ||
+  jabatan.value !== originalData.value.jabatan ||
+  detailId.value !== originalData.value.detailId
+// reset error
+errors.value = {
+  email: "",
+  nama: "",
+  jabatan: ""
+}
 
+let isValid = true
+
+if (!email.value.trim()) {
+  errors.value.email = "Email wajib diisi"
+  isValid = false
+}
+
+if (!nama.value.trim()) {
+  errors.value.nama = "Nama wajib diisi"
+  isValid = false
+}
+
+if (!jabatan.value.trim()) {
+  errors.value.jabatan = "Role wajib dipilih"
+  isValid = false
+}
+
+if (!isValid) {
+  return
+}
+if (!isChanged) {
+  alert("Tidak ada perubahan data")
+
+  router.push("/dashboard-superadmin/akun")
+  return
+}
     const token = localStorage.getItem("token")
     const id = route.params.id
 
@@ -177,10 +234,22 @@ onMounted(() => {
         </label>
 
         <input
-          v-model="email"
-          type="text"
-          class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-[#243e90]"
-        />
+  v-model="email"
+  type="text"
+  :class="[
+    'w-full rounded-xl px-4 py-3 focus:outline-none',
+    errors.email
+      ? 'border border-red-500'
+      : 'border border-gray-300 focus:border-[#243e90]'
+  ]"
+/>
+
+<p
+  v-if="errors.email"
+  class="text-red-500 text-sm mt-1"
+>
+  {{ errors.email }}
+</p>
 
       </div>
 
@@ -191,11 +260,23 @@ onMounted(() => {
           Nama
         </label>
 
-        <input
-          v-model="nama"
-          type="text"
-          class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-[#243e90]"
-        />
+      <input
+  v-model="nama"
+  type="text"
+  :class="[
+    'w-full rounded-xl px-4 py-3 focus:outline-none',
+    errors.nama
+      ? 'border border-red-500'
+      : 'border border-gray-300 focus:border-[#243e90]'
+  ]"
+/>
+
+<p
+  v-if="errors.nama"
+  class="text-red-500 text-sm mt-1"
+>
+  {{ errors.nama }}
+</p>
 
       </div>
 
@@ -206,10 +287,15 @@ onMounted(() => {
           Role
         </label>
 
-        <select
-          v-model="jabatan"
-          class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-[#243e90]"
-        >
+<select
+  v-model="jabatan"
+  :class="[
+    'w-full rounded-xl px-4 py-3 focus:outline-none',
+    errors.jabatan
+      ? 'border border-red-500'
+      : 'border border-gray-300 focus:border-[#243e90]'
+  ]"
+>
 
           <option
             disabled
@@ -227,7 +313,12 @@ onMounted(() => {
           </option>
 
         </select>
-
+<p
+  v-if="errors.jabatan"
+  class="text-red-500 text-sm mt-1"
+>
+  {{ errors.jabatan }}
+</p>
       </div>
 
       <!-- BUTTON -->

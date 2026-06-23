@@ -30,7 +30,6 @@ const selectedUserId = ref("")
 const router = useRouter()
 
 const users = ref<User[]>([])
-const totalPages = ref(1)
 
 const allUsers = ref<User[]>([])
 
@@ -100,27 +99,9 @@ const getAllUsers = async () => {
 // ================= GET USERS =================
 const getUsers = async () => {
   try {
-    const response = await fetch(
-      `${API.users}?page=${currentPage.value}&per_page=${perPage.value}`,
-      {
-        method: "GET",
-        headers: getHeaders(),
-      }
-    )
-
-    const data = await response.json()
-    console.log("USERS:", data)
-
-    if (!response.ok) {
-      console.log("Gagal mengambil user")
-      return
-    }
-
-    users.value = data.data.items || []
-    totalPages.value = data.data.pagination?.total_pages || 1
-
+    await getAllUsers()
   } catch (err) {
-    console.error("GET USERS ERROR:", err)
+    console.error(err)
   }
 }
 
@@ -128,21 +109,32 @@ const getUsers = async () => {
 const filteredUsers = computed(() => {
   const keyword = search.value.toLowerCase().trim()
 
-  if (!keyword) return users.value
+  if (!keyword) return allUsers.value
 
-  const source = allUsersLoaded.value ? allUsers.value : users.value
-  return source.filter((item) =>
-    item.name?.toLowerCase().includes(keyword)
+  return allUsers.value.filter((item) =>
+    item.name?.toLowerCase().includes(keyword) ||
+    item.email?.toLowerCase().includes(keyword)
   )
 })
 
 // ================= PAGINATION =================
-const nextPage = async () => {
+const totalPages = computed(() =>
+  Math.max(1, Math.ceil(filteredUsers.value.length / perPage.value))
+)
+
+const paginatedUsers = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value
+  const end = start + perPage.value
+
+  return filteredUsers.value.slice(start, end)
+})
+
+const nextPage = () => {
   if (currentPage.value < totalPages.value) {
     currentPage.value++
-    await getUsers()
   }
 }
+
 
 const prevPage = async () => {
   if (currentPage.value > 1) {
@@ -259,57 +251,56 @@ onMounted(() => {
             </tr>
           </thead>
 
-          <tbody>
-            <tr v-for="(item, index) in filteredUsers" :key="item.id" class="border-t border-gray-100">
+<tbody>
+  <tr
+  v-for="(item, index) in paginatedUsers"
+    :key="item.id"
+    class="border-t border-gray-100"
+  >
+    <td class="px-5 py-4">
+      {{
+        search
+          ? index + 1
+          : (currentPage - 1) * perPage + index + 1
+      }}
+    </td>
 
-              <td class="px-5 py-4">
-                {{
-                  search
-                    ? index + 1
-                    : (currentPage - 1) * perPage + index + 1
-                }}
-              </td>
+    <td class="px-5 py-4">{{ item.email }}</td>
+    <td class="px-5 py-4">{{ item.name }}</td>
+    <td class="px-5 py-4">{{ item.role_name }}</td>
 
-              <td class="px-5 py-4">{{ item.email }}</td>
+    <td class="px-5 py-4">
+      <div class="flex gap-2">
+        <button
+          @click="router.push(`/dashboard-superadmin/edit_akun/${item.id}`)"
+          class="rounded-md bg-yellow-400 px-3 py-1 text-xs font-medium text-white hover:bg-yellow-900"
+        >
+          ✏ Edit
+        </button>
 
-              <td class="px-5 py-4">{{ item.name }}</td>
+        <button
+          @click="openDeleteModal(item.id, item.email)"
+          class="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-900"
+        >
+          🗑 Hapus
+        </button>
 
-              <td class="px-5 py-4">{{ item.role_name }}</td>
+        <button
+          @click="router.push(`/dashboard-superadmin/reset_password/${encodeURIComponent(item.email)}`)"
+          class="rounded-md bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-900"
+        >
+          🔑 Reset Password
+        </button>
+      </div>
+    </td>
+  </tr>
 
-              <td class="px-5 py-4">
-                <div class="flex gap-2">
-
-                  <!-- EDIT -->
-                  <button @click="router.push(`/dashboard-superadmin/edit_akun/${item.id}`)"
-                    class="rounded-md bg-yellow-400 px-3 py-1 text-xs font-medium text-white hover:bg-yellow-900">
-                    ✏ Edit
-                  </button>
-
-                  <!-- RESET PASSWORD -->
-
-
-                  <!-- DELETE -->
-                  <button @click="openDeleteModal(item.id, item.email)"
-                    class="rounded-md bg-red-500 px-3 py-1 text-xs font-medium text-white hover:bg-red-900">
-                    🗑 Hapus
-                  </button>
-                  <button @click="router.push(`/dashboard-superadmin/reset_password/${encodeURIComponent(item.email)}`)"
-                    class="rounded-md bg-blue-500 px-3 py-1 text-xs font-medium text-white hover:bg-blue-900">
-                    🔑 Reset Password
-                  </button>
-                </div>
-              </td>
-
-            </tr>
-
-            <!-- EMPTY STATE -->
-            <tr v-if="filteredUsers.length === 0">
-              <td colspan="5" class="px-5 py-8 text-center text-gray-400">
-                Tidak ada data akun
-              </td>
-            </tr>
-
-          </tbody>
+  <tr v-if="filteredUsers.length === 0">
+    <td colspan="5" class="px-5 py-8 text-center text-gray-400">
+      Memuat..
+    </td>
+  </tr>
+</tbody>
 
         </table>
       </div>
@@ -371,4 +362,4 @@ onMounted(() => {
       @confirm="confirmDelete" />
 
   </div>
-</template>
+</template>>

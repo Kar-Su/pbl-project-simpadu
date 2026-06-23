@@ -67,7 +67,7 @@ const fetchKHS = async () => {
       {
         method: "GET",
         headers: {
-          accept: "application/json",
+          // Accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
       }
