@@ -235,6 +235,14 @@ definitions:
       name:
         type: string
     type: object
+  web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest:
+    properties:
+      new_semester:
+        example: 5
+        type: integer
+    required:
+    - new_semester
+    type: object
   web-hosting_internal_modules_kelas_dto.TahunAkademikResponse:
     properties:
       id:
@@ -247,6 +255,60 @@ definitions:
         type: string
       tipe_semester:
         type: string
+    type: object
+  web-hosting_internal_modules_khs_dto.CreateKhsRequest:
+    properties:
+      mahasiswa_id:
+        example: miaco-3525sdvs-3vfdv
+        type: string
+      pengampu_id:
+        example: miaco-3525sdvs-3vfdv
+        type: string
+      total_nilai:
+        example: 4
+        maximum: 100
+        minimum: 0
+        type: number
+    required:
+    - mahasiswa_id
+    - pengampu_id
+    - total_nilai
+    type: object
+  web-hosting_internal_modules_khs_dto.KHSResponse:
+    properties:
+      ipk:
+        type: number
+      ips:
+        type: number
+      kelas_name:
+        type: string
+      kurikulum_name:
+        type: string
+      mahasiswa_name:
+        type: string
+      nilai:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_khs_dto.NilaiResponse'
+        type: array
+      prodi_name:
+        type: string
+      semester:
+        type: integer
+      tahun_akademik:
+        type: integer
+    type: object
+  web-hosting_internal_modules_khs_dto.NilaiResponse:
+    properties:
+      grade:
+        type: string
+      kode_mk:
+        type: string
+      nama_mk:
+        type: string
+      nilai:
+        type: number
+      sks:
+        type: integer
     type: object
   web-hosting_internal_modules_kurikulum_dto.JurusanResponse:
     properties:
@@ -464,6 +526,13 @@ definitions:
       pengampu_id:
         type: string
       sesi_id:
+        type: string
+    type: object
+  web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse:
+    properties:
+      created_at:
+        type: string
+      status:
         type: string
     type: object
   web-hosting_internal_modules_presensi_dto.UserResponse:
@@ -1906,12 +1975,10 @@ definitions:
     type: object
   web-hosting_internal_package_swagger.KelasMahasiswaCreateRequest:
     properties:
-      kelas_id:
-        example: 01965a1d-7777-7777-7777-777777777777
-        type: string
       mahasiswa_id:
-        example: 01965a1d-7777-7777-7777-777777777777
-        type: string
+        items:
+          type: string
+        type: array
     required:
     - mahasiswa_id
     type: object
@@ -2066,6 +2133,15 @@ definitions:
       items:
         items:
           $ref: '#/definitions/web-hosting_internal_modules_kelas_dto.KelasResponse'
+        type: array
+      pagination:
+        $ref: '#/definitions/web-hosting_internal_package_utils.PaginationMeta'
+    type: object
+  web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/web-hosting_internal_modules_khs_dto.KHSResponse'
         type: array
       pagination:
         $ref: '#/definitions/web-hosting_internal_package_utils.PaginationMeta'
@@ -2375,6 +2451,20 @@ definitions:
       success:
         type: boolean
     type: object
+  web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any:
+    properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
   web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any:
     properties:
       data:
@@ -2421,6 +2511,20 @@ definitions:
   : properties:
       data:
         $ref: '#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse'
+      error: {}
+      message:
+        example: Operation successful
+        type: string
+      path:
+        example: /api/resource
+        type: string
+      success:
+        type: boolean
+    type: object
+  ? web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any
+  : properties:
+      data:
+        $ref: '#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse'
       error: {}
       message:
         example: Operation successful
@@ -2896,6 +3000,37 @@ paths:
       tags:
       - jurusan
   /api/kelas:
+    get:
+      description: |-
+        Mengambil semua daftar kelas dengan pagination (10 per halaman).
+
+        **Akses:** Semua user yang sudah login.
+      parameters:
+      - description: Halaman (default 1)
+        example: 1
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Get All Kelas (Paginated)
+      tags:
+      - kelas
     post:
       consumes:
       - application/json
@@ -3294,6 +3429,148 @@ paths:
       summary: Get Kelas by Prodi (Paginated)
       tags:
       - kelas
+  /api/kelas/semester:
+    put:
+      consumes:
+      - application/json
+      description: |-
+        Mengupdate semester kelas yang sudah ada
+
+        **Akses:** Admin Akademik
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+        - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'Kelas' Error:..."`
+        - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to update kelas", error: "kelas not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` role user tidak memiliki akses -> `message: "role anda tidak diizinkan", error: "Forbidden"`
+        - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
+      parameters:
+      - example: 20241
+        in: query
+        name: ta_id
+        required: true
+        type: integer
+      - description: New Semester Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasInternalServer'
+      security:
+      - ApiKeyAuth: []
+      summary: Update Semester
+      tags:
+      - kelas
+  /api/khs:
+    get:
+      description: |-
+        Mengambil daftar KHS dengan pagination (10 per halaman).
+        Logged in user.
+
+        **Akses:** Semua user yang sudah login (Authenticated User).
+
+        **Error yang mungkin terjadi:**
+        - `400` Parameter URI tidak valid -> `message: "bad request", error: "Key: 'KhsId' Error:..."`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+      parameters:
+      - description: Semester
+        example: 1
+        in: query
+        name: semester
+        type: integer
+      - description: Nama Prodi
+        example: '"Teknik Informatika"'
+        in: query
+        name: prodi_name
+        type: string
+      - description: Halaman (default 1, 10 per halaman)
+        example: 1
+        in: query
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+      security:
+      - ApiKeyAuth: []
+      summary: Get khs (Paginated)
+      tags:
+      - khs
+  /api/khs/nilai:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Menambahkan nilai baru ke sistem
+
+        **Akses:** Admin Akademik, Dosen
+      parameters:
+      - description: nilai Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/web-hosting_internal_modules_khs_dto.CreateKhsRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumFailed'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+      security:
+      - ApiKeyAuth: []
+      summary: Create Nilai Baru
+      tags:
+      - khs
   /api/kurikulum:
     get:
       consumes:
@@ -4183,6 +4460,47 @@ paths:
       summary: Get Pengampu by kelas id
       tags:
       - pengampu
+  /api/presensi/count:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Menghitung jumlah presensi pegawai berdasarkan tipe presensi
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Tidak ada presensi dengan id tersebut -> `message: "failed to count presensi", error: "presensi not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+      parameters:
+      - example: mahasiswa
+        in: query
+        name: tipe
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-any-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+      security:
+      - ApiKeyAuth: []
+      summary: Count Presensi
+      tags:
+      - presensi
   /api/presensi/mahasiswa:
     get:
       consumes:
@@ -4471,6 +4789,41 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Update Presensi Pegawai
+      tags:
+      - presensi
+  /api/presensi/pegawai/me:
+    get:
+      consumes:
+      - application/json
+      description: |-
+        Mengambil presensi pegawai diri sendiri
+
+        **Akses:** Logged User
+
+        **Error yang mungkin terjadi:**
+        - `400` Tidak ada presensi dengan id tersebut -> `message: "failed to get presensi", error: "presensi not found"`
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Presensi Pegawai diri sendiri
       tags:
       - presensi
   /api/prodi:
@@ -5797,6 +6150,59 @@ paths:
       summary: Update User Non-Admin
       tags:
       - user
+  /api/workers/presensi/start:
+    post:
+      description: |-
+        **Akses:** Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `400` Worker presensi already on"`
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Otomatis Start Presensi pegawai
+      tags:
+      - workers
+  /api/workers/presensi/status:
+    get:
+      description: |-
+        **Akses:** Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get Status Presensi pegawai
+      tags:
+      - workers
+  /api/workers/presensi/stop:
+    post:
+      description: |-
+        **Akses:** Admin Pegawai.
+
+        **Error yang mungkin terjadi:**
+        - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+        - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+        - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+        - `400` message": "Worker presensi already off"`
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Otomatis Stop Presensi pegawai
+      tags:
+      - workers
 securityDefinitions:
   ApiKeyAuth:
     description: 'Format: Bearer access_token'

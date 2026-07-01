@@ -29,6 +29,8 @@ services:
     working_dir: /golang
     volumes:
       - ./backend:/golang
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
     environment:
       - ENV=development
     env_file:
@@ -38,7 +40,8 @@ services:
       db:
         condition: service_healthy
     networks:
-      - web_hosting
+      web_hosting:
+        ipv4_address: 172.16.0.5
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.golang-service.entrypoints=web"
@@ -183,3 +186,7 @@ services:
 networks:
   web_hosting:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
+          ip_range: 172.16.1.0/24

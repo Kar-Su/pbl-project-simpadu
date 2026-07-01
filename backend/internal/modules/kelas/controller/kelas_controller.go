@@ -19,9 +19,11 @@ type (
 	KelasController interface {
 		CreateKelas(ctx *gin.Context)
 		UpdateKelas(ctx *gin.Context)
+		UpdateSemesterByTahunAkademikID(ctx *gin.Context)
 		DeleteKelas(ctx *gin.Context)
 		GetKelasByID(ctx *gin.Context)
 		GetKelasByProdiName(ctx *gin.Context)
+		GetAllKelas(ctx *gin.Context)
 	}
 
 	kelasController struct {
@@ -35,6 +37,60 @@ func NewKelasController(injector do.Injector, db *gorm.DB, kelasService service.
 		db:           db,
 		kelasService: kelasService,
 	}
+}
+
+// UpdateSemesterByTahunAkademikID godoc
+// @Summary Update Semester
+// @Description Mengupdate semester kelas yang sudah ada
+// @Description
+// @Description  **Akses:** Admin Akademik
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Parameter tidak valid -> `message: "failed to validate parameter", error: "Key: 'param' Error:..."`
+// @Description  - `400` Body tidak valid / field wajib kosong -> `message: "failed to get request", error: "Key: 'Kelas' Error:..."`
+// @Description  - `400` kelas dengan id tersebut tidak ditemukan -> `message: "failed to update kelas", error: "kelas not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` role user tidak memiliki akses -> `message: "role anda tidak diizinkan", error: "Forbidden"`
+// @Description  - `500` Kesalahan internal server -> `message: "failed to update role", error: "Internal Error"`
+// @Tags kelas
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param ta_id query dto.TahunAkademikIDQuery  true "tahun akademik ID"
+// @Param request body dto.SemesterUpdateRequest true "New Semester Request"
+// @Success      200      {object}  utils.Response[any,any]
+// @Failure      400      {object}  swagger.ErrUpdateKelasFailed
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Failure      500      {object}  swagger.ErrUpdateKelasInternalServer
+// @Router /api/kelas/semester [put]
+func (c *kelasController) UpdateSemesterByTahunAkademikID(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+
+	var query dto.TahunAkademikIDQuery
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KELAS, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	var req dto.SemesterUpdateRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KELAS, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	if err := c.kelasService.UpdateSemesterByTahunAkademikID(ctx.Request.Context(), query.TahunAkademikID, req.NewSemester); err != nil {
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_UPDATE_KELAS, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_UPDATE_KELAS, any(nil), path)
+	ctx.JSON(http.StatusOK, res)
 }
 
 // CreateKelas godoc
@@ -323,3 +379,39 @@ func (c *kelasController) GetKelasByProdiName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
+// GetAllKelas godoc
+// @Summary      Get All Kelas (Paginated)
+// @Description  Mengambil semua daftar kelas dengan pagination (10 per halaman).
+// @Description
+// @Description  **Akses:** Semua user yang sudah login.
+// @Tags         kelas
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        page  query  int  false  "Halaman (default 1)"  example(1)
+// @Success      200   {object}  utils.Response[utils.PaginatedData[[]dto.KelasResponse],any]
+// @Failure      401   {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      500   {object}  swagger.ErrGetKelasInternalServer
+// @Router       /api/kelas [get]
+func (c *kelasController) GetAllKelas(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+
+	var pageQuery utils.PaginationQuery
+	if err := ctx.ShouldBindQuery(&pageQuery); err != nil || pageQuery.Page <= 0 {
+		pageQuery.Page = 1
+	}
+
+	data, total, err := c.kelasService.GetAllKelas(ctx.Request.Context(), pageQuery.Page)
+	if err != nil {
+		status := http.StatusBadRequest
+		if errors.Is(err, constants.ErrInternalErr) {
+			status = http.StatusInternalServerError
+		}
+		res := utils.BuildResponseFailed(dto.MESSAGE_FAILED_GET_KELAS, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(status, res)
+		return
+	}
+
+	paginated := utils.BuildPaginatedResponse(data, pageQuery.Page, total)
+	res := utils.BuildResponseSuccess(dto.MESSAGE_SUCCESS_GET_KELAS, paginated, path)
+	ctx.JSON(http.StatusOK, res)
+}

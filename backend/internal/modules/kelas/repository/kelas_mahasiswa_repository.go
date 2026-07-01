@@ -11,7 +11,7 @@ import (
 
 type (
 	KelasMahasiswaRepository interface {
-		Create(ctx context.Context, tx *gorm.DB, entity entities.KelasMahasiswa) error
+		Create(ctx context.Context, tx *gorm.DB, entitys []entities.KelasMahasiswa) error
 		Delete(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID, kelasId uuid.UUID) error
 		GetAllKelasMahasiswa(ctx context.Context, tx *gorm.DB, mahasiswaId uuid.UUID) ([]entities.KelasMahasiswa, error)
 		GetMahasiswaByKelasId(ctx context.Context, tx *gorm.DB, kelasId uuid.UUID) ([]entities.KelasMahasiswa, error)
@@ -28,12 +28,12 @@ func NewKelasMahasiswaRepository(db *gorm.DB) KelasMahasiswaRepository {
 	return &kelasMahasiswaRepository{db: db}
 }
 
-func (k *kelasMahasiswaRepository) Create(ctx context.Context, tx *gorm.DB, entity entities.KelasMahasiswa) error {
+func (k *kelasMahasiswaRepository) Create(ctx context.Context, tx *gorm.DB, entitys []entities.KelasMahasiswa) error {
 	if tx == nil {
 		tx = k.db
 	}
 
-	if err := tx.WithContext(ctx).Create(&entity).Error; err != nil {
+	if err := tx.WithContext(ctx).Create(&entitys).Error; err != nil {
 		return err
 	}
 	return nil

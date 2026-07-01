@@ -58,7 +58,7 @@ func NewPengampuController(injector do.Injector, db *gorm.DB, pengampuService se
 // @Produce      json
 // @Security     ApiKeyAuth
 // @Param        request  body      swagger.CreatePengampuRequest  true  "Payload Create Pengampu"
-// @Success      201      {object}  utils.Response[any, any]
+// @Success      201      {object}  utils.Response[dto.PengampuResponse, any]
 // @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
 // @Failure      403      {object}  swagger.ErrForbiddenAccess
 // @Failure      500      {object}  swagger.ErrCreateRoleInternalServer
@@ -73,7 +73,8 @@ func (c *pengampuController) CreatePengampu(ctx *gin.Context) {
 		return
 	}
 
-	if err := c.pengampuService.CreatePengampu(ctx.Request.Context(), req); err != nil {
+	data, err := c.pengampuService.CreatePengampu(ctx.Request.Context(), req)
+	if err != nil {
 		status := http.StatusBadRequest
 		if errors.Is(err, constants.ErrInternalErr) {
 			status = http.StatusInternalServerError
@@ -83,7 +84,7 @@ func (c *pengampuController) CreatePengampu(ctx *gin.Context) {
 		return
 	}
 
-	res := utils.BuildResponseSuccess(dto.SUCCESS_CREATE_PENGAMPU, any(nil), path)
+	res := utils.BuildResponseSuccess(dto.SUCCESS_CREATE_PENGAMPU, data, path)
 	ctx.JSON(http.StatusCreated, res)
 }
 

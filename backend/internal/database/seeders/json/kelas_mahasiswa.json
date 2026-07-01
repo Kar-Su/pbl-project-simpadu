@@ -1,82 +1,602 @@
 [
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339648cc-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d7e"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "33987deb-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d7e8f"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "33989796-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d7e8f9a"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "33989f5e-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3398a605-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "6f7a8b9c-0d1e-2f3a-4b5c-6d7e8f9a0b1c"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3398ae0f-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3398cc44-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3398d4cf-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "9c0d1e2f-3a4b-5c6d-7e8f-9a0b1c2d3e4f"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3398df08-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja1",
-    "mahasiswa_id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e4f5a"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3398e8c9-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "e1f2a3b4-c5d6-4e7f-8a9b-0c1d2e3f4a5b"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "33991425-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "33996dae-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "a3b4c5d6-e7f8-4a9b-0c1d-2e3f4a5b6c7d"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3399b3ae-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "b4c5d6e7-f8a9-4b0c-1d2e-3f4a5b6c7d8e"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "3399f8a8-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "c5d6e7f8-a9b0-4c1d-2e3f-4a5b6c7d8e9f"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339a0882-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "d6e7f8a9-b0c1-4d2e-3f4a-5b6c7d8e9f0a"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339a379b-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "e7f8a9b0-c1d2-4e3f-4a5b-6c7d8e9f0a1b"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339a425c-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "f8a9b0c1-d2e3-4f4a-5b6c-7d8e9f0a1b2c"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339a56b0-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "a9b0c1d2-e3f4-4a5b-6c7d-8e9f0a1b2c3d"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339a66a5-608d-11f1-8fad-e6bab20372e0"
   },
   {
-    "kelas_name": "inidummyaja2",
-    "mahasiswa_id": "b0c1d2e3-f4a5-4b6c-7d8e-9f0a1b2c3d4e"
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339a7e54-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339b46c0-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339bbd15-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339ccb13-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339d4da8-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339da2c4-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339dc784-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339de7d8-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339def22-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339df47d-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339e486a-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339e534b-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339e5a28-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339e605c-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339ebde8-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339ef9b3-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339f0544-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339f0b04-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339f12cc-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339f1907-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "339f1ed2-608d-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3366196-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368038-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368247-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336834f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368434-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c33685ae-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368cd5-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368dcf-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368e96-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3368f6d-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336905c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369128-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c33691df-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c33693ef-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c33694bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369579-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369637-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369701-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c33697bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336987f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369964-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369a2f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369aea-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369c8b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c3369d61-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a0a2-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a15c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a222-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a2d8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a38b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a44c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a50b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a5d2-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a79f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "TI-A",
+    "mahasiswa_id": "c336a863-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336a924-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336a9e4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336ab65-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336ac32-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336acfe-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336ade5-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336aea5-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336af66-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336b031-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336b0f3-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336b1bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336b277-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336b33c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336cc05-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336ccd7-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336ce3a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336cf94-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336d034-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336d0d8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336d17e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336d20f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336d2ac-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336d344-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e33d-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e40c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e4bb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e558-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e6cb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e769-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e800-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e89f-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336e946-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336eab2-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336eb5e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336ebf9-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336eea6-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336f09c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336f2b4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336f479-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336f939-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336faed-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336fc90-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c336fe5e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c337000b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c337e84a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c337f173-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c337f374-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c337f4c6-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c337f5fb-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33807fc-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380a6b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380b4e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380c1a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380cf8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380dc3-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380e85-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380f3b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3380ff0-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c338109c-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381149-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33811fc-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33812b1-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381420-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33814e8-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33815ad-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c338166b-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381711-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33817c3-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c338186a-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c338190d-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c33819b4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381a48-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381ae4-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381b7e-66d0-11f1-8fad-e6bab20372e0"
+  },
+  {
+    "kelas_name": "SIKC-A",
+    "mahasiswa_id": "c3381cbc-66d0-11f1-8fad-e6bab20372e0"
   }
 ]

@@ -536,6 +536,50 @@ const docTemplate = `{
             }
         },
         "/api/kelas": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil semua daftar kelas dengan pagination (10 per halaman).\n\n**Akses:** Semua user yang sudah login.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Get All Kelas (Paginated)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -662,6 +706,76 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrGetKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/kelas/semester": {
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengupdate semester kelas yang sudah ada\n\n**Akses:** Admin Akademik\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter tidak valid -\u003e ` + "`" + `message: \"failed to validate parameter\", error: \"Key: 'param' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Body tidak valid / field wajib kosong -\u003e ` + "`" + `message: \"failed to get request\", error: \"Key: 'Kelas' Error:...\"` + "`" + `\n- ` + "`" + `400` + "`" + ` kelas dengan id tersebut tidak ditemukan -\u003e ` + "`" + `message: \"failed to update kelas\", error: \"kelas not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` role user tidak memiliki akses -\u003e ` + "`" + `message: \"role anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `\n- ` + "`" + `500` + "`" + ` Kesalahan internal server -\u003e ` + "`" + `message: \"failed to update role\", error: \"Internal Error\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "kelas"
+                ],
+                "summary": "Update Semester",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 20241,
+                        "name": "ta_id",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "description": "New Semester Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUpdateKelasInternalServer"
                         }
                     }
                 }
@@ -1041,6 +1155,117 @@ const docTemplate = `{
                         "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrDeleteKelasInternalServer"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/khs": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil daftar KHS dengan pagination (10 per halaman).\nLogged in user.\n\n**Akses:** Semua user yang sudah login (Authenticated User).\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Parameter URI tidak valid -\u003e ` + "`" + `message: \"bad request\", error: \"Key: 'KhsId' Error:...\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "khs"
+                ],
+                "summary": "Get khs (Paginated)",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Semester",
+                        "name": "semester",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "example": "\"Teknik Informatika\"",
+                        "description": "Nama Prodi",
+                        "name": "prodi_name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "example": 1,
+                        "description": "Halaman (default 1, 10 per halaman)",
+                        "name": "page",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/khs/nilai": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menambahkan nilai baru ke sistem\n\n**Akses:** Admin Akademik, Dosen",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "khs"
+                ],
+                "summary": "Create Nilai Baru",
+                "parameters": [
+                    {
+                        "description": "nilai Request",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_modules_khs_dto.CreateKhsRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrCreateKurikulumFailed"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
                         }
                     }
                 }
@@ -2200,6 +2425,55 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/presensi/count": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Menghitung jumlah presensi pegawai berdasarkan tipe presensi\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Tidak ada presensi dengan id tersebut -\u003e ` + "`" + `message: \"failed to count presensi\", error: \"presensi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Count Presensi",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "example": "mahasiswa",
+                        "name": "tipe",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            }
+        },
         "/api/presensi/mahasiswa": {
             "get": {
                 "security": [
@@ -2527,6 +2801,46 @@ const docTemplate = `{
                         "description": "Created",
                         "schema": {
                             "$ref": "#/definitions/web-hosting_internal_package_utils.Response-any-any"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrUnauthorizedInvalidToken"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_swagger.ErrForbiddenAccess"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/presensi/pegawai/me": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Mengambil presensi pegawai diri sendiri\n\n**Akses:** Logged User\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `400` + "`" + ` Tidak ada presensi dengan id tersebut -\u003e ` + "`" + `message: \"failed to get presensi\", error: \"presensi not found\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `403` + "`" + ` user tidak memiliki akses -\u003e ` + "`" + `message: \"kelas anda tidak diizinkan\", error: \"Forbidden\"` + "`" + `",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "presensi"
+                ],
+                "summary": "Get Presensi Pegawai diri sendiri",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any"
                         }
                     },
                     "401": {
@@ -4168,6 +4482,60 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/api/workers/presensi/start": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "**Akses:** Admin Pegawai.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `400` + "`" + ` Worker presensi already on\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Otomatis Start Presensi pegawai",
+                "responses": {}
+            }
+        },
+        "/api/workers/presensi/status": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "**Akses:** Admin Pegawai.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Get Status Presensi pegawai",
+                "responses": {}
+            }
+        },
+        "/api/workers/presensi/stop": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "**Akses:** Admin Pegawai.\n\n**Error yang mungkin terjadi:**\n- ` + "`" + `401` + "`" + ` Authorization header tidak ada -\u003e ` + "`" + `message: \"failed_auth\", error: \"Authorization header missing\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Format header salah (bukan \"Bearer ...\") -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid authentication header\"` + "`" + `\n- ` + "`" + `401` + "`" + ` Token JWT tidak valid atau kedaluwarsa -\u003e ` + "`" + `message: \"failed_auth\", error: \"invalid token\"` + "`" + `\n- ` + "`" + `400` + "`" + ` message\": \"Worker presensi already off\"` + "`" + `",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "workers"
+                ],
+                "summary": "Otomatis Stop Presensi pegawai",
+                "responses": {}
+            }
         }
     },
     "definitions": {
@@ -4516,6 +4884,18 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_modules_kelas_dto.SemesterUpdateRequest": {
+            "type": "object",
+            "required": [
+                "new_semester"
+            ],
+            "properties": {
+                "new_semester": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
         "web-hosting_internal_modules_kelas_dto.TahunAkademikResponse": {
             "type": "object",
             "properties": {
@@ -4533,6 +4913,85 @@ const docTemplate = `{
                 },
                 "tipe_semester": {
                     "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_khs_dto.CreateKhsRequest": {
+            "type": "object",
+            "required": [
+                "mahasiswa_id",
+                "pengampu_id",
+                "total_nilai"
+            ],
+            "properties": {
+                "mahasiswa_id": {
+                    "type": "string",
+                    "example": "miaco-3525sdvs-3vfdv"
+                },
+                "pengampu_id": {
+                    "type": "string",
+                    "example": "miaco-3525sdvs-3vfdv"
+                },
+                "total_nilai": {
+                    "type": "number",
+                    "maximum": 100,
+                    "minimum": 0,
+                    "example": 4
+                }
+            }
+        },
+        "web-hosting_internal_modules_khs_dto.KHSResponse": {
+            "type": "object",
+            "properties": {
+                "ipk": {
+                    "type": "number"
+                },
+                "ips": {
+                    "type": "number"
+                },
+                "kelas_name": {
+                    "type": "string"
+                },
+                "kurikulum_name": {
+                    "type": "string"
+                },
+                "mahasiswa_name": {
+                    "type": "string"
+                },
+                "nilai": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_khs_dto.NilaiResponse"
+                    }
+                },
+                "prodi_name": {
+                    "type": "string"
+                },
+                "semester": {
+                    "type": "integer"
+                },
+                "tahun_akademik": {
+                    "type": "integer"
+                }
+            }
+        },
+        "web-hosting_internal_modules_khs_dto.NilaiResponse": {
+            "type": "object",
+            "properties": {
+                "grade": {
+                    "type": "string"
+                },
+                "kode_mk": {
+                    "type": "string"
+                },
+                "nama_mk": {
+                    "type": "string"
+                },
+                "nilai": {
+                    "type": "number"
+                },
+                "sks": {
+                    "type": "integer"
                 }
             }
         },
@@ -4842,6 +5301,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "sesi_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "status": {
                     "type": "string"
                 }
             }
@@ -6865,13 +7335,11 @@ const docTemplate = `{
                 "mahasiswa_id"
             ],
             "properties": {
-                "kelas_id": {
-                    "type": "string",
-                    "example": "01965a1d-7777-7777-7777-777777777777"
-                },
                 "mahasiswa_id": {
-                    "type": "string",
-                    "example": "01965a1d-7777-7777-7777-777777777777"
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },
@@ -7080,6 +7548,20 @@ const docTemplate = `{
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/web-hosting_internal_modules_kelas_dto.KelasResponse"
+                    }
+                },
+                "pagination": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginationMeta"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/web-hosting_internal_modules_khs_dto.KHSResponse"
                     }
                 },
                 "pagination": {
@@ -7526,6 +8008,26 @@ const docTemplate = `{
                 }
             }
         },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_presensi_dto_PresensiPegawaiMeResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_modules_presensi_dto.PresensiPegawaiMeResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "web-hosting_internal_package_utils.Response-web-hosting_internal_modules_prodi_dto_ProdiResponse-any": {
             "type": "object",
             "properties": {
@@ -7591,6 +8093,26 @@ const docTemplate = `{
             "properties": {
                 "data": {
                     "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_kelas_dto_KelasResponse"
+                },
+                "error": {},
+                "message": {
+                    "type": "string",
+                    "example": "Operation successful"
+                },
+                "path": {
+                    "type": "string",
+                    "example": "/api/resource"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "web-hosting_internal_package_utils.Response-web-hosting_internal_package_utils_PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse-any": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "$ref": "#/definitions/web-hosting_internal_package_utils.PaginatedData-array_web-hosting_internal_modules_khs_dto_KHSResponse"
                 },
                 "error": {},
                 "message": {

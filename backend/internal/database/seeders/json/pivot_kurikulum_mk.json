@@ -1,32 +1,110 @@
 [
   {
-    "kurikulum_kode": "mbg-01",
-    "mk_kode": "mk-dp-001",
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "C0320102",
     "semester": 1,
-    "wajib": true
-  },
-  {
-    "kurikulum_kode": "mbg-01",
-    "mk_kode": "mk-fd-001",
-    "semester": 1,
-    "wajib": true
-  },
-  {
-    "kurikulum_kode": "mbg-01",
-    "mk_kode": "mk-dsa-001",
-    "semester": 2,
-    "wajib": true
-  },
-  {
-    "kurikulum_kode": "mbg-02",
-    "mk_kode": "mk-iot-001",
-    "semester": 3,
     "wajib": false
   },
   {
-    "kurikulum_kode": "mbg-02",
-    "mk_kode": "mk-dsa-001",
-    "semester": 2,
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "C0320101",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "C03240104",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "MKWI2001",
+    "semester": 1,
     "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "MKWU2002",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "C03240103",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "MKWI2003",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "MKWU2004",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-TI",
+    "mk_kode": "C03240105",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "C0320102",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "C0320101",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "C03240104",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "MKWI2001",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "MKWU2002",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "C03240103",
+    "semester": 1,
+    "wajib": false
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "MKWI2003",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "MKWU2004",
+    "semester": 1,
+    "wajib": true
+  },
+  {
+    "kurikulum_kode": "kur-mer-SIKC",
+    "mk_kode": "C03240105",
+    "semester": 1,
+    "wajib": false
   }
 ]

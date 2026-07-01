@@ -1,5 +1,8 @@
-<<<<<<< HEAD
 # pbl-project-simpadu
+Project Micro Service yang berkolaborasi dengan tim lain, service ini berfokus kepada:
+- Design system login
+- Super Admin
+- Master Data (Admin Akademik)
 
 Repository proyek PBL (Project Based Learning) - Sistem Informasi Manajemen Padu (SIMPADU).
 Berikut adalah panduan untuk menjalankan proyek ini di lingkungan lokal menggunakan Docker.

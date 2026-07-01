@@ -7,6 +7,7 @@ import (
 	"web-hosting/internal/modules/auth"
 	"web-hosting/internal/modules/jurusan"
 	"web-hosting/internal/modules/kelas"
+	"web-hosting/internal/modules/khs"
 	"web-hosting/internal/modules/kurikulum"
 	"web-hosting/internal/modules/mk"
 	"web-hosting/internal/modules/pengampu"
@@ -14,6 +15,7 @@ import (
 	"web-hosting/internal/modules/prodi"
 	"web-hosting/internal/modules/role"
 	"web-hosting/internal/modules/user"
+	workerAPI "web-hosting/internal/modules/workers"
 	"web-hosting/internal/package/env"
 	"web-hosting/internal/providers"
 	"web-hosting/internal/workers"
@@ -108,9 +110,14 @@ func main() {
 	kelas.RegisterRoutes(server, injector)
 	pengampu.RegisterRoutes(server, injector)
 	presensi.RegisterRoutes(server, injector)
+	workerAPI.RegisterRoutes(server, injector)
+	khs.RegisterRoutes(server, injector)
+
+	totalRoutes := len(server.Routes())
+	log.Println("Total routes:", totalRoutes)
 
 	worker := do.MustInvoke[workers.Schedule](injector)
-	worker.StartSchedule()
+	go worker.StartAll()
 
 	run(server)
 }

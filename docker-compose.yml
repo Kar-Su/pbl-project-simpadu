@@ -21,7 +21,8 @@ services:
       db:
         condition: service_healthy
     networks:
-      - pbl
+      pbl:
+        ipv4_address: 172.16.0.5
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.golang-service.entrypoints=web"
@@ -114,3 +115,7 @@ services:
 networks:
   pbl:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.0.0/16
+          ip_range: 172.16.1.0/24

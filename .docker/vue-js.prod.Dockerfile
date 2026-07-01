@@ -24,7 +24,7 @@ FROM nginx:1.25-alpine AS production-stage
 
 # Menyalin hasil build dari stage 1 ke direktori root Nginx
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-
+COPY ./.docker/nginx/default.conf /etc/nginx/conf.d/default.conf
 # Expose port HTTP default internal
 EXPOSE 80
 

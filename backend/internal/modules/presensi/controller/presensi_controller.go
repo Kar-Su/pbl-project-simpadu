@@ -2,10 +2,12 @@ package controller
 
 import (
 	"net/http"
+	"slices"
 	"web-hosting/internal/modules/presensi/dto"
 	"web-hosting/internal/modules/presensi/service"
 	"web-hosting/internal/modules/presensi/validation"
 	userService "web-hosting/internal/modules/user/service"
+	"web-hosting/internal/package/constants"
 	_ "web-hosting/internal/package/swagger"
 	"web-hosting/internal/package/types"
 	"web-hosting/internal/package/utils"
@@ -25,6 +27,8 @@ type (
 		UpdatePresensiByQR(ctx *gin.Context)
 		GetPresensiMahasiswa(ctx *gin.Context)
 		GetPresensiPegawai(ctx *gin.Context)
+		CountPresensi(ctx *gin.Context)
+		GetStatusPresensiPegawaiMe(ctx *gin.Context)
 	}
 	presensiController struct {
 		db                 *gorm.DB
@@ -384,6 +388,99 @@ func (c *presensiController) GetPresensiPegawai(ctx *gin.Context) {
 	}
 
 	data, err := c.presensiService.GetPresensi(ctx.Request.Context(), tipePresensi, filter)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.SUCCESS_GET_PRESENSI, data, path)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// CountPresensi godoc
+// @Summary Count Presensi
+// @Description Menghitung jumlah presensi pegawai berdasarkan tipe presensi
+// @Description
+// @Description  **Akses:** Logged User
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Tidak ada presensi dengan id tersebut -> `message: "failed to count presensi", error: "presensi not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+// @Tags presensi
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Param tipe query dto.TipePresensiQuery true "Tipe presensi (mahasiswa/pegawai)" example(mahasiswa)
+// @Success      200      {object}  utils.Response[any,any]
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Router /api/presensi/count [get]
+func (c *presensiController) CountPresensi(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+
+	var query dto.TipePresensiQuery
+	if err := ctx.ShouldBindQuery(&query); err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_COUNT_PRESENSI, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	count, err := c.presensiService.CountPresensi(ctx.Request.Context(), query.Tipe)
+	if err != nil {
+		res := utils.BuildResponseFailed(dto.FAILED_COUNT_PRESENSI, err.Error(), nil, path)
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)
+		return
+	}
+
+	res := utils.BuildResponseSuccess(dto.SUCCESS_COUNT_PRESENSI, count, path)
+	ctx.JSON(http.StatusOK, res)
+}
+
+// GetPresensiPegawaiStatusMe godoc
+// @Summary Get Presensi Pegawai diri sendiri
+// @Description Mengambil presensi pegawai diri sendiri
+// @Description
+// @Description  **Akses:** Logged User
+// @Description
+// @Description  **Error yang mungkin terjadi:**
+// @Description  - `400` Tidak ada presensi dengan id tersebut -> `message: "failed to get presensi", error: "presensi not found"`
+// @Description  - `401` Authorization header tidak ada -> `message: "failed_auth", error: "Authorization header missing"`
+// @Description  - `401` Format header salah (bukan "Bearer ...") -> `message: "failed_auth", error: "invalid authentication header"`
+// @Description  - `401` Token JWT tidak valid atau kedaluwarsa -> `message: "failed_auth", error: "invalid token"`
+// @Description  - `403` user tidak memiliki akses -> `message: "kelas anda tidak diizinkan", error: "Forbidden"`
+// @Tags presensi
+// @Accept json
+// @Produce json
+// @Security ApiKeyAuth
+// @Success      200      {object}  utils.Response[dto.PresensiPegawaiMeResponse,any]
+// @Failure      401      {object}  swagger.ErrUnauthorizedInvalidToken
+// @Failure      403      {object}  swagger.ErrForbiddenAccess
+// @Router /api/presensi/pegawai/me [get]
+func (c *presensiController) GetStatusPresensiPegawaiMe(ctx *gin.Context) {
+	path := ctx.Request.URL.Path
+	excludedRoles := []string{
+		constants.ROLE_MAHASISWA,
+		constants.ROLE_SUPER_ADMIN,
+		constants.ROLE_ADMIN_AKADEMIK,
+		constants.ROLE_ADMIN_PEGAWAI,
+		constants.ROLE_ADMIN_MAHASISWA,
+		constants.ROLE_ADMIN_KEUANGAN,
+	}
+
+	role := ctx.MustGet("role_name").(string)
+
+	if slices.Contains(excludedRoles, role) {
+		res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, "role not allowed", nil, path)
+		ctx.AbortWithStatusJSON(http.StatusForbidden, res)
+		return
+	}
+
+	detailID := ctx.MustGet("detail_id").(uuid.UUID)
+	data, err := c.presensiService.GetStatusPresensiPegawaiMe(ctx.Request.Context(), c.db, detailID)
 	if err != nil {
 		res := utils.BuildResponseFailed(dto.FAILED_GET_PRESENSI, err.Error(), nil, path)
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, res)

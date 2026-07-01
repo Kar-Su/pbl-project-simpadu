@@ -15,6 +15,9 @@ import (
 	kelasController "web-hosting/internal/modules/kelas/controller"
 	kelasRepository "web-hosting/internal/modules/kelas/repository"
 	kelasService "web-hosting/internal/modules/kelas/service"
+	khsController "web-hosting/internal/modules/khs/controller"
+	khsRepo "web-hosting/internal/modules/khs/repository"
+	khsService "web-hosting/internal/modules/khs/service"
 	kurikulumController "web-hosting/internal/modules/kurikulum/controller"
 	kurikulumRepo "web-hosting/internal/modules/kurikulum/repository"
 	kurikulumService "web-hosting/internal/modules/kurikulum/service"
@@ -36,6 +39,7 @@ import (
 	userController "web-hosting/internal/modules/user/controller"
 	userRepo "web-hosting/internal/modules/user/repository"
 	userService "web-hosting/internal/modules/user/service"
+	workerController "web-hosting/internal/modules/workers/controller"
 
 	"web-hosting/internal/package/constants"
 	"web-hosting/internal/workers"
@@ -51,19 +55,21 @@ func InitDatabases(injector do.Injector) {
 }
 
 func InitTestDatabases(injector do.Injector) {
-	do.ProvideNamed[*gorm.DB](injector, "db_test", func(i do.Injector) (*gorm.DB, error) {
+	do.ProvideNamed[*gorm.DB](injector, constants.DB_TEST, func(i do.Injector) (*gorm.DB, error) {
 		return configs.SetUpDatabaseTestConnection(), nil
 	})
 }
 
 func RegisterProviders(injector do.Injector) {
-	// InitDatabases(injector)
-	InitTestDatabases(injector)
 	do.ProvideNamed[authService.JwtService](injector, constants.JWTService, func(i do.Injector) (authService.JwtService, error) {
 		return authService.NewJwtService(), nil
 	})
 
-	db := do.MustInvokeNamed[*gorm.DB](injector, "db_test")
+	InitDatabases(injector)
+	db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB)
+	InitTestDatabases(injector)
+	// db := do.MustInvokeNamed[*gorm.DB](injector, constants.DB_TEST)
+
 	db.SetupJoinTable(&entities.Kurikulum{}, "MataKuliah", &entities.KurikulumMK{})
 	db.SetupJoinTable(&entities.Kelas{}, "Mahasiswa", &entities.KelasMahasiswa{})
 
@@ -82,6 +88,7 @@ func RegisterProviders(injector do.Injector) {
 	kelasPivotRepo := kelasRepository.NewKelasMahasiswaRepository(db)
 	pengampuRepo := pengampuRepo.NewPengampuRepository(db)
 	presensiRepo := presensiRepo.NewPresensiRepository(db)
+	khsRepo := khsRepo.NewKhsRepository(db)
 
 	roleService := roleService.NewRoleService(roleRepo, db)
 	userService := userService.NewUserService(userRepo, roleService, db)
@@ -91,6 +98,7 @@ func RegisterProviders(injector do.Injector) {
 	mkService := mkService.NewMkService(mkRepo, db)
 	akademikService := akademikService.NewTahunAkademikService(akademikRepo, db)
 	kService := kurikulumService.NewKurikulumService(kRepo, prodiService, db)
+	khsService := khsService.NewKhsService(khsRepo, db)
 	kPivotService := kurikulumService.NewKurikulumMKService(db, kRepo, kPivotRepo, mkRepo)
 	kelasServiceVar := kelasService.NewKelasService(db, kelasRepo, akademikRepo, prodiRepo, kRepo)
 	kelasPivotService := kelasService.NewKelasMahasiswaService(db, userRepo, kelasRepo, kelasPivotRepo)
@@ -103,7 +111,7 @@ func RegisterProviders(injector do.Injector) {
 
 	do.Provide(injector, func(i do.Injector) (workers.Schedule, error) {
 		authService := do.MustInvoke[authService.AuthService](i)
-		return workers.NewSchedule(i, authService), nil
+		return workers.NewSchedule(i, authService, presensiService), nil
 	})
 
 	do.Provide(injector, func(i do.Injector) (presensiController.PresensiController, error) {
@@ -151,5 +159,11 @@ func RegisterProviders(injector do.Injector) {
 	})
 	do.Provide(injector, func(i do.Injector) (pengampuController.PengampuController, error) {
 		return pengampuController.NewPengampuController(i, db, pengampuService), nil
+	})
+	do.Provide(injector, func(i do.Injector) (workerController.WorkerController, error) {
+		return workerController.NewWorkerController(i), nil
+	})
+	do.Provide(injector, func(i do.Injector) (khsController.KHSController, error) {
+		return khsController.NewKHSController(i, db, khsService), nil
 	})
 }

@@ -27,7 +27,7 @@ var (
 type (
 	AkademikResponse struct {
 		ID           uint              `json:"id" example:"20241"`
-		TipeSemester string            `json:"tipee_semester" example:"semester"`
+		TipeSemester string            `json:"tipe_semester" example:"semester"`
 		TahunAwal    karTypes.DateOnly `json:"tahun_awal" example:"2024-01-01"`
 		TahunAkhir   karTypes.DateOnly `json:"tahun_akhir" example:"2025-01-01"`
 		Status       string            `json:"status" example:"aktif"`

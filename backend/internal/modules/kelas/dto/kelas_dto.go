@@ -2,6 +2,8 @@ package dto
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 	"web-hosting/internal/database/entities"
 	"web-hosting/internal/package/types"
 
@@ -87,7 +89,7 @@ type (
 func ToKelasResponse(entity entities.Kelas) KelasResponse {
 	res := KelasResponse{
 		ID:       entity.ID,
-		Name:     entity.Name,
+		Name:     strings.Replace(entity.Name, "-", fmt.Sprintf("-%d", entity.Semester), 1),
 		Semester: entity.Semester,
 	}
 
@@ -161,6 +163,9 @@ type (
 		TahunAkademikID uint   `json:"tahun_akademik_id" binding:"omitempty" example:"20241"`
 		KurikulumKode   string `json:"kurikulum_kode" binding:"omitempty,max=255" example:"mk-hutao"`
 	}
+	SemesterUpdateRequest struct {
+		NewSemester uint `json:"new_semester" binding:"required,gt=0" example:"5"`
+	}
 
 	ProdiNameURI struct {
 		Name string `uri:"prodi_name" binding:"required,max=255"`
@@ -168,5 +173,9 @@ type (
 
 	KelasIDURI struct {
 		KelasID string `uri:"kelas_id" binding:"required"`
+	}
+
+	TahunAkademikIDQuery struct {
+		TahunAkademikID uint `form:"ta_id" json:"ta_id" binding:"required" example:"20241"`
 	}
 )

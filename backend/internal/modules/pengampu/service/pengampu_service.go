@@ -15,7 +15,7 @@ import (
 
 type (
 	PengampuService interface {
-		CreatePengampu(ctx context.Context, req dto.CreatePengampuRequest) error
+		CreatePengampu(ctx context.Context, req dto.CreatePengampuRequest) (dto.PengampuResponse, error)
 		UpdatePengampuByID(ctx context.Context, id uuid.UUID, req dto.UpdatePengampuRequest) (dto.PengampuResponse, error)
 		DeletePengampuByID(ctx context.Context, id uuid.UUID) error
 		GetPengampuByID(ctx context.Context, id uuid.UUID) (dto.PengampuResponse, error)
@@ -36,22 +36,19 @@ func NewPengampuService(db *gorm.DB, pengampuRepo repository.PengampuRepository)
 	}
 }
 
-func (s *pengampuService) CreatePengampu(ctx context.Context, req dto.CreatePengampuRequest) error {
+func (s *pengampuService) CreatePengampu(ctx context.Context, req dto.CreatePengampuRequest) (dto.PengampuResponse, error) {
 	entity := entities.Pengampu{
 		KelasID: req.KelasID,
 		MKKode:  req.MKKode,
 		DosenID: req.DosenID,
 	}
 
-	if err := s.PengampuRepo.Create(ctx, s.db, entity); err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return dto.ErrDuplicatedKey
-		}
-		log.Printf("Internal Error: %v", err)
-		return constants.ErrInternalErr
+	newEntity, err := s.PengampuRepo.Create(ctx, s.db, entity)
+	if err != nil {
+		return dto.PengampuResponse{}, err
 	}
 
-	return nil
+	return dto.ToPengampuResponse(newEntity), nil
 }
 
 func (s *pengampuService) UpdatePengampuByID(ctx context.Context, id uuid.UUID, req dto.UpdatePengampuRequest) (dto.PengampuResponse, error) {

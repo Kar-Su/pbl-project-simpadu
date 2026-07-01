@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 	"web-hosting/internal/database/entities"
@@ -23,6 +24,8 @@ type (
 		GetPresensiMahasiswa(ctx context.Context, tx *gorm.DB, presensiID uuid.UUID) (entities.Presensi, error)
 		GetPresensiPegawai(ctx context.Context, tx *gorm.DB, filter any) (entities.Presensi, error)
 		GetAllPresensiPegawai(ctx context.Context, tx *gorm.DB, offset, limit int) ([]entities.Presensi, int64, error)
+		CountPresensi(ctx context.Context, tx *gorm.DB, tipe *string) (int64, error)
+		GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (*dto.PresensiPegawaiMeResponse, error)
 	}
 
 	presensiRepository struct {
@@ -155,7 +158,7 @@ func (r *presensiRepository) UpdatePresensi(ctx context.Context, tx *gorm.DB, re
 	switch v := req.(type) {
 	case dto.PresensiPegawaiUpdateRequest:
 		var entity entities.Presensi
-		if err := tx.WithContext(ctx).Select("id").Where("created_at = ?", v.Date).First(&entity).Error; err != nil {
+		if err := tx.WithContext(ctx).Select("id").Where("created_at = ? AND tipe = ?", v.Date, "pegawai").First(&entity).Error; err != nil {
 			return err
 		}
 		queryBatch := make([]entities.PresensiPegawai, len(v.Detail))
@@ -189,7 +192,8 @@ func (r *presensiRepository) UpdatePresensi(ctx context.Context, tx *gorm.DB, re
 		}).Create(&queryBatch).Error; err != nil {
 			return err
 		}
-
+	default:
+		return errors.New("invalid request type")
 	}
 	return nil
 }
@@ -218,9 +222,9 @@ func (r *presensiRepository) GetPresensiPegawai(ctx context.Context, tx *gorm.DB
 
 	switch v := filter.(type) {
 	case uuid.UUID:
-		query.Where("id = ?", v)
+		query = query.Where("id = ?", v)
 	case types.DateOnly:
-		query.Where("created_at = ?", v)
+		query = query.Where("created_at = ?", v)
 	default:
 		return entities.Presensi{}, fmt.Errorf("Filter by ID presensi or created_at")
 	}
@@ -251,4 +255,38 @@ func (r *presensiRepository) GetAllPresensiPegawai(ctx context.Context, tx *gorm
 	}
 
 	return presensi, total, nil
+}
+
+func (r *presensiRepository) CountPresensi(ctx context.Context, tx *gorm.DB, tipe *string) (int64, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var total int64
+	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).Where("tipe = ?", &tipe).Count(&total).Error; err != nil {
+		return 0, err
+	}
+
+	return total, nil
+}
+
+func (r *presensiRepository) GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (*dto.PresensiPegawaiMeResponse, error) {
+	if tx == nil {
+		tx = r.db
+	}
+
+	var data dto.PresensiPegawaiMeResponse
+
+	if err := tx.WithContext(ctx).Model(&entities.Presensi{}).
+		Select("presensi_pegawai.status, presensi.created_at").
+		Where("tipe = ?", "pegawai").
+		Joins("JOIN presensi_pegawai ON presensi_pegawai.presensi_id = presensi.id").
+		Where("presensi_pegawai.pegawai_id = ?", pegawaiID).
+		Order("presensi.created_at desc").
+		Row().
+		Scan(&data.Status, &data.CreatedAt); err != nil {
+		return nil, err
+	}
+
+	return &data, nil
 }

@@ -21,10 +21,12 @@ type (
 	KelasService interface {
 		CreateKelas(ctx context.Context, req dto.KelasCreateRequest) error
 		UpdateKelas(ctx context.Context, id uuid.UUID, req dto.KelasUpdateRequest) (dto.KelasResponse, error)
+		UpdateSemesterByTahunAkademikID(ctx context.Context, tahunAkademikID uint, semester uint) error
 		DeleteKelas(ctx context.Context, id uuid.UUID) error
 		GetKelasByID(ctx context.Context, id uuid.UUID) (dto.KelasResponse, error)
 		GetKelasByProdiName(ctx context.Context, prodiName string) ([]dto.KelasResponse, error)
 		GetKelasByProdiNamePaginated(ctx context.Context, prodiName string, page int) ([]dto.KelasResponse, int64, error)
+		GetAllKelas(ctx context.Context, page int) ([]dto.KelasResponse, int64, error)
 	}
 
 	kelasService struct {
@@ -44,6 +46,10 @@ func NewKelasService(db *gorm.DB, kelasRepo kelasRepo.KelasRepository, akademikR
 		prodiRepo:     prodiRepo,
 		kurikulumRepo: kurikulumRepo,
 	}
+}
+
+func (s *kelasService) UpdateSemesterByTahunAkademikID(ctx context.Context, tahunAkademikID uint, semester uint) error {
+	return s.kelasRepo.UpdateSemesterByTahunAkademikID(ctx, s.db, tahunAkademikID, semester)
 }
 
 func (s *kelasService) CreateKelas(ctx context.Context, req dto.KelasCreateRequest) error {
@@ -201,6 +207,21 @@ func (s *kelasService) GetKelasByProdiName(ctx context.Context, prodiName string
 		responses[i] = dto.ToKelasResponse(entity)
 	}
 	return responses, nil
+}
+
+func (s *kelasService) GetAllKelas(ctx context.Context, page int) ([]dto.KelasResponse, int64, error) {
+	offset := (page - 1) * 10
+	kelasEntities, total, err := s.kelasRepo.GetAll(ctx, s.db, offset, 10)
+	if err != nil {
+		log.Printf("Internal Error: %v", err)
+		return nil, 0, constants.ErrInternalErr
+	}
+
+	responses := make([]dto.KelasResponse, len(kelasEntities))
+	for i, entity := range kelasEntities {
+		responses[i] = dto.ToKelasResponse(entity)
+	}
+	return responses, total, nil
 }
 
 func (s *kelasService) GetKelasByProdiNamePaginated(ctx context.Context, prodiName string, page int) ([]dto.KelasResponse, int64, error) {

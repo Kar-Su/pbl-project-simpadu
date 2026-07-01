@@ -17,6 +17,8 @@ type (
 		UpdatePresensi(ctx context.Context, tipePresensi string, req any) error
 		GetPresensi(ctx context.Context, tipePresensi string, filter any) (any, error)
 		GetAllPresensiPaginated(ctx context.Context, tipePresensi string, filter any, page int) (any, int64, error)
+		CountPresensi(ctx context.Context, tipe string) (int64, error)
+		GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (*dto.PresensiPegawaiMeResponse, error)
 	}
 	presensiService struct {
 		db   *gorm.DB
@@ -102,4 +104,22 @@ func (s *presensiService) GetAllPresensiPaginated(ctx context.Context, tipePrese
 		return nil, 0, fmt.Errorf("invalid tipe presensi: %s", tipePresensi)
 	}
 
+}
+
+func (s *presensiService) CountPresensi(ctx context.Context, tipe string) (int64, error) {
+	tipe = helpers.NormalizeString(tipe)
+	switch tipe {
+	case "mahasiswa", "pegawai":
+		return s.repo.CountPresensi(ctx, s.db, &tipe)
+	default:
+		return 0, fmt.Errorf("invalid tipe presensi: %s", tipe)
+	}
+}
+
+func (s *presensiService) GetStatusPresensiPegawaiMe(ctx context.Context, tx *gorm.DB, pegawaiID uuid.UUID) (*dto.PresensiPegawaiMeResponse, error) {
+	data, err := s.repo.GetStatusPresensiPegawaiMe(ctx, tx, pegawaiID)
+	if err != nil {
+		return nil, err
+	}
+	return data, nil
 }

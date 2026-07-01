@@ -2,6 +2,8 @@ package dto
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 	"web-hosting/internal/database/entities"
 
 	"github.com/google/uuid"
@@ -40,7 +42,7 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 	if entity.Kelas.ID != uuid.Nil {
 		res.Kelas = &KelasResponseLess{
 			KelasID: entity.Kelas.ID,
-			Name:    entity.Kelas.Name,
+			Name:    strings.Replace(entity.Kelas.Name, "-", fmt.Sprintf("-%d", entity.Kelas.Semester), 1),
 		}
 	}
 
@@ -57,8 +59,7 @@ func ToKelasMahasiswaResponse(entity entities.KelasMahasiswa) KelasMahasiswaResp
 
 type (
 	KelasMahasiswaCreateRequest struct {
-		KelasID     uuid.UUID `json:"kelas_id"`
-		MahasiswaID uuid.UUID `json:"mahasiswa_id" binding:"required"`
+		MahasiswaID []uuid.UUID `json:"mahasiswa_id" binding:"required"`
 	}
 
 	KelasMahasiswaCreateByEmailRequest struct {
