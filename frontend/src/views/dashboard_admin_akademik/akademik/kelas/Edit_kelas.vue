@@ -1,4 +1,3 @@
-```vue
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue"
 import { useRoute, useRouter } from "vue-router"
@@ -38,6 +37,15 @@ const filteredProdiList = computed(() => {
         (item) =>
             String(item.jurusan?.id) === String(jurusan.value)
     )
+})
+
+// nama prodi yang sedang dipilih, dipakai untuk payload prodi_name
+const selectedProdiName = computed(() => {
+    const found = prodiList.value.find(
+        (item) => String(item.id) === String(prodi.value)
+    )
+
+    return found?.name ?? ""
 })
 
 const getTahunAkademik = async () => {
@@ -163,14 +171,20 @@ const getDetailKelas = async () => {
 }
 
 const simpanData = async () => {
+    if (!namaKelas.value || !selectedProdiName.value || !kurikulum.value || !tahunAkademik.value || !semester.value) {
+        alert("Mohon lengkapi semua data yang wajib diisi")
+        return
+    }
+
     try {
         saving.value = true
 
+        // payload disesuaikan dengan API: prodi dikirim sebagai prodi_name, bukan prodi_id
         const payload = {
             name: namaKelas.value,
-            prodi_id: prodi.value,
-            tahun_akademik_id: Number(tahunAkademik.value),
+            prodi_name: selectedProdiName.value,
             kurikulum_kode: kurikulum.value,
+            tahun_akademik_id: Number(tahunAkademik.value),
             semester: Number(semester.value),
         }
 
@@ -199,6 +213,10 @@ const simpanData = async () => {
     } finally {
         saving.value = false
     }
+}
+
+const kembali = () => {
+    router.push("/dashboard-admin/kelas")
 }
 
 watch(jurusan, () => {
@@ -364,10 +382,15 @@ onMounted(async () => {
 
                 </div>
 
-                <div class="mt-6">
+                <div class="mt-6 flex gap-3">
                     <button @click="simpanData" :disabled="saving"
-                        class="bg-[#243e90] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#1d3275]">
+                        class="bg-[#243e90] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#1d3275] disabled:opacity-60">
                         {{ saving ? "Menyimpan..." : "💾 Simpan" }}
+                    </button>
+
+                    <button @click="kembali" type="button"
+                        class="bg-white text-[#243e90] border border-[#243e90] px-6 py-2 rounded-lg font-semibold hover:bg-[#eef4fb]">
+                        ← Kembali
                     </button>
                 </div>
 
@@ -376,4 +399,3 @@ onMounted(async () => {
 
     </div>
 </template>
-```

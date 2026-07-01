@@ -2,7 +2,9 @@
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
 
+
 const router = useRouter()
+
 
 const BASE_URL = "https://be.karlearn.site"
 
@@ -67,7 +69,7 @@ const fetchKHS = async () => {
       {
         method: "GET",
         headers: {
-          accept: "application/json",
+          // Accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
       }

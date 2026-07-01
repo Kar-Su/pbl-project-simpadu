@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
+import konfirmasi_hapus from "../../../dashboard_super_admin/akademik/akun/konfirmasi_hapus.vue"
+
 
 const router = useRouter()
 
@@ -21,7 +23,8 @@ const getHeaders = (): Record<string, string> => ({
 const selectedJurusan = ref<string>("")
 const selectedProdi = ref<string>("")
 const selectedTahun = ref<string>("")
-
+const showDeleteModal = ref(false)
+const selectedKelas = ref<KelasItem | null>(null)
 // ─────────────────────────────────────────────
 // MASTER DATA INTERFACES
 // ─────────────────────────────────────────────
@@ -248,7 +251,45 @@ const handleEdit = (item: KelasItem): void => {
 }
 
 const handleDelete = (item: KelasItem): void => {
-  console.log("Delete:", getKelasId(item))
+  selectedKelas.value = item
+  showDeleteModal.value = true
+}
+const confirmDelete = async (): Promise<void> => {
+  try {
+    if (!selectedKelas.value) return
+
+    const id = getKelasId(selectedKelas.value)
+
+    const res = await fetch(
+      `${BASE_URL}/api/kelas/${id}`,
+      {
+        method: "DELETE",
+        headers: getHeaders(),
+      }
+    )
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      alert(data.message || "Gagal menghapus data")
+      return
+    }
+
+    showDeleteModal.value = false
+    selectedKelas.value = null
+
+    await getKelas()
+
+    alert("Data berhasil dihapus")
+  } catch (err) {
+    console.error(err)
+    alert("Terjadi kesalahan saat menghapus data")
+  }
+}
+
+const cancelDelete = (): void => {
+  showDeleteModal.value = false
+  selectedKelas.value = null
 }
 
 const goToPage = (page: number): void => {
@@ -482,4 +523,12 @@ onMounted((): void => {
 
     </div>
   </div>
+<konfirmasi_hapus
+  v-if="showDeleteModal"
+  :show="showDeleteModal"
+  title="Hapus Data Peserta Kelas"
+  message="Apakah Anda yakin ingin menghapus data peserta kelas ini?"
+  @confirm="confirmDelete"
+  @close="cancelDelete"
+/>
 </template>

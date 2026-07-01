@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
+import KonfirmasiHapus from "@/views/dashboard_super_admin/akademik/akun/konfirmasi_hapus.vue"
 
 const router = useRouter()
 
@@ -16,6 +17,9 @@ const tahunMap = ref<Record<number, any>>({})
 const allKelasData = ref<any[]>([])
 const kelasData = ref<any[]>([])
 
+
+const showDeleteModal = ref(false)
+const deleteTarget = ref<any>(null)
 // ================= PAGINATION =================
 const currentPage = ref(1)
 const perPage = ref(5)
@@ -235,7 +239,37 @@ const editData = (item: any) => {
 }
 
 const hapusData = (item: any) => {
-  console.log("HAPUS:", item)
+  deleteTarget.value = item
+  showDeleteModal.value = true
+}
+
+const submitDelete = async () => {
+  if (!deleteTarget.value) return
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/api/kelas/${deleteTarget.value.id}`,
+      {
+        method: "DELETE",
+        headers: getHeaders(),
+      }
+    )
+
+    const json = await res.json()
+
+    if (!res.ok) {
+      alert(json?.message || "Gagal menghapus kelas")
+      return
+    }
+
+    showDeleteModal.value = false
+    deleteTarget.value = null
+
+    await getKelas()
+  } catch (err) {
+    console.error(err)
+    alert("Terjadi kesalahan jaringan")
+  }
 }
 
 // ================= INIT =================
@@ -457,4 +491,10 @@ onMounted(async () => {
     </div>
 
   </div>
+  <KonfirmasiHapus
+  v-if="showDeleteModal"
+  :message="`Apakah anda yakin ingin menghapus kelas '${deleteTarget?.name}'?`"
+  @close="showDeleteModal = false"
+  @confirm="submitDelete"
+/>
 </template>

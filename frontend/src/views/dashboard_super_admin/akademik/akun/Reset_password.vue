@@ -133,7 +133,7 @@ const handleResetPassword = async () => {
         </label>
         <input
           v-model="password"
-          type="password"
+          type=""
           autocomplete="new-password"
           placeholder="Isi password baru..."
           class="w-full rounded-xl border border-gray-400 bg-white px-4 py-3 text-sm focus:outline-none focus:border-[#243e90]"
@@ -150,7 +150,7 @@ const handleResetPassword = async () => {
         </label>
         <input
           v-model="passwordKonfirmasi"
-          type="password"
+          type=""
           autocomplete="new-password"
           placeholder="Isi konfirmasi password..."
           class="w-full rounded-xl border border-gray-400 bg-white px-4 py-3 text-sm focus:outline-none focus:border-[#243e90]"

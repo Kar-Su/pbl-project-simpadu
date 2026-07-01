@@ -10,7 +10,6 @@ const showPass = ref<boolean>(false)
 const loading = ref<boolean>(false)
 const errorMsg = ref<string>('')
 
-// 🔥 HARDCODE BACKEND (PALING AMAN UNTUK DEPLOY SEKARANG)
 const BASE_URL = 'https://be.karlearn.site'
 const ENDPOINT = `${BASE_URL}/api/auth/login`
 
@@ -44,6 +43,7 @@ const handleLogin = async (): Promise<void> => {
 
     if (!res.ok) {
       errorMsg.value = data.message || 'Login gagal'
+      errorMsg.value = "Username atau Kata Sandi salah"
       return
     }
 

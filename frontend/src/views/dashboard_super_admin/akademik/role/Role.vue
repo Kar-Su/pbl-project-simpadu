@@ -167,7 +167,7 @@ onMounted(() => {
       <!-- SEARCH -->
       <div class="relative">
 
-        <input v-model="search" type="text" placeholder="Cari Akun..."
+        <input v-model="search" type="text" placeholder="Cari Role..."
           class="w-64 rounded-lg border border-gray-200 bg-white py-2 pl-4 pr-10 text-sm outline-none focus:border-blue-500" />
 
         <svg xmlns="http://www.w3.org/2000/svg" class="absolute right-3 top-2.5 h-4 w-4 text-gray-400" fill="none"

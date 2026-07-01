@@ -3,15 +3,22 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const goToTambahTahunAkademik = () => {
+  router.push('/dashboard-admin/tambah_tahunakademik')
+}
 
 // ================= TYPE =================
 interface AkademikItem {
   id: number
   tipeSemester: string
-  tahunAwal: string
-  tahunAkhir: string
-  status?: string
   rawTipeSemester?: string
+  awalTanggal: number
+  awalBulan: number
+  awalTahun: number
+  akhirTanggal: number
+  akhirBulan: number
+  akhirTahun: number
+  status?: string
 }
 
 // ================= STATE =================
@@ -30,20 +37,119 @@ const editingItem = ref<AkademikItem | null>(null)
 
 const editForm = ref({
   tipeSemester: '',
-  tahunAwal: '',
-  tahunAkhir: '',
+  awalTanggal: '',
+  awalBulan: '',
+  awalTahun: '',
+  akhirTanggal: '',
+  akhirBulan: '',
+  akhirTahun: '',
   status: '',
 })
 
-// ================= WATCH TAHUN =================
-watch(() => editForm.value.tahunAwal, (val) => {
-  const angka = Number(val)
-  if (val && val.length === 4 && !isNaN(angka)) {
-    editForm.value.tahunAkhir = String(angka + 1)
-  } else {
-    editForm.value.tahunAkhir = ''
+// PERINGATAN: tahun akademik yang seharusnya non aktif tapi gagal
+// dinonaktifkan otomatis (misal endpoint menolak / tidak ada hak akses).
+// Selama daftar ini tidak kosong, banner peringatan akan tampil
+// supaya admin tahu harus minta tim backend membenarkan data secara manual.
+const duplicateActiveWarning = ref<string[]>([])
+const isFixingDuplicates = ref(false)
+
+// ================= NAMA BULAN (untuk tampilan) =================
+const NAMA_BULAN = [
+  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+]
+
+// ================= HELPER TANGGAL =================
+const pad2 = (n: number) => String(n).padStart(2, '0')
+
+const isTahunKabisat = (tahun: number): boolean => {
+  if (!tahun) return false
+  return (tahun % 4 === 0 && tahun % 100 !== 0) || tahun % 400 === 0
+}
+
+// Mengembalikan jumlah hari maksimal untuk bulan & tahun tertentu
+// (Februari otomatis menyesuaikan tahun kabisat)
+const getMaxTanggal = (bulan: number, tahun: number): number => {
+  if (!bulan || bulan < 1 || bulan > 12) return 31
+  const hariPerBulan = [
+    31, isTahunKabisat(tahun) ? 29 : 28, 31, 30, 31, 30,
+    31, 31, 30, 31, 30, 31,
+  ]
+  return hariPerBulan[bulan - 1]
+}
+
+// Format tampilan tanpa tanda "-", contoh: "12 April 2023"
+const formatTanggal = (tanggal?: number, bulan?: number, tahun?: number): string => {
+  if (!tanggal || !bulan || !tahun) return '-'
+  return `${tanggal} ${NAMA_BULAN[bulan - 1] ?? '-'} ${tahun}`
+}
+
+// Pecah string tanggal dari API ("YYYY-MM-DD") jadi tanggal/bulan/tahun
+const parseTanggalAPI = (str?: string) => {
+  if (!str) return { tanggal: 0, bulan: 0, tahun: 0 }
+  const [tahun, bulan, tanggal] = str.split('-').map(Number)
+  return { tahun: tahun || 0, bulan: bulan || 0, tanggal: tanggal || 0 }
+}
+
+// Batasi input bulan: hanya angka, max 2 digit, tidak boleh > 12
+const clampBulan = (val: string): string => {
+  let v = val.replace(/\D/g, '').slice(0, 2)
+  if (v && Number(v) > 12) v = '12'
+  return v
+}
+
+// Batasi input tanggal: hanya angka, max 2 digit, tidak boleh melebihi
+// jumlah hari pada bulan (dan tahun, khusus Februari) yang sedang dipilih
+const clampTanggal = (val: string, bulan: string, tahun: string): string => {
+  let v = val.replace(/\D/g, '').slice(0, 2)
+  const maxTanggal = getMaxTanggal(Number(bulan), Number(tahun))
+  if (v && Number(v) > maxTanggal) v = String(maxTanggal)
+  return v
+}
+
+// ================= WATCH: HITUNG TAHUN AKHIR OTOMATIS =================
+// Tahun Akhir selalu sama tanggal & bulannya dengan Tahun Awal,
+// hanya tahunnya yang ditambah 1. Field Tahun Akhir di form selalu disabled.
+watch(
+  () => [editForm.value.awalTanggal, editForm.value.awalBulan, editForm.value.awalTahun],
+  () => {
+    const { awalTanggal, awalBulan, awalTahun } = editForm.value
+    if (awalTanggal && awalBulan && awalTahun.length === 4) {
+      editForm.value.akhirTanggal = awalTanggal
+      editForm.value.akhirBulan = awalBulan
+      editForm.value.akhirTahun = String(Number(awalTahun) + 1)
+    } else {
+      editForm.value.akhirTanggal = ''
+      editForm.value.akhirBulan = ''
+      editForm.value.akhirTahun = ''
+    }
   }
-})
+)
+
+// ================= INPUT HANDLER (TANGGAL AWAL) =================
+const onAwalTanggalInput = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  editForm.value.awalTanggal = clampTanggal(target.value, editForm.value.awalBulan, editForm.value.awalTahun)
+}
+
+const onAwalBulanInput = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  editForm.value.awalBulan = clampBulan(target.value)
+  // bulan berubah -> jumlah hari maksimal bisa berubah, cek ulang tanggal yang sudah diisi
+  editForm.value.awalTanggal = clampTanggal(editForm.value.awalTanggal, editForm.value.awalBulan, editForm.value.awalTahun)
+}
+
+const onAwalTahunInput = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  editForm.value.awalTahun = target.value.replace(/\D/g, '').slice(0, 4)
+  // tahun berubah -> kemungkinan kabisat/non-kabisat berubah, cek ulang tanggal (khusus Februari)
+  editForm.value.awalTanggal = clampTanggal(editForm.value.awalTanggal, editForm.value.awalBulan, editForm.value.awalTahun)
+}
+
+// Jumlah hari maksimal untuk bulan & tahun yang sedang dipilih di form (buat hint)
+const maxTanggalAwal = computed(() =>
+  getMaxTanggal(Number(editForm.value.awalBulan), Number(editForm.value.awalTahun))
+)
 
 // ================= HEADER =================
 const getHeaders = () => ({
@@ -52,23 +158,29 @@ const getHeaders = () => ({
   Authorization: `Bearer ${localStorage.getItem('token') ?? ''}`,
 })
 
-// ================= FETCH API =================
-const getTahunAkademik = async (): Promise<void> => {
-  try {
-    const res = await fetch(
-      'https://be.karlearn.site/api/tahun-akademik',
-      {
-        method: 'GET',
-        headers: getHeaders(),
-      }
-    )
+const formatLabel = (item: AkademikItem) =>
+  `${item.tipeSemester} ${formatTanggal(item.awalTanggal, item.awalBulan, item.awalTahun)} - ${formatTanggal(item.akhirTanggal, item.akhirBulan, item.akhirTahun)}`
 
-    const json = await res.json()
-    console.log('RESPONSE:', json)
+// ================= FETCH (tanpa cek duplikat) =================
+const fetchAndSetData = async (): Promise<void> => {
+  const res = await fetch(
+    'https://be.karlearn.site/api/tahun-akademik',
+    {
+      method: 'GET',
+      headers: getHeaders(),
+    }
+  )
 
-    const raw = Array.isArray(json.data) ? json.data : []
+  const json = await res.json()
+  console.log('RESPONSE:', json)
 
-    allData.value = raw.map((item: any) => ({
+  const raw = Array.isArray(json.data) ? json.data : []
+
+  allData.value = raw.map((item: any) => {
+    const awal = parseTanggalAPI(item.tahun_awal)
+    const akhir = parseTanggalAPI(item.tahun_akhir)
+
+    return {
       id: item.id,
       tipeSemester:
         item.tipe_semester === 'ganjil'
@@ -79,21 +191,97 @@ const getTahunAkademik = async (): Promise<void> => {
 
       rawTipeSemester: item.tipe_semester,
 
-      tahunAwal: item.tahun_awal
-        ? item.tahun_awal.split('-')[0]
-        : '-',
+      awalTanggal: awal.tanggal,
+      awalBulan: awal.bulan,
+      awalTahun: awal.tahun,
 
-      tahunAkhir: item.tahun_akhir
-        ? item.tahun_akhir.split('-')[0]
-        : '-',
+      akhirTanggal: akhir.tanggal,
+      akhirBulan: akhir.bulan,
+      akhirTahun: akhir.tahun,
 
       status: item.status === 'aktif'
         ? 'Aktif/jalan'
         : 'Non Aktif',
-    }))
-console.log("ALL DATA:", raw)
-    filteredData.value = [...allData.value]
-    currentPage.value = 1
+    }
+  })
+
+  console.log('ALL DATA:', raw)
+  filteredData.value = [...allData.value]
+  currentPage.value = 1
+}
+
+// ================= NONAKTIFKAN 1 ITEM (dipakai untuk auto-fix & toggle) =================
+const deactivateItem = async (item: AkademikItem): Promise<boolean> => {
+  try {
+    const payload = {
+      id: item.id,
+      status: 'nonaktif',
+      tahun_awal: `${item.awalTahun}-${pad2(item.awalBulan)}-${pad2(item.awalTanggal)}`,
+      tahun_akhir: `${item.akhirTahun}-${pad2(item.akhirBulan)}-${pad2(item.akhirTanggal)}`,
+      tipe_semester: item.rawTipeSemester ?? item.tipeSemester.toLowerCase(),
+    }
+
+    const res = await fetch(
+      `https://be.karlearn.site/api/tahun-akademik/${item.id}`,
+      {
+        method: 'PUT',
+        headers: getHeaders(),
+        body: JSON.stringify(payload),
+      }
+    )
+
+    return res.ok
+  } catch (err) {
+    console.error('AUTO DEACTIVATE ERROR:', err)
+    return false
+  }
+}
+
+// ================= CEK & PERBAIKI TAHUN AKADEMIK AKTIF GANDA =================
+// Idealnya hanya 1 tahun akademik yang aktif. Kalau backend mengirim lebih
+// dari 1 (misal karena belum ada validasi unique-active di backend),
+// yang pertama di list dipertahankan aktif, sisanya otomatis dinonaktifkan
+// lewat endpoint PUT yang sama dengan tombol "Nonaktifkan".
+// Kalau ada yang gagal dinonaktifkan (endpoint menolak / bukan hak akses kita),
+// tampilkan peringatan supaya diminta diperbaiki manual di backend.
+const checkAndFixMultipleActive = async () => {
+  duplicateActiveWarning.value = []
+
+  const activeItems = allData.value.filter((i) => i.status === 'Aktif/jalan')
+  if (activeItems.length <= 1) return
+
+  const dipertahankan = activeItems[0]
+  const harusDinonaktifkan = activeItems.slice(1)
+
+  console.warn(
+    `Ditemukan ${activeItems.length} tahun akademik aktif bersamaan. ` +
+    `Mempertahankan "${formatLabel(dipertahankan)}" aktif, mencoba menonaktifkan sisanya otomatis.`
+  )
+
+  isFixingDuplicates.value = true
+  const gagal: AkademikItem[] = []
+
+  for (const item of harusDinonaktifkan) {
+    const ok = await deactivateItem(item)
+    if (!ok) gagal.push(item)
+  }
+
+  isFixingDuplicates.value = false
+
+  if (gagal.length > 0) {
+    // Tidak semua berhasil dinonaktifkan otomatis -> butuh perbaikan manual di backend
+    duplicateActiveWarning.value = gagal.map(formatLabel)
+  } else {
+    // Semua berhasil dinonaktifkan otomatis, ambil data terbaru tanpa alert mengganggu
+    await fetchAndSetData()
+  }
+}
+
+// ================= FETCH API (entrypoint utama) =================
+const getTahunAkademik = async (): Promise<void> => {
+  try {
+    await fetchAndSetData()
+    await checkAndFixMultipleActive()
   } catch (err) {
     console.error('GET ERROR:', err)
   }
@@ -111,7 +299,7 @@ const applyFilter = () => {
       : true
 
     const tahunMatch = filterTahun.value
-      ? item.tahunAwal.includes(filterTahun.value)
+      ? String(item.awalTahun).includes(filterTahun.value)
       : true
 
     return semesterMatch && tahunMatch
@@ -153,24 +341,38 @@ const displayedPages = computed(() => {
   return [1, '...', current, '...', total]
 })
 
+// Duplikat dicek berdasarkan kombinasi semester + tanggal awal (tanggal, bulan, tahun)
 const isDuplicateData = computed(() => {
   if (!editingItem.value) return false
 
   return allData.value.some((item) => {
     return (
       item.id !== editingItem.value?.id &&
-      item.tipeSemester.toLowerCase() ===
-      editForm.value.tipeSemester.toLowerCase() &&
-      item.tahunAwal === editForm.value.tahunAwal
+      item.tipeSemester.toLowerCase() === editForm.value.tipeSemester.toLowerCase() &&
+      String(item.awalTahun) === editForm.value.awalTahun &&
+      String(item.awalBulan) === editForm.value.awalBulan &&
+      String(item.awalTanggal) === editForm.value.awalTanggal
     )
   })
 })
 
 const isInvalidYear = computed(() => {
   return (
-    editForm.value.tahunAwal.length > 0 &&
-    editForm.value.tahunAwal.length < 4
+    editForm.value.awalTahun.length > 0 &&
+    editForm.value.awalTahun.length < 4
   )
+})
+
+// Tanggal & bulan harus diisi berpasangan (tidak boleh hanya salah satu)
+const isInvalidDate = computed(() => {
+  const { awalTanggal, awalBulan } = editForm.value
+  return (!!awalTanggal && !awalBulan) || (!awalTanggal && !!awalBulan)
+})
+
+// Form belum lengkap (belum bisa disimpan)
+const isFormIncomplete = computed(() => {
+  const { tipeSemester, awalTanggal, awalBulan, awalTahun } = editForm.value
+  return !tipeSemester || !awalTanggal || !awalBulan || awalTahun.length !== 4
 })
 
 // ================= EDIT =================
@@ -179,8 +381,12 @@ const editItem = (item: AkademikItem) => {
 
   editForm.value = {
     tipeSemester: item.tipeSemester,
-    tahunAwal: item.tahunAwal,
-    tahunAkhir: item.tahunAkhir,
+    awalTanggal: item.awalTanggal ? String(item.awalTanggal) : '',
+    awalBulan: item.awalBulan ? String(item.awalBulan) : '',
+    awalTahun: item.awalTahun ? String(item.awalTahun) : '',
+    akhirTanggal: item.akhirTanggal ? String(item.akhirTanggal) : '',
+    akhirBulan: item.akhirBulan ? String(item.akhirBulan) : '',
+    akhirTahun: item.akhirTahun ? String(item.akhirTahun) : '',
     status: item.status ?? '',
   }
 
@@ -190,19 +396,23 @@ const editItem = (item: AkademikItem) => {
 // ================= SAVE EDIT =================
 const saveEdit = async () => {
   if (!editingItem.value) return
+  if (isFormIncomplete.value) {
+    alert('Tanggal, bulan, dan tahun awal wajib diisi lengkap')
+    return
+  }
   if (isDuplicateData.value) {
-    alert('Semester dan tahun awal sudah terdaftar')
+    alert('Semester dan tanggal awal sudah terdaftar')
     return
   }
   if (isInvalidYear.value) {
     alert('Tahun harus 4 digit')
     return
   }
-
-  if (isDuplicateData.value) {
-    alert('Semester dan tahun awal sudah terdaftar')
+  if (isInvalidDate.value) {
+    alert('Tanggal dan bulan harus diisi bersamaan')
     return
   }
+
   try {
     const payload = {
       id: editingItem.value.id,
@@ -210,8 +420,8 @@ const saveEdit = async () => {
         editForm.value.status === 'Aktif/jalan'
           ? 'aktif'
           : 'nonaktif',
-      tahun_awal: `${editForm.value.tahunAwal}-01-01`,
-      tahun_akhir: `${editForm.value.tahunAkhir}-01-01`,
+      tahun_awal: `${editForm.value.awalTahun}-${pad2(Number(editForm.value.awalBulan))}-${pad2(Number(editForm.value.awalTanggal))}`,
+      tahun_akhir: `${editForm.value.akhirTahun}-${pad2(Number(editForm.value.akhirBulan))}-${pad2(Number(editForm.value.akhirTanggal))}`,
       tipe_semester: editForm.value.tipeSemester.toLowerCase(),
     }
 
@@ -244,15 +454,51 @@ const saveEdit = async () => {
 
 
 // ================= TOGGLE STATUS =================
+// PERBAIKAN: tahun akademik tidak boleh aktif lebih dari 1 secara bersamaan.
+// Kalau user klik "Aktifkan" sementara ada tahun akademik lain yang masih
+// aktif, akan dikonfirmasi dulu lalu yang lama otomatis dinonaktifkan
+// sebelum yang baru diaktifkan. Kalau proses nonaktifkan otomatis gagal
+// (misal hak akses endpoint terbatas), proses dibatalkan dan user diberi
+// tahu untuk minta tim backend menonaktifkannya secara manual.
 const toggleStatus = async (item: AkademikItem) => {
   try {
+    const akanDiaktifkan = item.status !== 'Aktif/jalan'
+
+    if (akanDiaktifkan) {
+      const aktifLain = allData.value.filter(
+        (i) => i.id !== item.id && i.status === 'Aktif/jalan'
+      )
+
+      if (aktifLain.length > 0) {
+        const namaLain = aktifLain.map(formatLabel).join(', ')
+
+        const konfirmasi = confirm(
+          `Tahun akademik "${namaLain}" sedang aktif.\n` +
+          `Hanya boleh ada 1 tahun akademik aktif dalam satu waktu.\n\n` +
+          `Mengaktifkan "${formatLabel(item)}" akan menonaktifkan "${namaLain}" secara otomatis. Lanjutkan?`
+        )
+
+        if (!konfirmasi) return
+
+        for (const lain of aktifLain) {
+          const ok = await deactivateItem(lain)
+          if (!ok) {
+            alert(
+              `Gagal menonaktifkan otomatis "${formatLabel(lain)}". ` +
+              `Mohon hubungi tim backend untuk menonaktifkannya secara manual ` +
+              `sebelum mengaktifkan tahun akademik baru.`
+            )
+            return
+          }
+        }
+      }
+    }
+
     const payload = {
       id: item.id,
-      status: item.status === 'Aktif/jalan'
-        ? 'nonaktif'
-        : 'aktif',
-      tahun_awal: `${item.tahunAwal}-01-01`,
-      tahun_akhir: `${item.tahunAkhir}-01-01`,
+      status: akanDiaktifkan ? 'aktif' : 'nonaktif',
+      tahun_awal: `${item.awalTahun}-${pad2(item.awalBulan)}-${pad2(item.awalTanggal)}`,
+      tahun_akhir: `${item.akhirTahun}-${pad2(item.akhirBulan)}-${pad2(item.akhirTanggal)}`,
       tipe_semester:
         item.rawTipeSemester ??
         item.tipeSemester.toLowerCase(),
@@ -304,6 +550,25 @@ const toggleStatus = async (item: AkademikItem) => {
       Kelola data tahun akademik
     </p>
 
+    <!-- BANNER: lagi memperbaiki duplikat aktif -->
+    <div v-if="isFixingDuplicates" class="mb-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+      Mendeteksi lebih dari satu tahun akademik aktif, sedang mencoba menonaktifkan otomatis...
+    </div>
+
+    <!-- BANNER: ada duplikat aktif yang GAGAL diperbaiki otomatis -->
+    <div v-if="duplicateActiveWarning.length > 0" class="mb-4 rounded-lg border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700">
+      <p class="font-semibold mb-1">
+        ⚠️ Ditemukan tahun akademik aktif lebih dari 1, dan sistem gagal menonaktifkannya secara otomatis:
+      </p>
+      <ul class="list-disc list-inside mb-1">
+        <li v-for="(nama, idx) in duplicateActiveWarning" :key="idx">{{ nama }}</li>
+      </ul>
+      <p>
+        Mohon hubungi tim backend untuk menonaktifkan data di atas secara manual,
+        karena seharusnya hanya 1 tahun akademik yang boleh aktif dalam satu waktu.
+      </p>
+    </div>
+
     <!-- Card -->
 <div class="col-span-3 bg-[#ececec] rounded-xl shadow-sm border-l-[4px] border-b-[3px] border-[#9db9dc] overflow-hidden">
 
@@ -318,7 +583,20 @@ const toggleStatus = async (item: AkademikItem) => {
   </div>
 
   <!-- ISI -->
-  <div class="p-5 overflow-x-auto">
+  <!-- ISI -->
+<div class="p-5">
+
+  <!-- Tombol Tambah -->
+  <div class="flex justify-end mb-4">
+    <button
+      @click="goToTambahTahunAkademik"
+      class="bg-[#1f3c93] hover:bg-blue-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition"
+    >
+      + Tambah
+    </button>
+  </div>
+
+  <div class="overflow-x-auto">
     <table class="w-full text-sm">
 
           <!-- Header -->
@@ -343,11 +621,11 @@ const toggleStatus = async (item: AkademikItem) => {
               </th> -->
 
               <th class="text-left py-3 px-4 font-semibold text-slate-600">
-                Tahun Awal
+                Tanggal Awal
               </th>
 
               <th class="text-left py-3 px-4 font-semibold text-slate-600">
-                Tahun Akhir
+                Tanggal Akhir
               </th>
 
               <th class="text-left py-3 px-4 font-semibold text-slate-600">
@@ -384,11 +662,11 @@ const toggleStatus = async (item: AkademikItem) => {
               </td> -->
 
               <td class="py-4 px-4">
-                {{ item.tahunAwal }}
+                {{ formatTanggal(item.awalTanggal, item.awalBulan, item.awalTahun) }}
               </td>
 
               <td class="py-4 px-4">
-                {{ item.tahunAkhir }}
+                {{ formatTanggal(item.akhirTanggal, item.akhirBulan, item.akhirTahun) }}
               </td>
 
               <td class="py-4 px-4">
@@ -425,6 +703,7 @@ const toggleStatus = async (item: AkademikItem) => {
           </tbody>
 
         </table>
+        </div>
         <!-- Pagination -->
         <div v-if="totalPages > 0" class="flex items-center justify-end gap-2 mt-6">
 
@@ -495,50 +774,78 @@ const toggleStatus = async (item: AkademikItem) => {
               <option>Genap</option>
             </select>
             <p v-if="isDuplicateData" class="text-red-500 text-xs mt-1">
-              Kombinasi semester dan tahun awal sudah digunakan.
+              Kombinasi semester dan tanggal awal sudah digunakan.
             </p>
           </div>
 
-          <!-- Tahun -->
-          <div class="flex gap-3">
+          <!-- Tanggal Awal -->
+          <div>
+            <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+              Tanggal Awal
+            </label>
 
-            <!-- Tahun Awal -->
-            <div class="flex-1">
-              <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-                Tahun Awal
-              </label>
+            <div class="flex gap-2">
+              <!-- Tanggal -->
+              <input :value="editForm.awalTanggal" @input="onAwalTanggalInput" type="text" inputmode="numeric"
+                maxlength="2" placeholder="Tgl"
+                class="w-1/3 border rounded-lg px-3 py-2.5 text-sm text-center outline-none focus:ring-2 focus:ring-blue-400"
+                :class="isDuplicateData ? 'border-red-500' : 'border-slate-200'" />
 
-              <input v-model="editForm.tahunAwal" type="text" inputmode="numeric" maxlength="4" placeholder="cth: 2024"
-                @input="editForm.tahunAwal = editForm.tahunAwal.replace(/\D/g, '').slice(0, 4)"
-                class="w-full border rounded-lg px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-400"
-                :class="(isDuplicateData || editForm.tahunAwal.length > 0 && editForm.tahunAwal.length < 4)
-                  ? 'border-red-500'
-                  : 'border-slate-200'" />
+              <!-- Bulan -->
+              <input :value="editForm.awalBulan" @input="onAwalBulanInput" type="text" inputmode="numeric"
+                maxlength="2" placeholder="Bln"
+                class="w-1/3 border rounded-lg px-3 py-2.5 text-sm text-center outline-none focus:ring-2 focus:ring-blue-400"
+                :class="isDuplicateData ? 'border-red-500' : 'border-slate-200'" />
 
-              <!-- Error 4 digit -->
-              <p v-if="editForm.tahunAwal.length > 0 && editForm.tahunAwal.length < 4"
-                class="text-red-500 text-xs mt-1">
-                Tahun harus terdiri dari 4 digit.
-              </p>
-
-              <!-- Error duplikat -->
-              <p v-else-if="isDuplicateData" class="text-red-500 text-xs mt-1">
-                Tahun awal dan semester tersebut sudah terdaftar.
-              </p>
+              <!-- Tahun -->
+              <input :value="editForm.awalTahun" @input="onAwalTahunInput" type="text" inputmode="numeric"
+                maxlength="4" placeholder="Thn"
+                class="w-1/3 border rounded-lg px-3 py-2.5 text-sm text-center outline-none focus:ring-2 focus:ring-blue-400"
+                :class="(isDuplicateData || isInvalidYear) ? 'border-red-500' : 'border-slate-200'" />
             </div>
 
-            <!-- Tahun Akhir -->
-            <div class="flex-1">
-              <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
-                Tahun Akhir
-              </label>
+            <!-- Hint max tanggal untuk bulan terpilih -->
+            <p v-if="editForm.awalBulan" class="text-slate-400 text-xs mt-1">
+              Bulan {{ editForm.awalBulan }} maksimal tanggal {{ maxTanggalAwal }}.
+            </p>
 
-              <input :value="editForm.tahunAkhir || '-'" type="text" disabled
-                class="w-full border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-slate-400 cursor-not-allowed" />
-            </div>
+            <!-- Error tahun -->
+            <p v-if="isInvalidYear" class="text-red-500 text-xs mt-1">
+              Tahun harus terdiri dari 4 digit.
+            </p>
 
+            <!-- Error tanggal & bulan harus berpasangan -->
+            <p v-else-if="isInvalidDate" class="text-red-500 text-xs mt-1">
+              Tanggal dan bulan harus diisi bersamaan.
+            </p>
+
+            <!-- Error duplikat -->
+            <p v-else-if="isDuplicateData" class="text-red-500 text-xs mt-1">
+              Semester dan tanggal awal tersebut sudah terdaftar.
+            </p>
           </div>
 
+          <!-- Tanggal Akhir (otomatis, disabled) -->
+          <div>
+            <label class="text-xs font-semibold text-slate-500 mb-1.5 block">
+              Tanggal Akhir (otomatis)
+            </label>
+
+            <div class="flex gap-2">
+              <input :value="editForm.akhirTanggal || '-'" type="text" disabled
+                class="w-1/3 border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-center text-slate-400 cursor-not-allowed" />
+
+              <input :value="editForm.akhirBulan || '-'" type="text" disabled
+                class="w-1/3 border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-center text-slate-400 cursor-not-allowed" />
+
+              <input :value="editForm.akhirTahun || '-'" type="text" disabled
+                class="w-1/3 border border-slate-200 bg-slate-100 rounded-lg px-3 py-2.5 text-sm text-center text-slate-400 cursor-not-allowed" />
+            </div>
+
+            <p class="text-slate-400 text-xs mt-1">
+              Tahun akhir otomatis mengikuti tanggal & bulan awal, tahun ditambah 1.
+            </p>
+          </div>
 
         </div>
 
@@ -550,8 +857,8 @@ const toggleStatus = async (item: AkademikItem) => {
             Batal
           </button>
 
-          <button @click="saveEdit" :disabled="isDuplicateData || isInvalidYear"
-            class="px-4 py-2 text-sm text-white font-semibold rounded-lg transition-colors" :class="isDuplicateData || isInvalidYear
+          <button @click="saveEdit" :disabled="isDuplicateData || isInvalidYear || isInvalidDate || isFormIncomplete"
+            class="px-4 py-2 text-sm text-white font-semibold rounded-lg transition-colors" :class="(isDuplicateData || isInvalidYear || isInvalidDate || isFormIncomplete)
               ? 'bg-slate-400 cursor-not-allowed'
               : 'bg-[#1f3c93] hover:bg-blue-800'
               ">

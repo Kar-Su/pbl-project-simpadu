@@ -60,18 +60,33 @@ const getPresensi = async () => {
 }
 
 // ================= FILTER BY DATE =================
+// PERBAIKAN: bisa ada lebih dari satu sesi untuk tanggal yang sama
+// (misal pegawai baru ditambahkan di sesi berikutnya pada hari yang sama).
+// Sebelumnya pakai .find() yang hanya ambil sesi PERTAMA yang cocok,
+// jadi pegawai yang baru ditambahkan di sesi berikutnya tidak pernah muncul.
+// Sekarang: gabungkan pegawai dari SEMUA sesi tanggal tersebut,
+// dedupe berdasarkan detail_id (data dari sesi yang lebih baru menang),
+// dan sesi_id aktif diambil dari sesi PALING BARU (terakhir) pada tanggal itu.
 const filterByDate = () => {
   currentPage.value = 1
 
-  // Cari sesi yang created_at cocok dengan selectedDate
-  const sesiCocok = sesiList.value.find(
+  const sesiSamaTanggal = sesiList.value.filter(
     (s) => s.created_at === selectedDate.value
   )
 
-  if (sesiCocok) {
-    sesiIdHariIni.value = sesiCocok.sesi_id
-    // Deep copy agar perubahan status tidak langsung mutate sumber
-    pegawaiHariIni.value = (sesiCocok.pegawai || []).map((p) => ({ ...p }))
+  if (sesiSamaTanggal.length > 0) {
+    const sesiTerakhir = sesiSamaTanggal[sesiSamaTanggal.length - 1]
+    sesiIdHariIni.value = sesiTerakhir.sesi_id
+
+    const pegawaiMap = new Map<string, Pegawai>()
+    sesiSamaTanggal.forEach((s) => {
+      ;(s.pegawai || []).forEach((p) => {
+        // deep copy agar perubahan status tidak langsung mutate sumber
+        pegawaiMap.set(p.detail_id, { ...p })
+      })
+    })
+
+    pegawaiHariIni.value = Array.from(pegawaiMap.values())
   } else {
     sesiIdHariIni.value = ""
     pegawaiHariIni.value = []
@@ -83,11 +98,30 @@ watch(selectedDate, () => {
   filterByDate()
 })
 
+// Reset ke halaman 1 setiap kali kata kunci pencarian berubah,
+// supaya tidak "nyangkut" di halaman yang sudah tidak ada datanya
+watch(search, () => {
+  currentPage.value = 1
+})
+
+// Reset ke halaman 1 setiap kali jumlah baris per halaman berubah
+watch(perPage, () => {
+  currentPage.value = 1
+})
+
 // ================= UPDATE STATUS (lokal) =================
-const updateStatus = (index: number, value: string) => {
-  // index dari paginatedPegawai → harus map balik ke pegawaiHariIni
-  const globalIndex = (currentPage.value - 1) * perPage.value + index
-  pegawaiHariIni.value[globalIndex].status = value
+// PERBAIKAN: sebelumnya pakai perhitungan index global
+// (currentPage - 1) * perPage + index, padahal tabel yang ditampilkan
+// berasal dari filteredPegawai (hasil pencarian), bukan langsung dari
+// pegawaiHariIni. Begitu search diisi, index jadi tidak sinkron dan
+// status yang ter-update bisa jadi milik pegawai yang salah.
+// Sekarang update langsung berdasarkan detail_id, jadi selalu tepat
+// sasaran terlepas dari filter/pencarian/halaman yang aktif.
+const updateStatus = (detailId: string, value: string) => {
+  const target = pegawaiHariIni.value.find((p) => p.detail_id === detailId)
+  if (target) {
+    target.status = value
+  }
 }
 
 // ================= SAVE / PUT =================
@@ -159,6 +193,14 @@ const filteredPegawai = computed(() => {
 const totalPages = computed(() =>
   Math.max(1, Math.ceil(filteredPegawai.value.length / perPage.value))
 )
+
+// PERBAIKAN: jaga-jaga supaya currentPage tidak pernah melebihi totalPages
+// (misalnya setelah data berkurang karena ganti tanggal/sesi)
+watch(totalPages, (newTotal) => {
+  if (currentPage.value > newTotal) {
+    currentPage.value = newTotal
+  }
+})
 
 const paginatedPegawai = computed(() => {
   const start = (currentPage.value - 1) * perPage.value
@@ -369,7 +411,7 @@ onMounted(() => {
               <td class="px-6 py-5">
                 <select
                   :value="item.status"
-                  @change="updateStatus(index, ($event.target as HTMLSelectElement).value)"
+                  @change="updateStatus(item.detail_id, ($event.target as HTMLSelectElement).value)"
                   :class="['rounded-lg px-3 py-2 text-xs font-semibold outline-none cursor-pointer', getStatusClass(item.status)]"
                 >
                   <option value="hadir">Hadir</option>

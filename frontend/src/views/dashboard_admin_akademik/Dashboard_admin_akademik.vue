@@ -126,15 +126,15 @@ const getAllUsers = async (): Promise<any[]> => {
 };
 
 const changePerPage = (): void => {
-    currentPage.value = 1
+    currentPage.value = 1;
 
-    totalItems.value = allMahasiswa.value.length
+    totalItems.value = allMahasiswa.value.length;
 
     akunList.value = allMahasiswa.value.slice(
         0,
         perPage.value
-    )
-}
+    );
+};
 
 const getTotalPegawaiExternal = async (): Promise<number> => {
     try {
@@ -150,14 +150,32 @@ const getTotalPegawaiExternal = async (): Promise<number> => {
     }
 };
 
-const getMahasiswaExternal = async (): Promise<any[]> => {
+const getMahasiswaExternal = async (): Promise<MahasiswaItem[]> => {
     try {
         const res = await fetch(
             "https://api-mahasiswa-4a.akufarish.my.id:8874/api/mahasiswa",
-            { headers: getHeaders() }
+            {
+                headers: {
+                    Accept: "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token") ?? ""}`,
+                },
+            }
         );
+
         const data = await res.json();
-        return Array.isArray(data.data) ? data.data : [];
+
+        const mahasiswa = Array.isArray(data.data) ? data.data : [];
+
+        return mahasiswa.map((item: any) => ({
+            id: item.id_mahasiswa ?? "-",
+            nim: item.nim ?? "-",
+            name: item.nama_mahasiswa ?? "-",
+            // kelas: "-",
+            prodi: item.prodi_id ? String(item.prodi_id) : "-",
+            angkatan: item.tahunakademik_id
+                ? String(item.tahunakademik_id)
+                : "-",
+        }));
     } catch (err) {
         console.error("getMahasiswaExternal:", err);
         return [];
@@ -219,7 +237,7 @@ interface MahasiswaItem {
     id: string;
     nim: string;
     name: string;
-    kelas: string;
+    // kelas: string;
     prodi: string;
     angkatan: string;
 }
@@ -275,74 +293,86 @@ const nextPage = (): void => goToPage(currentPage.value + 1);
 // ON MOUNTED
 // ─────────────────────────────────────────────
 onMounted(async (): Promise<void> => {
-    refreshUserInfo()
-    getProfile()
+    refreshUserInfo();
+    getProfile();
 
-    const [users, externalPegawaiTotal] = await Promise.all([
+    const [
+        users,
+        externalPegawaiTotal,
+        externalMahasiswa,
+    ] = await Promise.all([
         getAllUsers(),
         getTotalPegawaiExternal(),
-    ])
-console.log("USERS", users)
+        getMahasiswaExternal(),
+    ]);
+
+    console.log("USERS", users);
+
+    // =========================
+    // MAHASISWA DARI KARLEARN
+    // =========================
+    const mahasiswaUsers = users
+        .filter((item: any) => {
+            const role = item.role_name?.toLowerCase()?.trim();
+            return role === "mahasiswa";
+        })
+        .map((item: any) => ({
+            id: item.id ?? "-",
+            nim: item.nim ?? "-",
+            name: item.name ?? "-",
+            // kelas: item.kelas_name ?? "-",
+            prodi: item.prodi_name ?? "-",
+            angkatan: item.angkatan ?? "-",
+        }));
+
     // =========================
     // TOTAL MAHASISWA
     // =========================
-    const mahasiswaUsers = users.filter((item: any) => {
-        const role = item.role_name?.toLowerCase()?.trim()
-        return role === "mahasiswa"
-    })
-
-    totalMahasiswa.value = mahasiswaUsers.length
+    totalMahasiswa.value =
+        mahasiswaUsers.length +
+        externalMahasiswa.length;
 
     // =========================
     // TOTAL PEGAWAI
     // =========================
     const karlearnPegawai = users.filter((item: any) => {
-        const role = item.role_name?.toLowerCase()?.trim()
+        const role = item.role_name?.toLowerCase()?.trim();
 
-        return (
-            role !== "mahasiswa"
-        )
-    }).length
+        return role !== "mahasiswa";
+    }).length;
 
     totalPegawai.value =
         karlearnPegawai +
-        externalPegawaiTotal
+        externalPegawaiTotal;
 
     // =========================
     // TOTAL DOSEN
     // =========================
     totalDosen.value = users.filter((item: any) => {
-        const role = item.role_name?.toLowerCase()?.trim()
+        const role = item.role_name?.toLowerCase()?.trim();
 
-        return role === "dosen"
-    }).length
+        return role === "dosen";
+    }).length;
 
     // =========================
-    // DATA TABEL MAHASISWA
+    // GABUNG MAHASISWA
     // =========================
-    allMahasiswa.value = mahasiswaUsers.map(
-        (item: any) => ({
-            id: item.id ?? "-",
-            nim: item.nim ?? "-",
-            name: item.name ?? "-",
-            kelas: item.kelas_name ?? "-",
-            prodi: item.prodi_name ?? "-",
-            angkatan: item.angkatan ?? "-",
-        })
-    )
+    allMahasiswa.value = [
+        ...externalMahasiswa,
+        ...mahasiswaUsers,
+       
+    ];
 
-    totalItems.value =
-        allMahasiswa.value.length
+    totalItems.value = allMahasiswa.value.length;
 
-    akunList.value =
-        allMahasiswa.value.slice(
-            0,
-            perPage.value
-        )
+    akunList.value = allMahasiswa.value.slice(
+        0,
+        perPage.value
+    );
 
-    getTahunAkademik()
-    getKurikulum()
-})
+    getTahunAkademik();
+    getKurikulum();
+});
 </script>
 
 <template>
@@ -694,7 +724,7 @@ console.log("USERS", users)
                                     <th class="py-3 px-2 text-left">No</th>
                                     <th class="py-3 px-2 text-left">NIM</th>
                                     <th class="py-3 px-2 text-left">Nama</th>
-                                    <th class="py-3 px-2 text-left">Kelas</th>
+                                    <!-- <th class="py-3 px-2 text-left">Kelas</th> -->
                                     <th class="py-3 px-2 text-left">Prodi</th>
                                     <th class="py-3 px-2 text-left">Angkatan</th>
                                 </tr>
@@ -712,7 +742,7 @@ console.log("USERS", users)
                                     </td>
                                     <td class="py-3 px-2">{{ item.nim }}</td>
                                     <td class="py-3 px-2">{{ item.name }}</td>
-                                    <td class="py-3 px-2">{{ item.kelas }}</td>
+                                    <!-- <td class="py-3 px-2">{{ item.kelas }}</td> -->
                                     <td class="py-3 px-2">{{ item.prodi }}</td>
                                     <td class="py-3 px-2">{{ item.angkatan }}</td>
                                 </tr>
