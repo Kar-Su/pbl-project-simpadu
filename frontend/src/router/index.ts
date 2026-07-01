@@ -23,7 +23,7 @@ import Tambah_kurikulum from "@/views/dashboard_admin_akademik/akademik/kurikulu
 import Tambah_kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Tambah_kelas.vue";
 
 // kelas
-import Kelas from "@/views/dashboard_admin_akademik/akademik/kelas/Kelas.vue";
+import Kelas from "@/views/dashboard_admin_akademik/akademik/Kelas/Kelas.vue";
 import Edit_kelas from "../views/dashboard_admin_akademik/akademik/Kelas/Edit_kelas.vue";
 
 // peserta kelas

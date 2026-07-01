@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from "vue-router"
+import KonfirmasiHapus from "@/views/dashboard_super_admin/akademik/akun/konfirmasi_hapus.vue"
 
 const router = useRouter()
 
@@ -12,6 +13,8 @@ const search = ref("")
 const showEditModal = ref(false)
 const editLoading = ref(false)
 const editError = ref("")
+const showDeleteModal = ref(false)
+const deleteTarget = ref<any>(null)
 
 const editForm = ref({
   kodeLama: "",
@@ -158,16 +161,17 @@ const submitEdit = async () => {
     editLoading.value = false
   }
 }
-const hapusData = async (item: any) => {
-  const konfirmasi = confirm(
-    `Yakin ingin menghapus mata kuliah "${item.nama}"?`
-  )
+const hapusData = (item: any) => {
+  deleteTarget.value = item
+  showDeleteModal.value = true
+}
 
-  if (!konfirmasi) return
+const submitDelete = async () => {
+  if (!deleteTarget.value) return
 
   try {
     const res = await fetch(
-      `${BASE_URL}/api/mata-kuliah/${item.kode}`,
+      `${BASE_URL}/api/mata-kuliah/${deleteTarget.value.kode}`,
       {
         method: "DELETE",
         headers: getHeaders(),
@@ -182,8 +186,6 @@ const hapusData = async (item: any) => {
       result = {}
     }
 
-    console.log("DELETE RESPONSE:", result)
-
     if (!res.ok) {
       alert(
         result?.message ||
@@ -193,7 +195,8 @@ const hapusData = async (item: any) => {
       return
     }
 
-    alert("Mata kuliah berhasil dihapus")
+    showDeleteModal.value = false
+    deleteTarget.value = null
 
     await getMataKuliah()
   } catch (err) {
@@ -465,4 +468,10 @@ onMounted(() => {
     </div>
 
   </div>
+  <KonfirmasiHapus
+  v-if="showDeleteModal"
+  :message="`Apakah anda yakin ingin menghapus mata kuliah '${deleteTarget?.nama}'?`"
+  @close="showDeleteModal = false"
+  @confirm="submitDelete"
+/>
 </template>

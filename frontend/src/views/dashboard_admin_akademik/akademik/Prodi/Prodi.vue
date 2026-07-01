@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
+import KonfirmasiHapus from "../../../dashboard_super_admin/akademik/akun/konfirmasi_hapus.vue"
+
 
 const router = useRouter()
 
@@ -475,31 +477,12 @@ onMounted(async () => {
     <!-- ================================ -->
     <!-- DELETE CONFIRM MODAL              -->
     <!-- ================================ -->
-    <div v-if="showDeleteModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-      @click.self="showDeleteModal = false">
-      <div class="bg-white rounded-xl shadow-xl w-full max-w-sm p-6">
-        <h2 class="text-xl font-bold text-[#404040] mb-2">Hapus Prodi</h2>
-        <p class="text-gray-600 text-sm mb-4">
-          Apakah Anda yakin ingin menghapus prodi
-          <span class="font-semibold text-red-600">{{ deleteTarget?.nama }}</span>?
-          Tindakan ini tidak dapat dibatalkan.
-        </p>
-
-        <p v-if="deleteError" class="text-red-500 text-sm mb-3 bg-red-50 px-3 py-2 rounded-lg">{{ deleteError }}</p>
-
-        <div class="flex justify-end gap-3">
-          <button @click="showDeleteModal = false"
-            class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-600 hover:bg-gray-100 transition">
-            Batal
-          </button>
-          <button @click="submitDelete" :disabled="deleteLoading"
-            class="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm font-semibold disabled:opacity-50 transition">
-            {{ deleteLoading ? "Menghapus..." : "Hapus" }}
-          </button>
-        </div>
-      </div>
-    </div>
-    <!-- END DELETE MODAL -->
+<KonfirmasiHapus
+  v-if="showDeleteModal"
+  :message="`Apakah anda yakin ingin menghapus prodi '${deleteTarget?.nama}'?`"
+  @close="showDeleteModal = false"
+  @confirm="submitDelete"
+/>
 
   </div>
 </template>

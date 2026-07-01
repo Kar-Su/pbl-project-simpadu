@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from "vue"
 import { useRouter } from "vue-router"
-import DeleteConfirmModal from "./konfirmasi_hapus.vue"
+import KonfirmasiHapus from "./konfirmasi_hapus.vue"
 
 // ================= TYPE =================
 interface User {
@@ -357,9 +357,11 @@ onMounted(() => {
 
     </div>
 
-    <!-- MODAL HAPUS -->
-    <DeleteConfirmModal v-if="Konfirmasi_hapus" :email="selectedEmail" @close="Konfirmasi_hapus = false"
-      @confirm="confirmDelete" />
-
+<KonfirmasiHapus
+  v-if="Konfirmasi_hapus"
+  :message="`Apakah anda yakin ingin menghapus akun '${selectedEmail}'?`"
+  @close="Konfirmasi_hapus = false"
+  @confirm="confirmDelete"
+/>
   </div>
 </template>>

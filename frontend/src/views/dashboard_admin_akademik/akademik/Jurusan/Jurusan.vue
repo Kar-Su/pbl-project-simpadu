@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue"
 import { useRouter } from "vue-router"
+import KonfirmasiHapus from "@/views/dashboard_super_admin/akademik/akun/konfirmasi_hapus.vue"
 
 const router = useRouter()
 
@@ -55,6 +56,8 @@ const tambahData = () => {
 // EDIT
 // ========================
 const showEditModal = ref(false)
+const showDeleteModal = ref(false)
+const selectedJurusan = ref<any>(null)
 
 const editForm = ref({
   rawName: "",    // ← nama asli untuk URL API
@@ -115,22 +118,32 @@ const filteredJurusan = computed(() => {
 // ========================
 // HAPUS
 // ========================
-const hapusJurusan = async (item: any) => {
-  const konfirmasi = confirm(`Hapus jurusan "${item.name}"?`)
-  if (!konfirmasi) return
+const hapusJurusan = (item: any) => {
+  selectedJurusan.value = item
+  showDeleteModal.value = true
+}
+
+const confirmDelete = async () => {
+  if (!selectedJurusan.value) return
 
   try {
-    // URL pakai rawName (dengan tanda hubung)
     const res = await fetch(
-      `${BASE_URL}/api/jurusan/${item.rawName}`,
-      { method: "DELETE", headers: getHeaders() }
+      `${BASE_URL}/api/jurusan/${selectedJurusan.value.rawName}`,
+      {
+        method: "DELETE",
+        headers: getHeaders(),
+      }
     )
+
     const json = await res.json()
 
     if (!res.ok) {
       alert(json.message || "Gagal menghapus jurusan.")
       return
     }
+
+    showDeleteModal.value = false
+    selectedJurusan.value = null
 
     await getJurusan()
   } catch (err) {
@@ -326,4 +339,10 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+<KonfirmasiHapus
+  v-if="showDeleteModal"
+  :message="`Apakah anda yakin ingin menghapus jurusan '${selectedJurusan?.name}'?`"
+  @close="showDeleteModal = false"
+  @confirm="confirmDelete"
+/>
 </template>

@@ -91,7 +91,7 @@ onMounted(() => {
         <thead>
           <tr class="border-b border-gray-200">
             <th class="py-3 px-2 text-left font-semibold text-gray-600 w-12">No</th>
-            <th class="py-3 px-2 text-left font-semibold text-gray-600">Semester</th>
+            <!-- <th class="py-3 px-2 text-left font-semibold text-gray-600">Semester</th> -->
             <th class="py-3 px-2 text-left font-semibold text-gray-600">Tahun Awal</th>
             <th class="py-3 px-2 text-left font-semibold text-gray-600">Tahun Akhir</th>
             <th class="py-3 px-2 text-left font-semibold text-gray-600">Status</th>
@@ -113,7 +113,7 @@ onMounted(() => {
             class="border-b border-gray-100 hover:bg-gray-50 transition-colors"
           >
             <td class="py-4 px-2 text-gray-700">{{ index + 1 }}</td>
-            <td class="py-4 px-2 text-gray-700 font-medium">{{ capitalize(item.tipee_semester) }}</td>
+            <!-- <td class="py-4 px-2 text-gray-700 font-medium">{{ capitalize(item.tipee_semester) }}</td> -->
             <td class="py-4 px-2 text-gray-700">{{ formatYear(item.tahun_awal) }}</td>
             <td class="py-4 px-2 text-gray-700">{{ formatYear(item.tahun_akhir) }}</td>
             <td class="py-4 px-2">
